@@ -22,47 +22,27 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private String otp;
+
+    private boolean isVerified = false;
+
     // GETTERS
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public Role getRole() {
-        return role;
-    }
+    public Long getId() { return id; }
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    public String getPassword() { return password; }
+    public Role getRole() { return role; }
+    public String getOtp() { return otp; }
+    public boolean isVerified() { return isVerified; }
 
     // SETTERS
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
+    public void setId(Long id) { this.id = id; }
+    public void setName(String name) { this.name = name; }
+    public void setEmail(String email) { this.email = email; }
+    public void setPassword(String password) { this.password = password; }
+    public void setRole(Role role) { this.role = role; }
+    public void setOtp(String otp) { this.otp = otp; }
+    public void setVerified(boolean verified) { isVerified = verified; }
 }

@@ -4,9 +4,11 @@ import com.rohit.jobportal.dto.LoginRequest;
 import com.rohit.jobportal.dto.RegisterRequest;
 import com.rohit.jobportal.dto.UserResponse;
 import com.rohit.jobportal.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -20,14 +22,22 @@ public class UserController {
 
     // Register
     @PostMapping("/register")
-    public UserResponse registerUser(@RequestBody RegisterRequest request) {
-        return userService.registerUser(request);
+    public ResponseEntity<UserResponse> registerUser(@RequestBody RegisterRequest request) {
+        return ResponseEntity.ok(userService.registerUser(request));
+    }
+
+    // Verify OTP
+    @PostMapping("/verify-otp")
+    public ResponseEntity<String> verifyOtp(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        String otp = body.get("otp");
+        return ResponseEntity.ok(userService.verifyOtp(email, otp));
     }
 
     // Login
     @PostMapping("/login")
-    public String loginUser(@RequestBody LoginRequest loginRequest) {
-        return userService.login(loginRequest);
+    public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(userService.login(loginRequest));
     }
 
     // Get all users
