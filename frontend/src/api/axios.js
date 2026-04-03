@@ -2,7 +2,6 @@ import axios from "axios";
 
 const API = axios.create({ baseURL: "https://job-portal-project-7tud.onrender.com/api" });
 
-
 // Attach JWT token to every request automatically
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
@@ -10,7 +9,7 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
-// Auto-logout on 401/403
+// Auto-logout on 401
 API.interceptors.response.use(
   (res) => res,
   (err) => {
@@ -25,9 +24,11 @@ API.interceptors.response.use(
 // ── Auth ──────────────────────────────────────────
 export const login = (data) => API.post("/users/login", data);
 export const register = (data) => API.post("/users/register", data);
+export const verifyOtp = (data) => API.post("/users/verify-otp", data);
 
 // ── Jobs ──────────────────────────────────────────
 export const getJobs = () => API.get("/jobs");
+export const getMyJobs = () => API.get("/jobs/my-jobs");
 export const createJob = (data) => API.post("/jobs", data);
 export const deleteJob = (id) => API.delete(`/jobs/${id}`);
 
@@ -39,4 +40,3 @@ export const updateApplicationStatus = (appId, status) =>
   API.put(`/applications/${appId}/status?status=${status}`);
 
 export default API;
-export const getMyJobs = () => API.get("/jobs/my-jobs");
