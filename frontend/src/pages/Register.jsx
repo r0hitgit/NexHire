@@ -58,7 +58,7 @@ export default function Register() {
 
         <form onSubmit={handleRegister}>
           <label style={labelStyle}>Full Name</label>
-          <input style={inputStyle} type="text" placeholder="John Doe" value={form.name}
+          <input style={inputStyle} type="text" placeholder="Your Name" value={form.name}
             onChange={e => setForm({ ...form, name: e.target.value })} required
             onFocus={e => e.target.style.borderColor = "var(--accent)"}
             onBlur={e => e.target.style.borderColor = "var(--border)"} />
