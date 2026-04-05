@@ -52,7 +52,12 @@ public class UserService {
         userRepository.save(user);
 
         // Send OTP email
-        emailService.sendOtp(request.getEmail(), otp);
+        try {
+            emailService.sendOtp(request.getEmail(), otp);
+            System.out.println("=== OTP EMAIL SENT to: " + request.getEmail());
+        } catch (Exception e) {
+            System.out.println("=== EMAIL FAILED: " + e.getMessage());
+        }
 
         return new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getRole().name());
     }
