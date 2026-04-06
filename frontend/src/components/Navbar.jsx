@@ -20,8 +20,12 @@ export default function Navbar() {
     ...(role === "CANDIDATE" ? [{ label: "My Applications", path: "/candidate" }] : []),
   ];
 
-  const handleLogout = () => { localStorage.clear(); navigate("/login"); };
+  const handleLogout = () => { localStorage.clear(); navigate("/"); };
   const handleNav = (path) => { navigate(path); setMenuOpen(false); };
+  const handleLogoClick = () => {
+    const token = localStorage.getItem("token");
+    navigate(token ? "/jobs" : "/");
+  };
 
   return (
     <>
@@ -34,7 +38,7 @@ export default function Navbar() {
       }}>
         {/* Logo */}
         <span
-          onClick={() => navigate("/jobs")}
+          onClick={handleLogoClick}
           style={{
             fontFamily: "var(--font-head)", fontSize: "1.4rem", fontWeight: 800,
             background: "linear-gradient(135deg, #6c63ff, #ff6584)",

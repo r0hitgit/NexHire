@@ -4,8 +4,8 @@ import Register from "./pages/Register";
 import JobListings from "./pages/JobListings";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
 import CandidateDashboard from "./pages/CandidateDashboard";
+import LandingPage from "./pages/LandingPage";
 
-// Protect routes — redirect to /login if no token
 const PrivateRoute = ({ children, roles }) => {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
@@ -18,7 +18,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/jobs" element={<PrivateRoute><JobListings /></PrivateRoute>} />
@@ -30,4 +30,3 @@ function App() {
 }
 
 export default App;
-export const getMyJobs = () => API.get("/jobs/my-jobs");
