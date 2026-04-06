@@ -69,7 +69,7 @@ export default function Register() {
           fontFamily: "var(--font-head)", fontSize: "clamp(1.4rem, 5vw, 1.8rem)", fontWeight: 800,
           background: "linear-gradient(135deg, #6c63ff, #ff6584)",
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "0.25rem",
-        }}>JobPortal</div>
+        }}>NexHire</div>
 
         {step === "register" ? (
           <>

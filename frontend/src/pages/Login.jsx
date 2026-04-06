@@ -44,7 +44,6 @@ export default function Login() {
 
   return (
     <div style={{
-      minHeight: "100vh",
       minHeight: "100dvh",
       display: "flex", alignItems: "center", justifyContent: "center",
       background: "radial-gradient(ellipse at 60% 20%, rgba(108,99,255,0.08) 0%, transparent 60%), var(--bg)",
@@ -62,7 +61,7 @@ export default function Login() {
           background: "linear-gradient(135deg, #6c63ff, #ff6584)",
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
           marginBottom: "0.25rem",
-        }}>JobPortal</div>
+        }}>NexHire</div>
         <p style={{ color: "var(--text2)", fontSize: "0.9rem", marginBottom: "2rem" }}>
           Sign in to your account
         </p>
@@ -91,8 +90,15 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)} required
             onFocus={e => e.target.style.borderColor = "var(--accent)"}
             onBlur={e => e.target.style.borderColor = "var(--border)"}
-            style={{ ...inputStyle, marginBottom: "1.5rem" }}
+            style={{ ...inputStyle, marginBottom: "0.5rem" }}
           />
+
+          {/* Forgot Password Link */}
+          <div style={{ textAlign: "right", marginBottom: "1.5rem" }}>
+            <Link to="/forgot-password" style={{ color: "var(--accent)", fontSize: "0.825rem", fontWeight: 500 }}>
+              Forgot password?
+            </Link>
+          </div>
 
           <button type="submit" disabled={loading} style={{
             width: "100%", padding: "0.85rem",
