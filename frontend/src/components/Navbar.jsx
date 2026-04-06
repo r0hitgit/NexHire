@@ -40,11 +40,10 @@ export default function Navbar() {
             background: "linear-gradient(135deg, #6c63ff, #ff6584)",
             WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
             cursor: "pointer", flexShrink: 0,
-          }}>JobPortal</span>
+          }}>NexHire</span>
 
         {/* Desktop Nav Links */}
-        <div style={{ display: "flex", gap: "0.25rem", "@media(max-width:640px)": { display: "none" } }}
-          className="desktop-nav">
+        <div style={{ display: "flex", gap: "0.25rem" }} className="desktop-nav">
           {links.map(link => (
             <button key={link.path} onClick={() => handleNav(link.path)} style={{
               padding: "0.4rem 1rem", borderRadius: "8px", border: "none",
