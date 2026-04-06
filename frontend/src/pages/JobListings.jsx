@@ -11,12 +11,11 @@ export default function JobListings() {
   const role = localStorage.getItem("role");
 
   useEffect(() => {
-      getJobs().then(res => {
-        const data = Array.isArray(res.data) ? res.data : res.data.content || [];
-        setJobs(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    getJobs().then(res => {
+      const data = Array.isArray(res.data) ? res.data : res.data.content || [];
+      setJobs(data);
+      setLoading(false);
+    }).catch(() => setLoading(false));
   }, []);
 
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
@@ -40,11 +39,11 @@ export default function JobListings() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <Navbar />
-      <main style={{ maxWidth: "1100px", margin: "0 auto", padding: "2.5rem 2rem" }}>
+      <main style={{ maxWidth: "1100px", margin: "0 auto", padding: "clamp(1rem, 4vw, 2.5rem) clamp(1rem, 3vw, 2rem)" }}>
 
         {/* Header */}
-        <div style={{ marginBottom: "2rem" }}>
-          <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>Find Your Next Role</h1>
+        <div style={{ marginBottom: "1.5rem" }}>
+          <h1 style={{ fontSize: "clamp(1.4rem, 5vw, 2rem)", marginBottom: "0.5rem" }}>Find Your Next Role</h1>
           <p style={{ color: "var(--text2)" }}>{jobs.length} opportunities available</p>
         </div>
 
@@ -55,43 +54,45 @@ export default function JobListings() {
           onFocus={e => e.target.style.borderColor = "var(--accent)"}
           onBlur={e => e.target.style.borderColor = "var(--border)"}
           style={{
-            width: "100%", padding: "0.85rem 1.25rem", marginBottom: "2rem",
+            width: "100%", padding: "0.85rem 1.25rem", marginBottom: "1.5rem",
             background: "var(--surface)", border: "1px solid var(--border)",
-            borderRadius: "var(--radius)", color: "var(--text)", fontSize: "0.95rem", outline: "none",
+            borderRadius: "var(--radius)", color: "var(--text)", fontSize: "0.95rem",
+            outline: "none", boxSizing: "border-box",
           }}
         />
 
         {/* Grid */}
         {loading ? (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.25rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(300px, 100%), 1fr))", gap: "1.25rem" }}>
             {[...Array(6)].map((_, i) => (
               <div key={i} className="skeleton" style={{ height: "220px" }} />
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "4rem", color: "var(--text2)" }}>
+          <div style={{ textAlign: "center", padding: "4rem 1rem", color: "var(--text2)" }}>
             <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🔍</div>
             <p>No jobs found matching your search</p>
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.25rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(300px, 100%), 1fr))", gap: "1.25rem" }}>
             {filtered.map(job => (
               <div key={job.id}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--accent)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "none"; }}
                 style={{
                   background: "var(--surface)", border: "1px solid var(--border)",
-                  borderRadius: "var(--radius-lg)", padding: "1.75rem",
+                  borderRadius: "var(--radius-lg)", padding: "clamp(1.25rem, 3vw, 1.75rem)",
                   transition: "var(--transition)", animation: "fadeIn 0.4s ease",
                 }}>
+
                 {/* Top */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.75rem" }}>
-                  <div>
-                    <div style={{ fontSize: "1.05rem", fontWeight: 700, fontFamily: "var(--font-head)", marginBottom: "0.2rem" }}>{job.title}</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.75rem", gap: "0.5rem" }}>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontSize: "1.05rem", fontWeight: 700, fontFamily: "var(--font-head)", marginBottom: "0.2rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{job.title}</div>
                     <div style={{ color: "var(--accent)", fontSize: "0.85rem", fontWeight: 500 }}>{job.recruiter?.name || "Company"}</div>
                   </div>
                   {job.salary && (
-                    <span style={{ background: "rgba(67,233,123,0.12)", color: "#43e97b", padding: "0.3rem 0.7rem", borderRadius: "20px", fontSize: "0.78rem", fontWeight: 600, whiteSpace: "nowrap" }}>
+                    <span style={{ background: "rgba(67,233,123,0.12)", color: "#43e97b", padding: "0.3rem 0.7rem", borderRadius: "20px", fontSize: "0.78rem", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>
                       ₹{(job.salary / 100000).toFixed(1)}L
                     </span>
                   )}
@@ -108,10 +109,10 @@ export default function JobListings() {
                   {job.postedDate && <span style={{ color: "var(--text2)", fontSize: "0.8rem" }}>📅 {new Date(job.postedDate).toLocaleDateString()}</span>}
                 </div>
 
-                {/* Apply Button — only for CANDIDATE */}
+                {/* Apply Button */}
                 {role === "CANDIDATE" && (
                   applied.has(job.id) ? (
-                    <div style={{ width: "100%", padding: "0.65rem", textAlign: "center", background: "rgba(67,233,123,0.1)", color: "#43e97b", border: "1px solid rgba(67,233,123,0.3)", borderRadius: "var(--radius)", fontWeight: 600, fontSize: "0.875rem" }}>
+                    <div style={{ width: "100%", padding: "0.65rem", textAlign: "center", background: "rgba(67,233,123,0.1)", color: "#43e97b", border: "1px solid rgba(67,233,123,0.3)", borderRadius: "var(--radius)", fontWeight: 600, fontSize: "0.875rem", boxSizing: "border-box" }}>
                       ✓ Applied
                     </div>
                   ) : (
@@ -137,7 +138,8 @@ export default function JobListings() {
       {/* Toast */}
       {toast && (
         <div style={{
-          position: "fixed", bottom: "2rem", right: "2rem",
+          position: "fixed", bottom: "2rem", right: "1rem", left: "1rem",
+          maxWidth: "400px", margin: "0 auto",
           background: "var(--surface2)", border: "1px solid var(--border)",
           padding: "1rem 1.5rem", borderRadius: "var(--radius)",
           fontSize: "0.9rem", boxShadow: "var(--shadow)", animation: "fadeIn 0.3s ease", zIndex: 1000,

@@ -15,18 +15,13 @@ export default function Login() {
     try {
       const response = await login({ email, password });
       const token = response.data;
-
-      // Decode JWT to extract role & email
       const payload = JSON.parse(atob(token.split(".")[1]));
       localStorage.setItem("token", token);
       localStorage.setItem("role", payload.role?.replace("ROLE_", ""));
       localStorage.setItem("email", payload.sub);
-
-      // Redirect based on role
       if (payload.role?.includes("RECRUITER")) navigate("/recruiter");
       else if (payload.role?.includes("CANDIDATE")) navigate("/candidate");
       else navigate("/jobs");
-
     } catch (err) {
       setError(err.response?.data || "Invalid email or password");
     } finally {
@@ -34,22 +29,36 @@ export default function Login() {
     }
   };
 
+  const inputStyle = {
+    width: "100%", padding: "0.75rem 1rem", marginBottom: "1.2rem",
+    background: "var(--surface2)", border: "1px solid var(--border)",
+    borderRadius: "var(--radius)", color: "var(--text)", fontSize: "0.95rem", outline: "none",
+    boxSizing: "border-box",
+  };
+
+  const labelStyle = {
+    display: "block", fontSize: "0.78rem", fontWeight: 600,
+    color: "var(--text2)", marginBottom: "0.4rem",
+    textTransform: "uppercase", letterSpacing: "0.5px",
+  };
+
   return (
     <div style={{
-      minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
+      minHeight: "100vh",
+      minHeight: "100dvh",
+      display: "flex", alignItems: "center", justifyContent: "center",
       background: "radial-gradient(ellipse at 60% 20%, rgba(108,99,255,0.08) 0%, transparent 60%), var(--bg)",
-      padding: "2rem",
+      padding: "1rem",
     }}>
       <div style={{
         width: "100%", maxWidth: "420px",
         background: "var(--surface)", border: "1px solid var(--border)",
-        borderRadius: "var(--radius-lg)", padding: "2.5rem",
+        borderRadius: "var(--radius-lg)", padding: "clamp(1.5rem, 5vw, 2.5rem)",
         boxShadow: "var(--shadow), var(--shadow-accent)",
         animation: "fadeIn 0.5s ease",
       }}>
-        {/* Logo */}
         <div style={{
-          fontFamily: "var(--font-head)", fontSize: "1.8rem", fontWeight: 800,
+          fontFamily: "var(--font-head)", fontSize: "clamp(1.4rem, 5vw, 1.8rem)", fontWeight: 800,
           background: "linear-gradient(135deg, #6c63ff, #ff6584)",
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
           marginBottom: "0.25rem",
@@ -67,34 +76,22 @@ export default function Login() {
         )}
 
         <form onSubmit={handleLogin}>
-          <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "var(--text2)", marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            Email
-          </label>
+          <label style={labelStyle}>Email</label>
           <input
             type="email" placeholder="you@example.com" value={email}
             onChange={(e) => setEmail(e.target.value)} required
             onFocus={e => e.target.style.borderColor = "var(--accent)"}
             onBlur={e => e.target.style.borderColor = "var(--border)"}
-            style={{
-              width: "100%", padding: "0.75rem 1rem", marginBottom: "1.2rem",
-              background: "var(--surface2)", border: "1px solid var(--border)",
-              borderRadius: "var(--radius)", color: "var(--text)", fontSize: "0.95rem", outline: "none",
-            }}
+            style={inputStyle}
           />
 
-          <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "var(--text2)", marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            Password
-          </label>
+          <label style={labelStyle}>Password</label>
           <input
             type="password" placeholder="••••••••" value={password}
             onChange={(e) => setPassword(e.target.value)} required
             onFocus={e => e.target.style.borderColor = "var(--accent)"}
             onBlur={e => e.target.style.borderColor = "var(--border)"}
-            style={{
-              width: "100%", padding: "0.75rem 1rem", marginBottom: "1.5rem",
-              background: "var(--surface2)", border: "1px solid var(--border)",
-              borderRadius: "var(--radius)", color: "var(--text)", fontSize: "0.95rem", outline: "none",
-            }}
+            style={{ ...inputStyle, marginBottom: "1.5rem" }}
           />
 
           <button type="submit" disabled={loading} style={{

@@ -5,7 +5,7 @@ import { register, verifyOtp } from "../api/axios";
 export default function Register() {
   const [form, setForm] = useState({ name: "", email: "", password: "", role: "CANDIDATE" });
   const [otp, setOtp] = useState("");
-  const [step, setStep] = useState("register"); // "register" or "verify"
+  const [step, setStep] = useState("register");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,8 +42,10 @@ export default function Register() {
   const inputStyle = {
     width: "100%", padding: "0.75rem 1rem", marginBottom: "1.2rem",
     background: "var(--surface2)", border: "1px solid var(--border)",
-    borderRadius: "var(--radius)", color: "var(--text)", fontSize: "0.95rem", outline: "none",
+    borderRadius: "var(--radius)", color: "var(--text)", fontSize: "0.95rem",
+    outline: "none", boxSizing: "border-box",
   };
+
   const labelStyle = {
     display: "block", fontSize: "0.78rem", fontWeight: 600,
     color: "var(--text2)", marginBottom: "0.4rem",
@@ -52,25 +54,26 @@ export default function Register() {
 
   return (
     <div style={{
-      minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
+      minHeight: "100dvh",
+      display: "flex", alignItems: "center", justifyContent: "center",
       background: "radial-gradient(ellipse at 40% 80%, rgba(255,101,132,0.07) 0%, transparent 60%), var(--bg)",
-      padding: "2rem",
+      padding: "1rem",
     }}>
       <div style={{
         width: "100%", maxWidth: "440px",
         background: "var(--surface)", border: "1px solid var(--border)",
-        borderRadius: "var(--radius-lg)", padding: "2.5rem",
+        borderRadius: "var(--radius-lg)", padding: "clamp(1.25rem, 5vw, 2.5rem)",
         boxShadow: "var(--shadow)", animation: "fadeIn 0.5s ease",
       }}>
         <div style={{
-          fontFamily: "var(--font-head)", fontSize: "1.8rem", fontWeight: 800,
+          fontFamily: "var(--font-head)", fontSize: "clamp(1.4rem, 5vw, 1.8rem)", fontWeight: 800,
           background: "linear-gradient(135deg, #6c63ff, #ff6584)",
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "0.25rem",
         }}>JobPortal</div>
 
         {step === "register" ? (
           <>
-            <p style={{ color: "var(--text2)", fontSize: "0.9rem", marginBottom: "2rem" }}>Create your account</p>
+            <p style={{ color: "var(--text2)", fontSize: "0.9rem", marginBottom: "1.5rem" }}>Create your account</p>
 
             {error && <div style={{ background: "rgba(255,101,132,0.1)", border: "1px solid rgba(255,101,132,0.3)", color: "#ff6584", padding: "0.75rem 1rem", borderRadius: "var(--radius)", fontSize: "0.875rem", marginBottom: "1rem" }}>{error}</div>}
             {success && <div style={{ background: "rgba(67,233,123,0.1)", border: "1px solid rgba(67,233,123,0.3)", color: "#43e97b", padding: "0.75rem 1rem", borderRadius: "var(--radius)", fontSize: "0.875rem", marginBottom: "1rem" }}>{success}</div>}
@@ -100,11 +103,12 @@ export default function Register() {
                   <button key={r} type="button"
                     onClick={() => setForm({ ...form, role: r })}
                     style={{
-                      padding: "0.75rem", borderRadius: "var(--radius)",
+                      padding: "0.75rem 0.5rem", borderRadius: "var(--radius)",
                       border: `2px solid ${form.role === r ? "var(--accent)" : "var(--border)"}`,
                       background: form.role === r ? "rgba(108,99,255,0.1)" : "var(--surface2)",
                       color: form.role === r ? "var(--accent)" : "var(--text2)",
-                      fontWeight: 600, fontSize: "0.875rem", cursor: "pointer", transition: "var(--transition)",
+                      fontWeight: 600, fontSize: "clamp(0.75rem, 3vw, 0.875rem)",
+                      cursor: "pointer", transition: "var(--transition)",
                     }}>
                     {r === "CANDIDATE" ? "👤 Candidate" : "🏢 Recruiter"}
                   </button>
@@ -131,7 +135,8 @@ export default function Register() {
         ) : (
           <>
             <p style={{ color: "var(--text2)", fontSize: "0.9rem", marginBottom: "2rem" }}>
-              Enter the 6-digit OTP sent to <strong style={{ color: "var(--text)" }}>{form.email}</strong>
+              Enter the 6-digit OTP sent to{" "}
+              <strong style={{ color: "var(--text)", wordBreak: "break-all" }}>{form.email}</strong>
             </p>
 
             {error && <div style={{ background: "rgba(255,101,132,0.1)", border: "1px solid rgba(255,101,132,0.3)", color: "#ff6584", padding: "0.75rem 1rem", borderRadius: "var(--radius)", fontSize: "0.875rem", marginBottom: "1rem" }}>{error}</div>}

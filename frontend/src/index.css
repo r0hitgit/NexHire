@@ -56,3 +56,34 @@ input, textarea, select { font-family: var(--font-body); }
   animation: shimmer 1.5s infinite;
   border-radius: var(--radius);
 }
+/* ── Responsive ────────────────────────────────── */
+@media (max-width: 480px) {
+  :root {
+    --radius-lg: 16px;
+  }
+
+  body {
+    font-size: 14px;
+  }
+}
+/* ── Navbar Responsive ─────────────────────────── */
+@media (max-width: 640px) {
+  .desktop-nav {
+    display: none !important;
+  }
+  .mobile-nav {
+    display: flex !important;
+  }
+}
+/* ── Dashboard Responsive ──────────────────────── */
+@media (max-width: 640px) {
+  .mobile-tabs {
+    display: flex !important;
+  }
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .hide-mobile {
+    display: none !important;
+  }
+}
