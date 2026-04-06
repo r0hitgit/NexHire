@@ -20,9 +20,9 @@ public class EmailService {
         try {
             String body = String.format("""
                 {
-                    "sender": {"name": "JobPortal", "email": "rv87919@gmail.com"},
+                    "sender": {"name": "NexHire", "email": "rv87919@gmail.com"},
                     "to": [{"email": "%s"}],
-                    "subject": "JobPortal - Email Verification OTP",
+                    "subject": "NexHire - Email Verification OTP",
                     "textContent": "Hello!\\n\\nYour OTP for JobPortal email verification is:\\n\\n  %s\\n\\nThis OTP is valid for 10 minutes.\\n\\nIf you did not register on JobPortal, please ignore this email.\\n\\nRegards,\\nJobPortal Team"
                 }
                 """, toEmail, otp);
