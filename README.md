@@ -15,7 +15,7 @@ A Full Stack Job Portal application built with **Spring Boot**, **Spring Securit
 - JWT Authentication
 - MySQL (Railway)
 - REST APIs
-- Email OTP Verification (Gmail SMTP)
+- Email OTP Verification (Brevo SMTP)
 
 ### Frontend
 - React (Vite)
