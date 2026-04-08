@@ -19,7 +19,7 @@ public class JobService {
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
 
-    // ✅ Create Job (Recruiter only)
+    //Create Job (Recruiter only)
 
     public Job createJob(Job job) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();

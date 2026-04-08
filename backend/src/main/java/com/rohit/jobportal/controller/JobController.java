@@ -16,7 +16,7 @@ public class JobController {
 
     private final JobService jobService;
 
-    //  Only RECRUITER or ADMIN can create job
+    // Only RECRUITER or ADMIN can create job
     @PostMapping
     //@PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
     @PreAuthorize("hasAuthority('ROLE_RECRUITER') or hasAuthority('ROLE_ADMIN')")
@@ -24,7 +24,7 @@ public class JobController {
         return ResponseEntity.ok(jobService.createJob(job));
     }
 
-    //  All roles can view jobs
+    // All roles can view jobs
     @GetMapping
     //@PreAuthorize("hasAnyRole('RECRUITER','ADMIN','CANDIDATE')")
     @PreAuthorize("hasAuthority('ROLE_RECRUITER') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_CANDIDATE')")
@@ -32,7 +32,7 @@ public class JobController {
         return ResponseEntity.ok(jobService.getAllJobs());
     }
 
-    //  Recruiter can see only their jobs
+    // Recruiter can see only their jobs
     @GetMapping("/my-jobs")
     //@PreAuthorize("hasRole('RECRUITER')")
     @PreAuthorize("hasAuthority('ROLE_RECRUITER')")
