@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { getJobs, applyForJob } from "../api/axios";
 
 export default function JobListings() {
@@ -37,9 +38,9 @@ export default function JobListings() {
   );
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", flexDirection: "column" }}>
       <Navbar />
-      <main style={{ maxWidth: "1100px", margin: "0 auto", padding: "clamp(1rem, 4vw, 2.5rem) clamp(1rem, 3vw, 2rem)" }}>
+      <main style={{ flex: 1, maxWidth: "1100px", width: "100%", margin: "0 auto", padding: "clamp(1rem, 4vw, 2.5rem) clamp(1rem, 3vw, 2rem)" }}>
 
         {/* Header */}
         <div style={{ marginBottom: "1.5rem" }}>
@@ -135,16 +136,9 @@ export default function JobListings() {
         )}
       </main>
 
+      <Footer />
+
       {/* Toast */}
       {toast && (
         <div style={{
-          position: "fixed", bottom: "2rem", right: "1rem", left: "1rem",
-          maxWidth: "400px", margin: "0 auto",
-          background: "var(--surface2)", border: "1px solid var(--border)",
-          padding: "1rem 1.5rem", borderRadius: "var(--radius)",
-          fontSize: "0.9rem", boxShadow: "var(--shadow)", animation: "fadeIn 0.3s ease", zIndex: 1000,
-        }}>{toast}</div>
-      )}
-    </div>
-  );
-}
+          position: "fixed", bottom: "2rem",
