@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -151,22 +152,8 @@ export default function LandingPage() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer style={{
-        padding: "1.5rem clamp(1rem, 4vw, 3rem)",
-        borderTop: "1px solid var(--border)",
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        flexWrap: "wrap", gap: "1rem",
-      }}>
-        <span style={{
-          fontFamily: "var(--font-head)", fontWeight: 800,
-          background: "linear-gradient(135deg, #6c63ff, #ff6584)",
-          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-        }}>NexHire</span>
-        <span style={{ color: "var(--text2)", fontSize: "0.8rem" }}>
-          © 2026 NexHire. Built with ❤️ by Rohit Verma
-        </span>
-      </footer>
+      {/* Full Footer */}
+      <Footer />
     </div>
   );
 }
