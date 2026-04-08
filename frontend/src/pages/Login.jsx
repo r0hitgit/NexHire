@@ -5,6 +5,7 @@ import { login } from "../api/axios";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function Login() {
   };
 
   const inputStyle = {
-    width: "100%", padding: "0.75rem 1rem", marginBottom: "1.2rem",
+    width: "100%", padding: "0.75rem 1rem",
     background: "var(--surface2)", border: "1px solid var(--border)",
     borderRadius: "var(--radius)", color: "var(--text)", fontSize: "0.95rem", outline: "none",
     boxSizing: "border-box",
@@ -81,17 +82,31 @@ export default function Login() {
             onChange={(e) => setEmail(e.target.value)} required
             onFocus={e => e.target.style.borderColor = "var(--accent)"}
             onBlur={e => e.target.style.borderColor = "var(--border)"}
-            style={inputStyle}
+            style={{ ...inputStyle, marginBottom: "1.2rem" }}
           />
 
           <label style={labelStyle}>Password</label>
-          <input
-            type="password" placeholder="••••••••" value={password}
-            onChange={(e) => setPassword(e.target.value)} required
-            onFocus={e => e.target.style.borderColor = "var(--accent)"}
-            onBlur={e => e.target.style.borderColor = "var(--border)"}
-            style={{ ...inputStyle, marginBottom: "0.5rem" }}
-          />
+          <div style={{ position: "relative", marginBottom: "0.5rem" }}>
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••" value={password}
+              onChange={(e) => setPassword(e.target.value)} required
+              onFocus={e => e.target.style.borderColor = "var(--accent)"}
+              onBlur={e => e.target.style.borderColor = "var(--border)"}
+              style={{ ...inputStyle, paddingRight: "3rem" }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: "absolute", right: "0.75rem", top: "50%",
+                transform: "translateY(-50%)",
+                background: "none", border: "none", cursor: "pointer",
+                color: "var(--text2)", fontSize: "1.1rem", padding: "0.25rem",
+              }}>
+              {showPassword ? "🙈" : "👁️"}
+            </button>
+          </div>
 
           {/* Forgot Password Link */}
           <div style={{ textAlign: "right", marginBottom: "1.5rem" }}>
