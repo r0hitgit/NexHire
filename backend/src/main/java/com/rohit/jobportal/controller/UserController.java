@@ -4,6 +4,7 @@ import com.rohit.jobportal.dto.LoginRequest;
 import com.rohit.jobportal.dto.RegisterRequest;
 import com.rohit.jobportal.dto.UserResponse;
 import com.rohit.jobportal.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,27 +21,35 @@ public class UserController {
         this.userService = userService;
     }
 
-    // Register
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> registerUser(@RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(userService.registerUser(request));
+    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest request) {
+        try {
+            return ResponseEntity.ok(userService.registerUser(request));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
-    // Verify OTP
     @PostMapping("/verify-otp")
-    public ResponseEntity<String> verifyOtp(@RequestBody Map<String, String> body) {
-        String email = body.get("email");
-        String otp = body.get("otp");
-        return ResponseEntity.ok(userService.verifyOtp(email, otp));
+    public ResponseEntity<?> verifyOtp(@RequestBody Map<String, String> body) {
+        try {
+            String email = body.get("email");
+            String otp = body.get("otp");
+            return ResponseEntity.ok(userService.verifyOtp(email, otp));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
-    // Login
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(userService.login(loginRequest));
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
+        try {
+            return ResponseEntity.ok(userService.login(loginRequest));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
 
-    // Get all users
     @GetMapping
     public List<UserResponse> getAllUsers() {
         return userService.getAllUsers();
