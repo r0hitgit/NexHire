@@ -141,4 +141,13 @@ export default function JobListings() {
       {/* Toast */}
       {toast && (
         <div style={{
-          position: "fixed", bottom: "2rem",
+          position: "fixed", bottom: "2rem", right: "1rem", left: "1rem",
+          maxWidth: "400px", margin: "0 auto",
+          background: "var(--surface2)", border: "1px solid var(--border)",
+          padding: "1rem 1.5rem", borderRadius: "var(--radius)",
+          fontSize: "0.9rem", boxShadow: "var(--shadow)", animation: "fadeIn 0.3s ease", zIndex: 1000,
+        }}>{toast}</div>
+      )}
+    </div>
+  );
+}
