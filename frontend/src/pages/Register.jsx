@@ -9,6 +9,7 @@ export default function Register() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
@@ -19,7 +20,12 @@ export default function Register() {
       setSuccess("OTP sent to your email! Please check your inbox.");
       setStep("verify");
     } catch (err) {
-      setError(err.response?.data || "Registration failed. Try again.");
+      const msg = err.response?.data;
+      setError(
+        msg === "Email already registered"
+          ? "This email is already registered. Please sign in instead."
+          : msg || "Registration failed. Try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -33,7 +39,8 @@ export default function Register() {
       setSuccess("Email verified! Redirecting to login...");
       setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
-      setError(err.response?.data || "Invalid OTP. Please try again.");
+      const msg = err.response?.data;
+      setError(msg || "Invalid OTP. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -51,6 +58,21 @@ export default function Register() {
     color: "var(--text2)", marginBottom: "0.4rem",
     textTransform: "uppercase", letterSpacing: "0.5px",
   };
+
+  const EyeIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  );
+
+  const EyeOffIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+      <line x1="1" y1="1" x2="23" y2="23"/>
+    </svg>
+  );
 
   return (
     <div style={{
@@ -75,7 +97,14 @@ export default function Register() {
           <>
             <p style={{ color: "var(--text2)", fontSize: "0.9rem", marginBottom: "1.5rem" }}>Create your account</p>
 
-            {error && <div style={{ background: "rgba(255,101,132,0.1)", border: "1px solid rgba(255,101,132,0.3)", color: "#ff6584", padding: "0.75rem 1rem", borderRadius: "var(--radius)", fontSize: "0.875rem", marginBottom: "1rem" }}>{error}</div>}
+            {error && (
+              <div style={{ background: "rgba(255,101,132,0.1)", border: "1px solid rgba(255,101,132,0.3)", color: "#ff6584", padding: "0.75rem 1rem", borderRadius: "var(--radius)", fontSize: "0.875rem", marginBottom: "1rem" }}>
+                {error}
+                {error.includes("already registered") && (
+                  <span> <Link to="/login" style={{ color: "#ff6584", fontWeight: 700, textDecoration: "underline" }}>Sign in here</Link></span>
+                )}
+              </div>
+            )}
             {success && <div style={{ background: "rgba(67,233,123,0.1)", border: "1px solid rgba(67,233,123,0.3)", color: "#43e97b", padding: "0.75rem 1rem", borderRadius: "var(--radius)", fontSize: "0.875rem", marginBottom: "1rem" }}>{success}</div>}
 
             <form onSubmit={handleRegister}>
@@ -92,10 +121,28 @@ export default function Register() {
                 onBlur={e => e.target.style.borderColor = "var(--border)"} />
 
               <label style={labelStyle}>Password</label>
-              <input style={inputStyle} type="password" placeholder="Min. 6 characters" value={form.password}
-                onChange={e => setForm({ ...form, password: e.target.value })} required
-                onFocus={e => e.target.style.borderColor = "var(--accent)"}
-                onBlur={e => e.target.style.borderColor = "var(--border)"} />
+              <div style={{ position: "relative", marginBottom: "1.2rem" }}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Min. 6 characters" value={form.password}
+                  onChange={e => setForm({ ...form, password: e.target.value })} required
+                  onFocus={e => e.target.style.borderColor = "var(--accent)"}
+                  onBlur={e => e.target.style.borderColor = "var(--border)"}
+                  style={{ ...inputStyle, marginBottom: 0, paddingRight: "3rem" }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: "absolute", right: "0.75rem", top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none", border: "none", cursor: "pointer",
+                    color: "var(--text2)", padding: "0.25rem",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                  {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                </button>
+              </div>
 
               <label style={labelStyle}>I am a...</label>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginBottom: "1.5rem" }}>
