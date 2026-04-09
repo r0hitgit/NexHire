@@ -73,6 +73,13 @@ public class UserService {
         user.setOtp(null);
         userRepository.save(user);
 
+        // Send welcome email after verification
+        try {
+            emailService.sendWelcomeEmail(user.getEmail(), user.getName(), user.getRole().name());
+        } catch (Exception e) {
+            System.out.println("=== WELCOME EMAIL FAILED: " + e.getMessage());
+        }
+
         return "Email verified successfully!";
     }
 
@@ -95,7 +102,6 @@ public class UserService {
         return jwtUtil.generateToken(user);
     }
 
-    // FORGOT PASSWORD - Send OTP
     public String forgotPassword(String email) {
         User user = userRepository.findByEmail(email.trim().toLowerCase())
                 .orElseThrow(() -> new RuntimeException("No account found with this email"));
@@ -113,7 +119,6 @@ public class UserService {
         return "OTP sent to your email";
     }
 
-    // RESET PASSWORD - Verify OTP and update password
     public String resetPassword(String email, String otp, String newPassword) {
         User user = userRepository.findByEmail(email.trim().toLowerCase())
                 .orElseThrow(() -> new RuntimeException("User not found"));
