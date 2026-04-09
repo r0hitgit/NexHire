@@ -31,14 +31,11 @@ public class UserService {
         this.emailService = emailService;
     }
 
-    // REGISTER USER
     public UserResponse registerUser(RegisterRequest request) {
-
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
 
-        // Generate 6-digit OTP
         String otp = String.valueOf(100000 + new Random().nextInt(900000));
 
         User user = new User();
@@ -51,10 +48,8 @@ public class UserService {
 
         userRepository.save(user);
 
-        // Send OTP email
         try {
             emailService.sendOtp(request.getEmail(), otp);
-            System.out.println("=== OTP EMAIL SENT to: " + request.getEmail());
         } catch (Exception e) {
             System.out.println("=== EMAIL FAILED: " + e.getMessage());
         }
@@ -62,9 +57,7 @@ public class UserService {
         return new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getRole().name());
     }
 
-    // VERIFY OTP
     public String verifyOtp(String email, String otp) {
-
         User user = userRepository.findByEmail(email.trim().toLowerCase())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -83,9 +76,7 @@ public class UserService {
         return "Email verified successfully!";
     }
 
-    // LOGIN USER
     public String login(LoginRequest loginRequest) {
-
         String email = loginRequest.getEmail().trim().toLowerCase();
         String password = loginRequest.getPassword();
 
@@ -104,7 +95,40 @@ public class UserService {
         return jwtUtil.generateToken(user);
     }
 
-    // GET ALL USERS
+    // FORGOT PASSWORD - Send OTP
+    public String forgotPassword(String email) {
+        User user = userRepository.findByEmail(email.trim().toLowerCase())
+                .orElseThrow(() -> new RuntimeException("No account found with this email"));
+
+        String otp = String.valueOf(100000 + new Random().nextInt(900000));
+        user.setOtp(otp);
+        userRepository.save(user);
+
+        try {
+            emailService.sendPasswordResetOtp(email, otp);
+        } catch (Exception e) {
+            System.out.println("=== EMAIL FAILED: " + e.getMessage());
+        }
+
+        return "OTP sent to your email";
+    }
+
+    // RESET PASSWORD - Verify OTP and update password
+    public String resetPassword(String email, String otp, String newPassword) {
+        User user = userRepository.findByEmail(email.trim().toLowerCase())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getOtp() == null || !user.getOtp().equals(otp)) {
+            throw new RuntimeException("Invalid or expired OTP");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setOtp(null);
+        userRepository.save(user);
+
+        return "Password reset successfully!";
+    }
+
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll()
                 .stream()
@@ -112,7 +136,6 @@ public class UserService {
                 .toList();
     }
 
-    // MAP USER → RESPONSE
     private UserResponse mapToUserResponse(User user) {
         return new UserResponse(
                 user.getId(),

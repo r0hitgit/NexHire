@@ -50,6 +50,28 @@ public class UserController {
         }
     }
 
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body) {
+        try {
+            String email = body.get("email");
+            return ResponseEntity.ok(userService.forgotPassword(email));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> body) {
+        try {
+            String email = body.get("email");
+            String otp = body.get("otp");
+            String newPassword = body.get("newPassword");
+            return ResponseEntity.ok(userService.resetPassword(email, otp, newPassword));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     @GetMapping
     public List<UserResponse> getAllUsers() {
         return userService.getAllUsers();
