@@ -17,11 +17,14 @@ export default function LandingPage() {
         background: "rgba(10,10,15,0.88)", backdropFilter: "blur(20px)",
         position: "sticky", top: 0, zIndex: 100,
       }}>
-        <span style={{
-          fontFamily: "var(--font-head)", fontSize: "1.4rem", fontWeight: 800,
-          background: "linear-gradient(135deg, #6c63ff, #ff6584)",
-          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-        }}>NexHire</span>
+        <span
+          onClick={() => navigate("/")}
+          style={{
+            fontFamily: "var(--font-head)", fontSize: "1.4rem", fontWeight: 800,
+            background: "linear-gradient(135deg, #6c63ff, #ff6584)",
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            cursor: "pointer",
+          }}>NexHire</span>
         <div style={{ display: "flex", gap: "0.75rem" }}>
           <button onClick={() => navigate("/login")} style={{
             padding: "0.4rem 1.2rem", borderRadius: "8px", border: "1px solid var(--border)",
