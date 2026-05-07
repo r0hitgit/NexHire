@@ -56,7 +56,7 @@ export default function LandingPage() {
           fontSize: "0.8rem", color: "#8b85ff", fontWeight: 600,
           marginBottom: "2rem", animation: "fadeIn 0.5s ease",
         }}>
-          🚀 The smarter way to hire & get hired
+           The smarter way to hire & get hired
         </div>
 
         {/* Headline */}
