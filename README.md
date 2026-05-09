@@ -1,8 +1,8 @@
-# NexHire 🚀 — Job Portal System
+# NexHire — Job Portal System
 
 A full-stack job portal connecting top talent with great companies.
 
-🌐 **Live:** [nexhire.me](https://nexhire.me)
+**Live:** [nexhire.me](https://nexhire.me)
 
 ---
 
@@ -88,14 +88,14 @@ Runs on `http://localhost:5173`
 
 | Service | URL |
 |---------|-----|
-| 🌐 Frontend | [nexhire.me](https://nexhire.me) |
-| 🔧 Backend | [job-portal-project-7tud.onrender.com](https://job-portal-project-7tud.onrender.com) |
-| 💻 GitHub Repo | [github.com/r0hitgit/job-portal-project](https://github.com/r0hitgit/job-portal-project) |
+| Frontend | [nexhire.me](https://nexhire.me) |
+| Backend | [job-portal-project-7tud.onrender.com](https://job-portal-project-7tud.onrender.com) |
+| GitHub Repo | [github.com/r0hitgit/job-portal-project](https://github.com/r0hitgit/job-portal-project) |
 
 ---
 
 ## Author
 
 **Rohit Verma**
-- 💼 [LinkedIn](https://www.linkedin.com/in/r0hitin)
-- 🐙 [GitHub](https://github.com/r0hitgit)
+- [LinkedIn](https://www.linkedin.com/in/r0hitin)
+- [GitHub](https://github.com/r0hitgit)
