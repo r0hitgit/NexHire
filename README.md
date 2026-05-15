@@ -16,6 +16,7 @@ A full-stack job portal connecting top talent with great companies.
 - REST APIs
 - Email OTP Verification (Brevo HTTP API)
 - Async Email Processing
+- Cloudinary (Resume Storage)
 
 ### Frontend
 - React (Vite)
@@ -27,6 +28,7 @@ A full-stack job portal connecting top talent with great companies.
 - **Frontend:** Netlify
 - **Database:** Aiven MySQL
 - **Email:** Brevo HTTP API
+- **File Storage:** Cloudinary
 - **Domain:** nexhire.me (Namecheap)
 - **Monitoring:** UptimeRobot
 
@@ -34,20 +36,37 @@ A full-stack job portal connecting top talent with great companies.
 
 ## Features
 
+### Authentication
 - ✅ User Registration & Login
 - ✅ JWT Authentication
 - ✅ Role Based Access (Candidate / Recruiter)
 - ✅ Email OTP Verification on Registration
 - ✅ Forgot Password with OTP Reset
 - ✅ Welcome Email on Registration
-- ✅ Post Jobs (Recruiter)
-- ✅ Apply for Jobs (Candidate)
-- ✅ Manage Applications & Status
-- ✅ Recruiter Dashboard
+
+### Candidate
+- ✅ Browse & Search Jobs
+- ✅ Job Detail Page with Full Job Info
+- ✅ Apply for Jobs with Resume Upload (PDF)
+- ✅ Withdraw Application
+- ✅ Track Application Status in Real Time
+- ✅ Interview Schedule Notifications (Email)
 - ✅ Candidate Dashboard
+
+### Recruiter
+- ✅ Post, Edit & Delete Jobs
+- ✅ View All Applicants per Job
+- ✅ View Candidate Resume (PDF)
+- ✅ Shortlist / Reject Candidates
+- ✅ Schedule Interview (Email Notification to Candidate)
+- ✅ Contact Candidate via Email
+- ✅ Recruiter Dashboard
+
+### General
 - ✅ Fully Responsive (Mobile + Desktop)
 - ✅ Custom Domain (nexhire.me)
 - ✅ Landing Page
+- ✅ UptimeRobot Monitoring (Prevents Render Cold Starts)
 
 ---
 
@@ -58,13 +77,26 @@ A full-stack job portal connecting top talent with great companies.
 - Node.js
 - Maven
 
+### Environment Variables
+
+Create the following environment variables before running locally:
+
+| Variable | Description |
+|---|---|
+| `SPRING_DATASOURCE_URL` | MySQL JDBC URL |
+| `SPRING_DATASOURCE_USERNAME` | MySQL username |
+| `SPRING_DATASOURCE_PASSWORD` | MySQL password |
+| `BREVO_API_KEY` | Brevo HTTP API key for emails |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name |
+| `CLOUDINARY_API_KEY` | Cloudinary API key |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret |
+
 ### Backend
 ```bash
 cd backend
-# Add your environment variables in application.properties
-./mvnw spring-boot:run
+# Set environment variables in application.properties or as system env vars
+mvn spring-boot:run -DskipTests
 ```
-Runs on `http://localhost:8081`
 
 ### Frontend
 ```bash
@@ -72,30 +104,74 @@ cd frontend
 npm install
 npm run dev
 ```
-Runs on `http://localhost:5173`
-
-### Environment Variables (Backend)
-| Variable | Description |
-|----------|-------------|
-| `BREVO_API_KEY` | Brevo HTTP API key for emails |
-| `SPRING_DATASOURCE_URL` | Aiven MySQL connection URL |
-| `SPRING_DATASOURCE_USERNAME` | Database username |
-| `SPRING_DATASOURCE_PASSWORD` | Database password |
 
 ---
 
-## Live Links
+## Project Structure
 
-| Service | URL |
-|---------|-----|
-| Frontend | [nexhire.me](https://nexhire.me) |
-| Backend | [job-portal-project-7tud.onrender.com](https://job-portal-project-7tud.onrender.com) |
-| GitHub Repo | [github.com/r0hitgit/job-portal-project](https://github.com/r0hitgit/job-portal-project) |
+
+job-portal-project/
+├── backend/                  # Spring Boot backend
+│   ├── src/main/java/com/rohit/jobportal/
+│   │   ├── config/           # Security & Cloudinary config
+│   │   ├── controller/       # REST controllers
+│   │   ├── entity/           # JPA entities
+│   │   ├── repository/       # Spring Data repositories
+│   │   ├── service/          # Business logic
+│   │   └── security/         # JWT filter & util
+│   └── src/main/resources/
+│       └── application.properties
+└── frontend/                 # React + Vite frontend
+└── src/
+├── api/              # Axios API calls
+├── components/       # Navbar, Footer
+└── pages/            # All page components
+
+---
+
+## API Endpoints
+
+### Auth
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/users/register` | Register new user |
+| POST | `/api/users/login` | Login |
+| POST | `/api/users/verify-otp` | Verify email OTP |
+| POST | `/api/users/forgot-password` | Request password reset OTP |
+| POST | `/api/users/reset-password` | Reset password |
+
+### Jobs
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/jobs` | Get all jobs |
+| GET | `/api/jobs/{id}` | Get job by ID |
+| GET | `/api/jobs/my-jobs` | Get recruiter's jobs |
+| POST | `/api/jobs` | Create job (Recruiter) |
+| PUT | `/api/jobs/{id}` | Edit job (Recruiter) |
+| DELETE | `/api/jobs/{id}` | Delete job (Recruiter) |
+
+### Applications
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/applications/apply/{jobId}` | Apply for job with resume |
+| GET | `/api/applications/my` | Get my applications (Candidate) |
+| GET | `/api/applications/job/{jobId}` | Get applicants for job (Recruiter) |
+| PUT | `/api/applications/{id}/status` | Update status (Recruiter) |
+| POST | `/api/applications/{id}/schedule-interview` | Schedule interview (Recruiter) |
+| POST | `/api/applications/{id}/contact` | Contact candidate (Recruiter) |
+| DELETE | `/api/applications/{id}` | Withdraw application (Candidate) |
+
+---
+
+## Screenshots
+
+> Coming soon
 
 ---
 
 ## Author
 
 **Rohit Verma**
-- [LinkedIn](https://www.linkedin.com/in/r0hitin)
-- [GitHub](https://github.com/r0hitgit)
+- GitHub: [@r0hitgit](https://github.com/r0hitgit)
+- LinkedIn: [r0hitin](https://linkedin.com/in/r0hitin)
+- Live: [nexhire.me](https://nexhire.me)
