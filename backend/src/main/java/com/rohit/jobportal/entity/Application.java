@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -16,25 +17,30 @@ public class Application {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Job applied for
     @ManyToOne
     @JoinColumn(name = "job_id")
     @JsonIgnoreProperties({"applications", "recruiter"})
     private Job job;
 
-    // Candidate who applied
     @ManyToOne
     @JoinColumn(name = "candidate_id")
     @JsonIgnoreProperties({"password"})
     private User candidate;
 
-    // Application status
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
     private LocalDate appliedDate;
 
-    // Automatically set applied date
+    // Resume stored on Cloudinary
+    private String resumeUrl;
+
+    // Interview scheduling
+    private LocalDateTime interviewScheduledAt;
+
+    @Column(length = 1000)
+    private String interviewDetails;
+
     @PrePersist
     protected void onApply() {
         this.appliedDate = LocalDate.now();

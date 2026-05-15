@@ -18,7 +18,6 @@ public class JobController {
 
     // Only RECRUITER or ADMIN can create job
     @PostMapping
-    //@PreAuthorize("hasAnyRole('RECRUITER','ADMIN')")
     @PreAuthorize("hasAuthority('ROLE_RECRUITER') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Job> createJob(@RequestBody Job job) {
         return ResponseEntity.ok(jobService.createJob(job));
@@ -26,7 +25,6 @@ public class JobController {
 
     // All roles can view jobs
     @GetMapping
-    //@PreAuthorize("hasAnyRole('RECRUITER','ADMIN','CANDIDATE')")
     @PreAuthorize("hasAuthority('ROLE_RECRUITER') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_CANDIDATE')")
     public ResponseEntity<List<Job>> getAllJobs() {
         return ResponseEntity.ok(jobService.getAllJobs());
@@ -34,9 +32,29 @@ public class JobController {
 
     // Recruiter can see only their jobs
     @GetMapping("/my-jobs")
-    //@PreAuthorize("hasRole('RECRUITER')")
     @PreAuthorize("hasAuthority('ROLE_RECRUITER')")
     public ResponseEntity<List<Job>> getMyJobs() {
         return ResponseEntity.ok(jobService.getMyJobs());
+    }
+
+    // Get single job by ID
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_RECRUITER') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_CANDIDATE')")
+    public ResponseEntity<Job> getJobById(@PathVariable Long id) {
+        return ResponseEntity.ok(jobService.getJobById(id));
+    }
+
+    // Delete job
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_RECRUITER')")
+    public ResponseEntity<Void> deleteJob(@PathVariable Long id) {
+        jobService.deleteJob(id);
+        return ResponseEntity.ok().build();
+    }
+    // Recruiter → Edit job
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_RECRUITER')")
+    public ResponseEntity<Job> updateJob(@PathVariable Long id, @RequestBody Job updatedJob) {
+        return ResponseEntity.ok(jobService.updateJob(id, updatedJob));
     }
 }
