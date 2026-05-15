@@ -110,22 +110,20 @@ npm run dev
 ## Project Structure
 
 
-job-portal-project/
-├── backend/                  # Spring Boot backend
-│   ├── src/main/java/com/rohit/jobportal/
-│   │   ├── config/           # Security & Cloudinary config
-│   │   ├── controller/       # REST controllers
-│   │   ├── entity/           # JPA entities
-│   │   ├── repository/       # Spring Data repositories
-│   │   ├── service/          # Business logic
-│   │   └── security/         # JWT filter & util
-│   └── src/main/resources/
-│       └── application.properties
-└── frontend/                 # React + Vite frontend
-└── src/
-├── api/              # Axios API calls
-├── components/       # Navbar, Footer
-└── pages/            # All page components
+## Project Structure
+
+**Backend** (`backend/src/main/java/com/rohit/jobportal/`)
+- `config/` — Security & Cloudinary configuration
+- `controller/` — REST API controllers
+- `entity/` — JPA entities (User, Job, Application)
+- `repository/` — Spring Data repositories
+- `service/` — Business logic
+- `security/` — JWT filter & utility
+
+**Frontend** (`frontend/src/`)
+- `api/` — Axios API calls
+- `components/` — Navbar, Footer
+- `pages/` — All page components
 
 ---
 
