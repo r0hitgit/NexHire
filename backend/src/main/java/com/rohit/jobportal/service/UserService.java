@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -32,8 +33,17 @@ public class UserService {
     }
 
     public UserResponse registerUser(RegisterRequest request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already registered");
+        Optional<User> existingUser = userRepository.findByEmail(request.getEmail().trim().toLowerCase());
+
+        // ✅ CHANGE: If email exists but not verified → delete old record and allow re-registration
+        if (existingUser.isPresent()) {
+            if (existingUser.get().isVerified()) {
+                // Email is verified → block registration
+                throw new RuntimeException("Email already registered");
+            } else {
+                // Email exists but not verified → delete and allow fresh registration
+                userRepository.delete(existingUser.get());
+            }
         }
 
         String otp = String.valueOf(100000 + new Random().nextInt(900000));
@@ -73,7 +83,6 @@ public class UserService {
         user.setOtp(null);
         userRepository.save(user);
 
-        // Send welcome email after verification
         try {
             emailService.sendWelcomeEmail(user.getEmail(), user.getName(), user.getRole().name());
         } catch (Exception e) {
