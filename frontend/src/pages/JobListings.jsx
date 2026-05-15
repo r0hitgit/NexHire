@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { getJobs, applyForJob } from "../api/axios";
+import { getJobs } from "../api/axios";
 
 export default function JobListings() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [applied, setApplied] = useState(new Set());
-  const [toast, setToast] = useState("");
+  const navigate = useNavigate();
   const role = localStorage.getItem("role");
 
   useEffect(() => {
@@ -18,18 +18,6 @@ export default function JobListings() {
       setLoading(false);
     }).catch(() => setLoading(false));
   }, []);
-
-  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
-
-  const handleApply = async (jobId) => {
-    try {
-      await applyForJob(jobId);
-      setApplied(prev => new Set([...prev, jobId]));
-      showToast("✅ Application submitted!");
-    } catch (err) {
-      showToast("❌ " + (err.response?.data || "Already applied or error occurred"));
-    }
-  };
 
   const filtered = jobs.filter(j =>
     j.title?.toLowerCase().includes(search.toLowerCase()) ||
@@ -78,12 +66,14 @@ export default function JobListings() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(300px, 100%), 1fr))", gap: "1.25rem" }}>
             {filtered.map(job => (
               <div key={job.id}
+                onClick={() => navigate(`/jobs/${job.id}`)}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--accent)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "none"; }}
                 style={{
                   background: "var(--surface)", border: "1px solid var(--border)",
                   borderRadius: "var(--radius-lg)", padding: "clamp(1.25rem, 3vw, 1.75rem)",
                   transition: "var(--transition)", animation: "fadeIn 0.4s ease",
+                  cursor: "pointer",
                 }}>
 
                 {/* Top */}
@@ -110,25 +100,16 @@ export default function JobListings() {
                   {job.postedDate && <span style={{ color: "var(--text2)", fontSize: "0.8rem" }}>📅 {new Date(job.postedDate).toLocaleDateString()}</span>}
                 </div>
 
-                {/* Apply Button */}
+                {/* View Details Button */}
                 {role === "CANDIDATE" && (
-                  applied.has(job.id) ? (
-                    <div style={{ width: "100%", padding: "0.65rem", textAlign: "center", background: "rgba(67,233,123,0.1)", color: "#43e97b", border: "1px solid rgba(67,233,123,0.3)", borderRadius: "var(--radius)", fontWeight: 600, fontSize: "0.875rem", boxSizing: "border-box" }}>
-                      ✓ Applied
-                    </div>
-                  ) : (
-                    <button onClick={() => handleApply(job.id)} style={{
-                      width: "100%", padding: "0.65rem",
-                      background: "linear-gradient(135deg, var(--accent), #8b85ff)",
-                      color: "#fff", border: "none", borderRadius: "var(--radius)",
-                      fontWeight: 600, fontSize: "0.875rem", fontFamily: "var(--font-head)",
-                      cursor: "pointer", transition: "var(--transition)",
-                    }}
-                      onMouseEnter={e => e.target.style.opacity = "0.85"}
-                      onMouseLeave={e => e.target.style.opacity = "1"}>
-                      Apply Now
-                    </button>
-                  )
+                  <div style={{
+                    width: "100%", padding: "0.65rem", textAlign: "center",
+                    background: "linear-gradient(135deg, var(--accent), #8b85ff)",
+                    color: "#fff", borderRadius: "var(--radius)",
+                    fontWeight: 600, fontSize: "0.875rem", boxSizing: "border-box",
+                  }}>
+                    View & Apply →
+                  </div>
                 )}
               </div>
             ))}
@@ -137,17 +118,6 @@ export default function JobListings() {
       </main>
 
       <Footer />
-
-      {/* Toast */}
-      {toast && (
-        <div style={{
-          position: "fixed", bottom: "2rem", right: "1rem", left: "1rem",
-          maxWidth: "400px", margin: "0 auto",
-          background: "var(--surface2)", border: "1px solid var(--border)",
-          padding: "1rem 1.5rem", borderRadius: "var(--radius)",
-          fontSize: "0.9rem", boxShadow: "var(--shadow)", animation: "fadeIn 0.3s ease", zIndex: 1000,
-        }}>{toast}</div>
-      )}
     </div>
   );
 }

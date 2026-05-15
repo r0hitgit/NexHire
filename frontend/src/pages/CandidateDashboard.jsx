@@ -1,27 +1,49 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import { getMyApplications } from "../api/axios";
+import { getMyApplications, withdrawApplication } from "../api/axios";
 
 const STATUS_CONFIG = {
-  APPLIED:     { color: "#6c63ff", bg: "rgba(108,99,255,0.12)", icon: "📋" },
-  SHORTLISTED: { color: "#f59e0b", bg: "rgba(245,158,11,0.12)",  icon: "⭐" },
-  REJECTED:    { color: "#ff6584", bg: "rgba(255,101,132,0.12)", icon: "✕"  },
+  APPLIED:              { color: "#6c63ff", bg: "rgba(108,99,255,0.12)",  icon: "📋" },
+  SHORTLISTED:          { color: "#f59e0b", bg: "rgba(245,158,11,0.12)",  icon: "⭐" },
+  INTERVIEW_SCHEDULED:  { color: "#43e97b", bg: "rgba(67,233,123,0.12)",  icon: "📅" },
+  REJECTED:             { color: "#ff6584", bg: "rgba(255,101,132,0.12)", icon: "✕"  },
 };
 
 export default function CandidateDashboard() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState("");
 
   useEffect(() => {
+    fetchApplications();
+  }, []);
+
+  // ✅ CHANGE 1: Extracted to reusable function so we can refresh after withdraw
+  const fetchApplications = () => {
     getMyApplications()
       .then(res => { setApplications(res.data); setLoading(false); })
       .catch(() => setLoading(false));
-  }, []);
+  };
+
+  // ✅ CHANGE 2: Withdraw handler
+  const handleWithdraw = async (appId) => {
+    if (!window.confirm("Are you sure you want to withdraw this application?")) return;
+    try {
+      await withdrawApplication(appId);
+      fetchApplications();
+      showToast("✅ Application withdrawn successfully");
+    } catch {
+      showToast("❌ Failed to withdraw application");
+    }
+  };
+
+  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
 
   const counts = {
-    APPLIED:     applications.filter(a => a.status === "APPLIED").length,
-    SHORTLISTED: applications.filter(a => a.status === "SHORTLISTED").length,
-    REJECTED:    applications.filter(a => a.status === "REJECTED").length,
+    APPLIED:             applications.filter(a => a.status === "APPLIED").length,
+    SHORTLISTED:         applications.filter(a => a.status === "SHORTLISTED").length,
+    INTERVIEW_SCHEDULED: applications.filter(a => a.status === "INTERVIEW_SCHEDULED").length,
+    REJECTED:            applications.filter(a => a.status === "REJECTED").length,
   };
 
   return (
@@ -36,11 +58,12 @@ export default function CandidateDashboard() {
         </div>
 
         {/* Stats */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.75rem", marginBottom: "1.5rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.75rem", marginBottom: "1.5rem" }}>
           {[
-            { label: "Applied",     val: counts.APPLIED,     color: "#6c63ff" },
-            { label: "Shortlisted", val: counts.SHORTLISTED, color: "#f59e0b" },
-            { label: "Rejected",    val: counts.REJECTED,    color: "#ff6584" },
+            { label: "Applied",     val: counts.APPLIED,             color: "#6c63ff" },
+            { label: "Shortlisted", val: counts.SHORTLISTED,         color: "#f59e0b" },
+            { label: "Interview",   val: counts.INTERVIEW_SCHEDULED, color: "#43e97b" },
+            { label: "Rejected",    val: counts.REJECTED,            color: "#ff6584" },
           ].map((s, i) => (
             <div key={i} style={{
               background: "var(--surface)", border: "1px solid var(--border)",
@@ -48,7 +71,7 @@ export default function CandidateDashboard() {
               borderTop: `3px solid ${s.color}`,
             }}>
               <div style={{ fontSize: "clamp(1.5rem, 5vw, 2.5rem)", fontWeight: 800, fontFamily: "var(--font-head)", color: s.color }}>{s.val}</div>
-              <div style={{ color: "var(--text2)", fontSize: "clamp(0.7rem, 2vw, 0.875rem)", marginTop: "0.25rem" }}>{s.label}</div>
+              <div style={{ color: "var(--text2)", fontSize: "clamp(0.65rem, 2vw, 0.875rem)", marginTop: "0.25rem" }}>{s.label}</div>
             </div>
           ))}
         </div>
@@ -78,7 +101,6 @@ export default function CandidateDashboard() {
                 style={{
                   padding: "1rem 1.25rem", borderRadius: "var(--radius)", marginBottom: "0.75rem",
                   border: "1px solid var(--border)", background: "var(--surface2)",
-                  display: "flex", flexDirection: "column", gap: "0.75rem",
                   transition: "var(--transition)", animation: "fadeIn 0.3s ease",
                 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "0.75rem", flexWrap: "wrap" }}>
@@ -91,7 +113,43 @@ export default function CandidateDashboard() {
                       {app.job?.location && <span style={{ color: "var(--text2)", fontSize: "0.8rem" }}>📍 {app.job.location}</span>}
                       {app.job?.salary && <span style={{ color: "var(--text2)", fontSize: "0.8rem" }}>💰 ₹{(app.job.salary / 100000).toFixed(1)}L</span>}
                     </div>
+
+                    {/* Interview Details */}
+                    {app.status === "INTERVIEW_SCHEDULED" && app.interviewScheduledAt && (
+                      <div style={{
+                        marginTop: "0.75rem", padding: "0.75rem 1rem",
+                        background: "rgba(67,233,123,0.08)", border: "1px solid rgba(67,233,123,0.2)",
+                        borderRadius: "var(--radius)", fontSize: "0.82rem",
+                      }}>
+                        <div style={{ color: "#43e97b", fontWeight: 700, marginBottom: "0.25rem" }}>
+                          📅 Interview: {app.interviewScheduledAt.replace('T', ' ').slice(0, 16)}
+                        </div>
+                        {app.interviewDetails && (
+                          <div style={{ color: "var(--text2)" }}>{app.interviewDetails}</div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* ✅ CHANGE 3: Withdraw button — only show for APPLIED status */}
+                    {app.status === "APPLIED" && (
+                      <button
+                        onClick={() => handleWithdraw(app.id)}
+                        style={{
+                          marginTop: "0.75rem",
+                          padding: "0.3rem 0.85rem",
+                          background: "rgba(255,101,132,0.1)",
+                          color: "#ff6584",
+                          border: "1px solid rgba(255,101,132,0.3)",
+                          borderRadius: "20px",
+                          fontSize: "0.75rem",
+                          fontWeight: 600,
+                          cursor: "pointer",
+                        }}>
+                        ✕ Withdraw
+                      </button>
+                    )}
                   </div>
+
                   <div style={{
                     padding: "0.4rem 1rem", borderRadius: "20px",
                     background: STATUS_CONFIG[app.status]?.bg || "var(--surface)",
@@ -99,7 +157,7 @@ export default function CandidateDashboard() {
                     fontWeight: 700, fontSize: "0.78rem", letterSpacing: "0.5px",
                     textTransform: "uppercase", whiteSpace: "nowrap", flexShrink: 0,
                   }}>
-                    {STATUS_CONFIG[app.status]?.icon} {app.status}
+                    {STATUS_CONFIG[app.status]?.icon} {app.status?.replace("_", " ")}
                   </div>
                 </div>
               </div>
@@ -107,6 +165,17 @@ export default function CandidateDashboard() {
           </div>
         </div>
       </main>
+
+      {/* Toast */}
+      {toast && (
+        <div style={{
+          position: "fixed", bottom: "2rem", right: "1rem", left: "1rem",
+          maxWidth: "400px", margin: "0 auto",
+          background: "var(--surface2)", border: "1px solid var(--border)",
+          padding: "1rem 1.5rem", borderRadius: "var(--radius)",
+          fontSize: "0.9rem", boxShadow: "var(--shadow)", animation: "fadeIn 0.3s ease", zIndex: 1000,
+        }}>{toast}</div>
+      )}
     </div>
   );
 }
