@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { version } from '../../package.json';
 
 export default function Footer() {
   const navigate = useNavigate();
@@ -114,7 +115,7 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div style={{
         borderTop: "1px solid var(--border)", paddingTop: "1.5rem",
-        display: "flex", justifyContent: "center", alignItems: "center",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
         flexWrap: "wrap", gap: "0.5rem",
         textAlign: "center",
       }}>
@@ -126,6 +127,15 @@ export default function Footer() {
             style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}>
             Rohit Verma
           </a>
+        </span>
+
+        {/* ✅ CHANGE: Version badge added */}
+        <span style={{
+          color: "var(--text2)", fontSize: "0.75rem",
+          background: "var(--surface2)", border: "1px solid var(--border)",
+          padding: "0.2rem 0.6rem", borderRadius: "20px",
+        }}>
+          v{version}
         </span>
       </div>
     </footer>
