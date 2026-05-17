@@ -115,8 +115,8 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div style={{
         borderTop: "1px solid var(--border)", paddingTop: "1.5rem",
-        display: "flex", justifyContent: "center", alignItems: "center",
-        flexDirection: "column", gap: "0.5rem",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        flexWrap: "wrap", gap: "0.5rem",
         textAlign: "center",
       }}>
         <span style={{ color: "var(--text2)", fontSize: "0.825rem" }}>
@@ -131,13 +131,13 @@ export default function Footer() {
 
         {/* ✅ CHANGE: Version badge added */}
         <span style={{
-            color: "var(--text2)", fontSize: "0.75rem",
-            background: "var(--surface2)", border: "1px solid var(--border)",
-            padding: "0.2rem 0.6rem", borderRadius: "20px",
-          }}>
-            v{version}
-          </span>
-        </div>
+          color: "var(--text2)", fontSize: "0.75rem",
+          background: "var(--surface2)", border: "1px solid var(--border)",
+          padding: "0.2rem 0.6rem", borderRadius: "20px",
+        }}>
+          v{version}
+        </span>
+      </div>
     </footer>
   );
 }
