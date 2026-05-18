@@ -2,6 +2,23 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { register, verifyOtp } from "../api/axios";
 
+// ✅ NEW: Password strength checker
+const getPasswordStrength = (password) => {
+  if (!password) return { score: 0, label: "", color: "" };
+  let score = 0;
+  if (password.length >= 8) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[a-z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) score++;
+
+  if (score <= 1) return { score, label: "Very Weak", color: "#ff6584" };
+  if (score === 2) return { score, label: "Weak", color: "#ff9f43" };
+  if (score === 3) return { score, label: "Fair", color: "#f59e0b" };
+  if (score === 4) return { score, label: "Strong", color: "#43e97b" };
+  return { score: 5, label: "Very Strong", color: "#00d2ff" };
+};
+
 export default function Register() {
   const [form, setForm] = useState({ name: "", email: "", password: "", role: "CANDIDATE" });
   const [otp, setOtp] = useState("");
@@ -12,9 +29,20 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+  // ✅ NEW: Compute strength on every keystroke
+  const strength = getPasswordStrength(form.password);
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setError(""); setSuccess(""); setLoading(true);
+
+    // ✅ NEW: Block submit if password not strong enough
+    if (strength.score < 5) {
+      setError("Please create a stronger password meeting all requirements.");
+      setLoading(false);
+      return;
+    }
+
     try {
       await register(form);
       setSuccess("OTP sent to your email! Please check your inbox.");
@@ -121,10 +149,10 @@ export default function Register() {
                 onBlur={e => e.target.style.borderColor = "var(--border)"} />
 
               <label style={labelStyle}>Password</label>
-              <div style={{ position: "relative", marginBottom: "1.2rem" }}>
+              <div style={{ position: "relative", marginBottom: "0.5rem" }}>
                 <input
                   type={showPassword ? "text" : "password"}
-                  placeholder="Min. 6 characters" value={form.password}
+                  placeholder="Min. 8 characters" value={form.password}
                   onChange={e => setForm({ ...form, password: e.target.value })} required
                   onFocus={e => e.target.style.borderColor = "var(--accent)"}
                   onBlur={e => e.target.style.borderColor = "var(--border)"}
@@ -143,6 +171,48 @@ export default function Register() {
                   {showPassword ? <EyeOffIcon /> : <EyeIcon />}
                 </button>
               </div>
+
+              {/* ✅ NEW: Password strength bar */}
+              {form.password && (
+                <div style={{ marginBottom: "1rem" }}>
+                  {/* Strength bars */}
+                  <div style={{ display: "flex", gap: "4px", marginBottom: "0.4rem" }}>
+                    {[1, 2, 3, 4, 5].map(i => (
+                      <div key={i} style={{
+                        flex: 1, height: "4px", borderRadius: "2px",
+                        background: i <= strength.score ? strength.color : "var(--border)",
+                        transition: "background 0.3s ease",
+                      }} />
+                    ))}
+                  </div>
+                  {/* Strength label */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: "0.75rem", color: strength.color, fontWeight: 600 }}>
+                      {strength.label}
+                    </span>
+                    <span style={{ fontSize: "0.7rem", color: "var(--text2)" }}>
+                      {strength.score}/5
+                    </span>
+                  </div>
+                  {/* ✅ NEW: Requirements checklist */}
+                  <div style={{ marginTop: "0.5rem", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                    {[
+                      { label: "At least 8 characters", met: form.password.length >= 8 },
+                      { label: "One uppercase letter (A-Z)", met: /[A-Z]/.test(form.password) },
+                      { label: "One lowercase letter (a-z)", met: /[a-z]/.test(form.password) },
+                      { label: "One number (0-9)", met: /[0-9]/.test(form.password) },
+                      { label: "One special character (!@#$...)", met: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(form.password) },
+                    ].map((req, i) => (
+                      <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.75rem" }}>
+                        <span style={{ color: req.met ? "#43e97b" : "var(--text2)", fontSize: "0.7rem" }}>
+                          {req.met ? "✓" : "○"}
+                        </span>
+                        <span style={{ color: req.met ? "#43e97b" : "var(--text2)" }}>{req.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <label style={labelStyle}>I am a...</label>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginBottom: "1.5rem" }}>
