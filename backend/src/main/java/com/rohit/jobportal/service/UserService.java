@@ -32,19 +32,38 @@ public class UserService {
         this.emailService = emailService;
     }
 
+    // ✅ NEW: Password strength validator
+    private void validatePassword(String password) {
+        if (password == null || password.length() < 8) {
+            throw new RuntimeException("Password must be at least 8 characters long");
+        }
+        if (!password.matches(".*[A-Z].*")) {
+            throw new RuntimeException("Password must contain at least one uppercase letter");
+        }
+        if (!password.matches(".*[a-z].*")) {
+            throw new RuntimeException("Password must contain at least one lowercase letter");
+        }
+        if (!password.matches(".*[0-9].*")) {
+            throw new RuntimeException("Password must contain at least one number");
+        }
+        if (!password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*")) {
+            throw new RuntimeException("Password must contain at least one special character (!@#$%^&*)");
+        }
+    }
+
     public UserResponse registerUser(RegisterRequest request) {
         Optional<User> existingUser = userRepository.findByEmail(request.getEmail().trim().toLowerCase());
 
-        // ✅ CHANGE: If email exists but not verified → delete old record and allow re-registration
         if (existingUser.isPresent()) {
             if (existingUser.get().isVerified()) {
-                // Email is verified → block registration
                 throw new RuntimeException("Email already registered");
             } else {
-                // Email exists but not verified → delete and allow fresh registration
                 userRepository.delete(existingUser.get());
             }
         }
+
+        // ✅ NEW: Validate password strength before saving
+        validatePassword(request.getPassword());
 
         String otp = String.valueOf(100000 + new Random().nextInt(900000));
 
@@ -135,6 +154,9 @@ public class UserService {
         if (user.getOtp() == null || !user.getOtp().equals(otp)) {
             throw new RuntimeException("Invalid or expired OTP");
         }
+
+        // ✅ NEW: Validate password strength on reset too
+        validatePassword(newPassword);
 
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setOtp(null);
