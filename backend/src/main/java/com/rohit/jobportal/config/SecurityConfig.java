@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/verify-otp").permitAll()
                         .requestMatchers("/api/users/forgot-password").permitAll()
                         .requestMatchers("/api/users/reset-password").permitAll()
+                        .requestMatchers("/api/users/health").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter,

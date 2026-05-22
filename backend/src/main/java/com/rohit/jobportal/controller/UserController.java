@@ -76,4 +76,10 @@ public class UserController {
     public List<UserResponse> getAllUsers() {
         return userService.getAllUsers();
     }
+    // Public health check endpoint for UptimeRobot
+    @GetMapping("/health")
+    public ResponseEntity<String> health() {
+        return ResponseEntity.ok("OK");
+    }
+
 }
