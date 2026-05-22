@@ -21,6 +21,8 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .claim("role", "ROLE_" + user.getRole().name())
+                // CHANGE: Add name to JWT payload
+                .claim("name", user.getName())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
                 .signWith(key)
@@ -28,17 +30,19 @@ public class JwtUtil {
     }
 
     public String extractEmail(String token) {
-
         return extractAllClaims(token).getSubject();
     }
 
     public String extractRole(String token) {
-
         return extractAllClaims(token).get("role", String.class);
     }
 
-    private Claims extractAllClaims(String token) {
+    //CHANGE: Add extractName method
+    public String extractName(String token) {
+        return extractAllClaims(token).get("name", String.class);
+    }
 
+    private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
