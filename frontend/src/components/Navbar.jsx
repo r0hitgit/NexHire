@@ -12,6 +12,8 @@ export default function Navbar() {
   const location = useLocation();
   const role = localStorage.getItem("role");
   const email = localStorage.getItem("email") || "";
+  // CHANGE: Get name from localStorage, fallback to email if name not available
+  const name = localStorage.getItem("name") || email;
   const [menuOpen, setMenuOpen] = useState(false);
 
   const links = [
@@ -63,10 +65,11 @@ export default function Navbar() {
 
         {/* Desktop Right Side */}
         <div className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          {/* CHANGE: Show name instead of email */}
           <span style={{
             fontSize: "0.8rem", color: "var(--text2)",
             maxWidth: "160px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-          }}>{email}</span>
+          }}>{name}</span>
           {role && (
             <span style={{
               padding: "0.25rem 0.75rem", borderRadius: "20px",
@@ -104,12 +107,12 @@ export default function Navbar() {
           padding: "1rem 1.25rem",
           display: "flex", flexDirection: "column", gap: "0.5rem",
         }}>
-          {/* Email + Role */}
+          {/* CHANGE: Show name instead of email in mobile menu */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
             <span style={{
               fontSize: "0.8rem", color: "var(--text2)",
               overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1,
-            }}>{email}</span>
+            }}>{name}</span>
             {role && (
               <span style={{
                 padding: "0.25rem 0.75rem", borderRadius: "20px",

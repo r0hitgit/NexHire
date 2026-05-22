@@ -20,6 +20,7 @@ export default function Login() {
       localStorage.setItem("token", token);
       localStorage.setItem("role", payload.role?.replace("ROLE_", ""));
       localStorage.setItem("email", payload.sub);
+      localStorage.setItem("name", payload.name || payload.sub);
       if (payload.role?.includes("RECRUITER")) navigate("/recruiter");
       else if (payload.role?.includes("CANDIDATE")) navigate("/candidate");
       else navigate("/jobs");
