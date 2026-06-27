@@ -11,101 +11,118 @@ export default function LandingPage() {
     }}>
 
       <style>{`
+        /* ── Navbar Sign In ── */
         .btn-nav-signin {
           padding: 0.4rem 1.2rem;
-          border-radius: 8px;
-          border: 1px solid var(--border);
-          background: transparent;
-          color: var(--text2);
+          border-radius: 10px;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          background: rgba(255, 255, 255, 0.06);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          color: rgba(255, 255, 255, 0.75);
           font-size: 0.875rem;
           cursor: pointer;
-          transition: all 0.25s ease;
+          transition: all 0.3s ease;
         }
         .btn-nav-signin:hover {
-          border-color: #ff6584;
-          color: #ff6584;
-          background: rgba(255, 101, 132, 0.08);
+          background: rgba(255, 255, 255, 0.11);
+          border-color: rgba(255, 101, 132, 0.4);
+          color: #fff;
           transform: translateY(-2px);
-          box-shadow: 0 4px 16px rgba(255, 101, 132, 0.25);
+          box-shadow: 0 4px 16px rgba(255, 101, 132, 0.12);
         }
 
+        /* ── Navbar Get Started ── */
         .btn-nav-getstarted {
           padding: 0.4rem 1.2rem;
-          border-radius: 8px;
-          border: none;
-          background: linear-gradient(135deg, #6c63ff, #8b85ff);
-          color: #fff;
+          border-radius: 10px;
+          border: 1px solid rgba(108, 99, 255, 0.35);
+          background: rgba(108, 99, 255, 0.15);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          color: #c4c0ff;
           font-size: 0.875rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.25s ease;
-          box-shadow: 0 2px 12px rgba(108, 99, 255, 0.3);
+          transition: all 0.3s ease;
         }
         .btn-nav-getstarted:hover {
-          transform: translateY(-2px) scale(1.06);
-          box-shadow: 0 6px 22px rgba(108, 99, 255, 0.55);
-          background: linear-gradient(135deg, #7c73ff, #a09aff);
-          filter: brightness(1.1);
+          background: rgba(108, 99, 255, 0.25);
+          border-color: rgba(108, 99, 255, 0.6);
+          color: #fff;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 18px rgba(108, 99, 255, 0.2);
         }
 
+        /* ── Hero Get Started Free ── */
         .btn-hero-getstarted {
           padding: 0.9rem 2rem;
-          border-radius: var(--radius);
-          background: linear-gradient(135deg, #6c63ff, #8b85ff);
-          color: #fff;
-          border: none;
+          border-radius: 14px;
+          border: 1px solid rgba(108, 99, 255, 0.4);
+          background: rgba(108, 99, 255, 0.18);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          color: #d0cdff;
           font-size: 1rem;
           font-weight: 700;
           font-family: var(--font-head);
           cursor: pointer;
-          box-shadow: 0 4px 24px rgba(108, 99, 255, 0.4);
-          transition: all 0.25s ease;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 12px rgba(108, 99, 255, 0.15);
         }
         .btn-hero-getstarted:hover {
-          transform: translateY(-4px) scale(1.05);
-          box-shadow: 0 10px 32px rgba(108, 99, 255, 0.6);
-          background: linear-gradient(135deg, #7c73ff, #a09aff);
-          filter: brightness(1.12);
+          background: rgba(108, 99, 255, 0.28);
+          border-color: rgba(108, 99, 255, 0.65);
+          color: #fff;
+          transform: translateY(-3px);
+          box-shadow: 0 6px 24px rgba(108, 99, 255, 0.25);
         }
         .btn-hero-getstarted:active {
-          transform: translateY(-1px) scale(1.02);
+          transform: translateY(-1px);
         }
 
+        /* ── Hero Sign In ── */
         .btn-hero-signin {
           padding: 0.9rem 2rem;
-          border-radius: var(--radius);
-          background: var(--surface);
-          color: var(--text);
-          border: 1px solid var(--border);
+          border-radius: 14px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          color: rgba(255, 255, 255, 0.7);
           font-size: 1rem;
           font-weight: 600;
           font-family: var(--font-head);
           cursor: pointer;
-          transition: all 0.25s ease;
+          transition: all 0.3s ease;
         }
         .btn-hero-signin:hover {
-          transform: translateY(-4px) scale(1.04);
-          border-color: #ff6584;
-          color: #ff6584;
-          box-shadow: 0 8px 24px rgba(255, 101, 132, 0.25);
-          background: rgba(255, 101, 132, 0.06);
+          background: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 101, 132, 0.35);
+          color: #fff;
+          transform: translateY(-3px);
+          box-shadow: 0 6px 20px rgba(255, 101, 132, 0.12);
         }
         .btn-hero-signin:active {
-          transform: translateY(-1px) scale(1.01);
+          transform: translateY(-1px);
         }
 
+        /* ── Feature Cards ── */
         .feature-card {
-          background: var(--surface);
-          border: 1px solid var(--border);
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
           border-radius: var(--radius-lg);
           padding: 1.75rem;
           text-align: left;
-          transition: all 0.25s ease;
+          transition: all 0.3s ease;
         }
         .feature-card:hover {
-          border-color: var(--accent);
+          background: rgba(108, 99, 255, 0.08);
+          border-color: rgba(108, 99, 255, 0.3);
           transform: translateY(-4px);
-          box-shadow: 0 8px 28px rgba(108, 99, 255, 0.15);
+          box-shadow: 0 8px 24px rgba(108, 99, 255, 0.1);
         }
 
         @keyframes fadeIn {
@@ -118,8 +135,9 @@ export default function LandingPage() {
       <nav style={{
         padding: "0 clamp(1rem, 4vw, 3rem)", height: "64px",
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        borderBottom: "1px solid var(--border)",
-        background: "rgba(10,10,15,0.88)", backdropFilter: "blur(20px)",
+        borderBottom: "1px solid rgba(255,255,255,0.07)",
+        background: "rgba(10,10,15,0.75)", backdropFilter: "blur(24px)",
+        WebkitBackdropFilter: "blur(24px)",
         position: "sticky", top: 0, zIndex: 100,
       }}>
         <span
@@ -131,12 +149,8 @@ export default function LandingPage() {
             cursor: "pointer",
           }}>NexHire</span>
         <div style={{ display: "flex", gap: "0.75rem" }}>
-          <button onClick={() => navigate("/login")} className="btn-nav-signin">
-            Sign In
-          </button>
-          <button onClick={() => navigate("/register")} className="btn-nav-getstarted">
-            Get Started
-          </button>
+          <button onClick={() => navigate("/login")} className="btn-nav-signin">Sign In</button>
+          <button onClick={() => navigate("/register")} className="btn-nav-getstarted">Get Started</button>
         </div>
       </nav>
 
@@ -148,6 +162,7 @@ export default function LandingPage() {
         textAlign: "center",
         background: "radial-gradient(ellipse at 50% 0%, rgba(108,99,255,0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(255,101,132,0.08) 0%, transparent 50%), var(--bg)",
       }}>
+
         {/* Badge */}
         <div style={{
           display: "inline-flex", alignItems: "center", gap: "0.5rem",
