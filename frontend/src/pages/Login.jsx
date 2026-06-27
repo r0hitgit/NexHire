@@ -33,9 +33,13 @@ export default function Login() {
 
   const inputStyle = {
     width: "100%", padding: "0.75rem 1rem",
-    background: "var(--surface2)", border: "1px solid var(--border)",
+    background: "rgba(255,255,255,0.05)",
+    border: "1px solid rgba(255,255,255,0.1)",
     borderRadius: "var(--radius)", color: "var(--text)", fontSize: "0.95rem", outline: "none",
     boxSizing: "border-box",
+    backdropFilter: "blur(8px)",
+    WebkitBackdropFilter: "blur(8px)",
+    transition: "border-color 0.25s ease, box-shadow 0.25s ease",
   };
 
   const labelStyle = {
@@ -63,16 +67,67 @@ export default function Login() {
     <div style={{
       minHeight: "100dvh",
       display: "flex", alignItems: "center", justifyContent: "center",
-      background: "radial-gradient(ellipse at 60% 20%, rgba(108,99,255,0.08) 0%, transparent 60%), var(--bg)",
+      background: "radial-gradient(ellipse at 60% 20%, rgba(108,99,255,0.1) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(255,101,132,0.07) 0%, transparent 50%), var(--bg)",
       padding: "1rem",
     }}>
-      <div style={{
-        width: "100%", maxWidth: "420px",
-        background: "var(--surface)", border: "1px solid var(--border)",
-        borderRadius: "var(--radius-lg)", padding: "clamp(1.5rem, 5vw, 2.5rem)",
-        boxShadow: "var(--shadow), var(--shadow-accent)",
-        animation: "fadeIn 0.5s ease",
-      }}>
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(16px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-card {
+          width: 100%;
+          max-width: 420px;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
+          border-radius: var(--radius-lg);
+          padding: clamp(1.5rem, 5vw, 2.5rem);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(108,99,255,0.08);
+          animation: fadeIn 0.5s ease;
+        }
+
+        .login-input:focus {
+          border-color: rgba(108, 99, 255, 0.6) !important;
+          box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.12);
+        }
+
+        .btn-signin-submit {
+          width: 100%;
+          padding: 0.85rem;
+          border: 1px solid rgba(108, 99, 255, 0.4);
+          background: rgba(108, 99, 255, 0.2);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          color: #d0cdff;
+          border-radius: var(--radius);
+          font-size: 1rem;
+          font-weight: 600;
+          font-family: var(--font-head);
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 12px rgba(108, 99, 255, 0.15);
+        }
+        .btn-signin-submit:hover:not(:disabled) {
+          background: rgba(108, 99, 255, 0.32);
+          border-color: rgba(108, 99, 255, 0.7);
+          color: #fff;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 24px rgba(108, 99, 255, 0.28);
+        }
+        .btn-signin-submit:active:not(:disabled) {
+          transform: translateY(0px);
+        }
+        .btn-signin-submit:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      `}</style>
+
+      <div className="login-card">
         <div style={{
           fontFamily: "var(--font-head)", fontSize: "clamp(1.4rem, 5vw, 1.8rem)", fontWeight: 800,
           background: "linear-gradient(135deg, #6c63ff, #ff6584)",
@@ -85,9 +140,10 @@ export default function Login() {
 
         {error && (
           <div style={{
-            background: "rgba(255,101,132,0.1)", border: "1px solid rgba(255,101,132,0.3)",
+            background: "rgba(255,101,132,0.08)", border: "1px solid rgba(255,101,132,0.25)",
             color: "#ff6584", padding: "0.75rem 1rem", borderRadius: "var(--radius)",
             fontSize: "0.875rem", marginBottom: "1rem",
+            backdropFilter: "blur(8px)",
           }}>{error}</div>
         )}
 
@@ -96,8 +152,7 @@ export default function Login() {
           <input
             type="email" placeholder="you@example.com" value={email}
             onChange={(e) => setEmail(e.target.value)} required
-            onFocus={e => e.target.style.borderColor = "var(--accent)"}
-            onBlur={e => e.target.style.borderColor = "var(--border)"}
+            className="login-input"
             style={{ ...inputStyle, marginBottom: "1.2rem" }}
           />
 
@@ -107,8 +162,7 @@ export default function Login() {
               type={showPassword ? "text" : "password"}
               placeholder="••••••••" value={password}
               onChange={(e) => setPassword(e.target.value)} required
-              onFocus={e => e.target.style.borderColor = "var(--accent)"}
-              onBlur={e => e.target.style.borderColor = "var(--border)"}
+              className="login-input"
               style={{ ...inputStyle, paddingRight: "3rem" }}
             />
             <button
@@ -125,21 +179,13 @@ export default function Login() {
             </button>
           </div>
 
-          {/* Forgot Password Link */}
           <div style={{ textAlign: "right", marginBottom: "1.5rem" }}>
             <Link to="/forgot-password" style={{ color: "var(--accent)", fontSize: "0.825rem", fontWeight: 500 }}>
               Forgot password?
             </Link>
           </div>
 
-          <button type="submit" disabled={loading} style={{
-            width: "100%", padding: "0.85rem",
-            background: "linear-gradient(135deg, #6c63ff, #8b85ff)",
-            color: "#fff", border: "none", borderRadius: "var(--radius)",
-            fontSize: "1rem", fontWeight: 600, fontFamily: "var(--font-head)",
-            cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1,
-            boxShadow: "0 4px 20px rgba(108,99,255,0.4)",
-          }}>
+          <button type="submit" disabled={loading} className="btn-signin-submit">
             {loading ? "Signing in..." : "Sign In →"}
           </button>
         </form>
