@@ -43,62 +43,71 @@ export default function CandidateDashboard() {
         @keyframes fadeIn { from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);} }
 
         .c-stat-card {
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.1);
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.08);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
           border-radius: var(--radius-lg);
           padding: clamp(0.75rem,3vw,1.5rem);
-          box-shadow: 0 4px 20px rgba(0,0,0,0.15);
           transition: all 0.25s ease;
+          animation: fadeIn 0.4s ease;
         }
         .c-stat-card:hover {
-          background: rgba(255,255,255,0.09);
+          border-color: rgba(108,99,255,0.4);
+          background: rgba(108,99,255,0.06);
           transform: translateY(-3px);
-          box-shadow: 0 10px 32px rgba(0,0,0,0.25);
-          border-color: rgba(255,255,255,0.18);
+          box-shadow: 0 8px 24px rgba(108,99,255,0.1);
         }
 
         .c-panel {
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.1);
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.08);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
           border-radius: var(--radius-lg);
-          box-shadow: 0 4px 24px rgba(0,0,0,0.15);
           overflow: hidden;
+          animation: fadeIn 0.4s ease;
         }
 
+        /* EXACT copy of .job-card and .job-card:hover from JobListings */
         .c-app-card {
-          padding: 1rem 1.25rem;
-          border-radius: var(--radius);
-          margin-bottom: 0.75rem;
-          border: 1px solid rgba(255,255,255,0.08);
           background: rgba(255,255,255,0.04);
-          box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+          border: 1px solid rgba(255,255,255,0.08);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+          border-radius: var(--radius-lg);
+          padding: clamp(1rem, 3vw, 1.25rem);
           transition: all 0.25s ease;
-          animation: fadeIn 0.3s ease;
-          cursor: default;
+          animation: fadeIn 0.4s ease;
+          margin-bottom: 0.75rem;
         }
         .c-app-card:hover {
-          border-color: rgba(108,99,255,0.5);
-          background: rgba(108,99,255,0.08);
+          border-color: rgba(108,99,255,0.4);
+          background: rgba(108,99,255,0.06);
           transform: translateY(-3px);
-          box-shadow: 0 8px 28px rgba(108,99,255,0.2), 0 0 0 1px rgba(108,99,255,0.15);
+          box-shadow: 0 8px 24px rgba(108,99,255,0.1);
         }
 
         .btn-withdraw {
           margin-top: 0.75rem; padding: 0.3rem 0.85rem;
           background: rgba(255,101,132,0.1); color: #ff6584;
-          border: 1px solid rgba(255,101,132,0.28); border-radius: 20px;
+          border: 1px solid rgba(255,101,132,0.22); border-radius: 20px;
           font-size: 0.75rem; font-weight: 600; cursor: pointer;
+          backdrop-filter: blur(6px);
           transition: all 0.2s ease;
         }
         .btn-withdraw:hover {
-          background: rgba(255,101,132,0.22); border-color: rgba(255,101,132,0.55);
-          color: #fff; box-shadow: 0 3px 12px rgba(255,101,132,0.22);
+          background: rgba(255,101,132,0.2);
+          border-color: rgba(255,101,132,0.5);
+          color: #fff;
+          box-shadow: 0 4px 12px rgba(255,101,132,0.15);
         }
 
         .toast-glass {
           position: fixed; bottom: 2rem; right: 1rem; left: 1rem;
           max-width: 400px; margin: 0 auto;
-          background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
+          background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+          backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
           padding: 1rem 1.5rem; border-radius: var(--radius); font-size: 0.9rem;
           box-shadow: 0 8px 24px rgba(0,0,0,0.3); animation: fadeIn 0.3s ease; z-index: 1000;
         }
@@ -155,7 +164,7 @@ export default function CandidateDashboard() {
                     </div>
 
                     {app.status === "INTERVIEW_SCHEDULED" && app.interviewScheduledAt && (
-                      <div style={{ marginTop:"0.75rem", padding:"0.75rem 1rem", background:"rgba(67,233,123,0.08)", border:"1px solid rgba(67,233,123,0.2)", borderRadius:"var(--radius)", fontSize:"0.82rem", boxShadow:"0 2px 8px rgba(67,233,123,0.08)" }}>
+                      <div style={{ marginTop:"0.75rem", padding:"0.75rem 1rem", background:"rgba(67,233,123,0.08)", border:"1px solid rgba(67,233,123,0.2)", borderRadius:"var(--radius)", fontSize:"0.82rem" }}>
                         <div style={{ color:"#43e97b", fontWeight:700, marginBottom:"0.25rem" }}>
                           📅 Interview: {app.interviewScheduledAt.replace('T',' ').slice(0,16)}
                         </div>
@@ -168,7 +177,15 @@ export default function CandidateDashboard() {
                     )}
                   </div>
 
-                  <div style={{ padding:"0.4rem 1rem", borderRadius:"20px", background:STATUS_CONFIG[app.status]?.bg||"rgba(255,255,255,0.05)", color:STATUS_CONFIG[app.status]?.color||"var(--text2)", fontWeight:700, fontSize:"0.78rem", letterSpacing:"0.5px", textTransform:"uppercase", whiteSpace:"nowrap", flexShrink:0, border:`1px solid ${STATUS_CONFIG[app.status]?.color}30`, boxShadow:`0 2px 8px ${STATUS_CONFIG[app.status]?.color}18` }}>
+                  <div style={{
+                    padding:"0.4rem 1rem", borderRadius:"20px",
+                    background: STATUS_CONFIG[app.status]?.bg || "rgba(255,255,255,0.05)",
+                    color: STATUS_CONFIG[app.status]?.color || "var(--text2)",
+                    fontWeight:700, fontSize:"0.78rem", letterSpacing:"0.5px",
+                    textTransform:"uppercase", whiteSpace:"nowrap", flexShrink:0,
+                    border:`1px solid ${STATUS_CONFIG[app.status]?.color}35`,
+                    backdropFilter:"blur(6px)",
+                  }}>
                     {STATUS_CONFIG[app.status]?.icon} {app.status?.replace("_"," ")}
                   </div>
                 </div>

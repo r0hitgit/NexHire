@@ -69,7 +69,7 @@ export default function RecruiterDashboard() {
 
   const inputStyle = {
     width:"100%", padding:"0.65rem 0.9rem", marginBottom:"0.85rem",
-    background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.12)",
+    background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.1)",
     borderRadius:"var(--radius)", color:"var(--text)", fontSize:"0.9rem",
     outline:"none", boxSizing:"border-box",
     transition:"border-color 0.25s ease, box-shadow 0.25s ease",
@@ -80,106 +80,119 @@ export default function RecruiterDashboard() {
       <style>{`
         @keyframes fadeIn { from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);} }
 
+        /* EXACT same as JobListings .job-card */
         .r-stat-card {
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.1);
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.08);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
           border-radius: var(--radius-lg);
           padding: clamp(0.75rem,3vw,1.5rem);
-          box-shadow: 0 4px 20px rgba(0,0,0,0.15);
           transition: all 0.25s ease;
+          animation: fadeIn 0.4s ease;
         }
         .r-stat-card:hover {
-          background: rgba(255,255,255,0.09);
+          border-color: rgba(108,99,255,0.4);
+          background: rgba(108,99,255,0.06);
           transform: translateY(-3px);
-          box-shadow: 0 10px 32px rgba(0,0,0,0.25);
-          border-color: rgba(255,255,255,0.18);
+          box-shadow: 0 8px 24px rgba(108,99,255,0.1);
         }
 
         .r-panel {
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.1);
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.08);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
           border-radius: var(--radius-lg);
-          box-shadow: 0 4px 24px rgba(0,0,0,0.15);
           overflow: hidden;
         }
 
-        /* Job items — same glow as JobListings cards */
+        /* EXACT same as JobListings .job-card for job items */
         .r-job-item {
-          padding: 1rem; border-radius: var(--radius); margin-bottom: 0.75rem;
-          cursor: pointer; transition: all 0.25s ease;
           background: rgba(255,255,255,0.04);
           border: 1px solid rgba(255,255,255,0.08);
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+          border-radius: var(--radius);
+          padding: 1rem;
+          margin-bottom: 0.75rem;
+          transition: all 0.25s ease;
+          animation: fadeIn 0.4s ease;
+          cursor: pointer;
         }
         .r-job-item:hover {
-          background: rgba(108,99,255,0.1);
-          border-color: rgba(108,99,255,0.5);
+          border-color: rgba(108,99,255,0.4);
+          background: rgba(108,99,255,0.06);
           transform: translateY(-3px);
-          box-shadow: 0 8px 28px rgba(108,99,255,0.2), 0 0 0 1px rgba(108,99,255,0.15);
+          box-shadow: 0 8px 24px rgba(108,99,255,0.1);
         }
         .r-job-item.selected {
-          background: rgba(108,99,255,0.12);
-          border-color: rgba(108,99,255,0.55);
-          box-shadow: 0 0 0 1px rgba(108,99,255,0.2), 0 6px 20px rgba(108,99,255,0.15);
-        }
-
-        /* Applicant cards — same glow */
-        .r-app-card {
-          padding: 1.25rem; border-radius: var(--radius); margin-bottom: 0.75rem;
-          border: 1px solid rgba(255,255,255,0.08);
-          background: rgba(255,255,255,0.04);
-          box-shadow: 0 2px 12px rgba(0,0,0,0.12);
-          animation: fadeIn 0.3s ease;
-          transition: all 0.25s ease;
-        }
-        .r-app-card:hover {
           border-color: rgba(108,99,255,0.5);
           background: rgba(108,99,255,0.08);
+          box-shadow: 0 8px 24px rgba(108,99,255,0.12);
+        }
+
+        /* EXACT same as JobListings .job-card for app cards */
+        .r-app-card {
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.08);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+          border-radius: var(--radius);
+          padding: 1.25rem;
+          margin-bottom: 0.75rem;
+          transition: all 0.25s ease;
+          animation: fadeIn 0.4s ease;
+        }
+        .r-app-card:hover {
+          border-color: rgba(108,99,255,0.4);
+          background: rgba(108,99,255,0.06);
           transform: translateY(-3px);
-          box-shadow: 0 8px 28px rgba(108,99,255,0.2), 0 0 0 1px rgba(108,99,255,0.15);
+          box-shadow: 0 8px 24px rgba(108,99,255,0.1);
         }
 
         .btn-post-job {
           padding: 0.6rem 1.4rem;
-          border: 1px solid rgba(108,99,255,0.45);
-          background: rgba(108,99,255,0.18);
-          color: #d0cdff; border-radius: var(--radius);
+          border: 1px solid rgba(108,99,255,0.4);
+          background: rgba(108,99,255,0.15);
+          backdrop-filter: blur(12px);
+          color: #c4c0ff; border-radius: var(--radius);
           font-weight: 600; font-family: var(--font-head);
           cursor: pointer; white-space: nowrap;
           transition: all 0.25s ease;
-          box-shadow: 0 2px 12px rgba(108,99,255,0.15);
         }
         .btn-post-job:hover {
-          background: rgba(108,99,255,0.3); border-color: rgba(108,99,255,0.7);
+          border-color: rgba(108,99,255,0.6);
+          background: rgba(108,99,255,0.25);
           color: #fff; transform: translateY(-2px);
-          box-shadow: 0 6px 24px rgba(108,99,255,0.3);
+          box-shadow: 0 8px 24px rgba(108,99,255,0.15);
         }
 
         .r-glass-modal {
           background: rgba(12,12,20,0.92);
           border: 1px solid rgba(255,255,255,0.12);
           border-radius: var(--radius-lg);
-          box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(108,99,255,0.12);
+          box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(108,99,255,0.1);
         }
 
-        .btn-mp { flex:2; padding:0.75rem; border:1px solid rgba(108,99,255,0.45); background:rgba(108,99,255,0.2); color:#d0cdff; border-radius:var(--radius); font-weight:600; font-family:var(--font-head); cursor:pointer; transition:all 0.25s ease; }
-        .btn-mp:hover:not(:disabled) { background:rgba(108,99,255,0.35); border-color:rgba(108,99,255,0.75); color:#fff; box-shadow:0 4px 18px rgba(108,99,255,0.28); }
+        .btn-mp { flex:2; padding:0.75rem; border:1px solid rgba(108,99,255,0.4); background:rgba(108,99,255,0.15); color:#c4c0ff; border-radius:var(--radius); font-weight:600; font-family:var(--font-head); cursor:pointer; transition:all 0.25s ease; backdrop-filter:blur(8px); }
+        .btn-mp:hover:not(:disabled) { border-color:rgba(108,99,255,0.65); background:rgba(108,99,255,0.28); color:#fff; box-shadow:0 8px 24px rgba(108,99,255,0.15); }
         .btn-mp:disabled { opacity:0.6; cursor:not-allowed; }
 
-        .btn-mc { flex:1; padding:0.75rem; background:rgba(255,255,255,0.06); color:var(--text2); border:1px solid rgba(255,255,255,0.12); border-radius:var(--radius); cursor:pointer; transition:all 0.25s ease; }
-        .btn-mc:hover { background:rgba(255,255,255,0.1); color:var(--text); }
+        .btn-mc { flex:1; padding:0.75rem; background:rgba(255,255,255,0.04); color:var(--text2); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius); cursor:pointer; transition:all 0.25s ease; backdrop-filter:blur(8px); }
+        .btn-mc:hover { background:rgba(255,255,255,0.08); color:var(--text); }
 
-        .btn-miv { flex:2; padding:0.75rem; border:1px solid rgba(67,233,123,0.4); background:rgba(67,233,123,0.14); color:#43e97b; border-radius:var(--radius); font-weight:700; cursor:pointer; transition:all 0.25s ease; }
-        .btn-miv:hover:not(:disabled) { background:rgba(67,233,123,0.25); border-color:rgba(67,233,123,0.65); color:#fff; box-shadow:0 4px 18px rgba(67,233,123,0.22); }
+        .btn-miv { flex:2; padding:0.75rem; border:1px solid rgba(67,233,123,0.35); background:rgba(67,233,123,0.1); color:#43e97b; border-radius:var(--radius); font-weight:700; cursor:pointer; transition:all 0.25s ease; backdrop-filter:blur(8px); }
+        .btn-miv:hover:not(:disabled) { background:rgba(67,233,123,0.2); border-color:rgba(67,233,123,0.6); color:#fff; box-shadow:0 8px 24px rgba(67,233,123,0.12); }
         .btn-miv:disabled { opacity:0.6; cursor:not-allowed; }
 
-        .btn-mco { flex:2; padding:0.75rem; border:1px solid rgba(245,158,11,0.4); background:rgba(245,158,11,0.14); color:#f59e0b; border-radius:var(--radius); font-weight:700; cursor:pointer; transition:all 0.25s ease; }
-        .btn-mco:hover:not(:disabled) { background:rgba(245,158,11,0.25); border-color:rgba(245,158,11,0.65); color:#fff; box-shadow:0 4px 18px rgba(245,158,11,0.22); }
+        .btn-mco { flex:2; padding:0.75rem; border:1px solid rgba(245,158,11,0.35); background:rgba(245,158,11,0.1); color:#f59e0b; border-radius:var(--radius); font-weight:700; cursor:pointer; transition:all 0.25s ease; backdrop-filter:blur(8px); }
+        .btn-mco:hover:not(:disabled) { background:rgba(245,158,11,0.2); border-color:rgba(245,158,11,0.6); color:#fff; box-shadow:0 8px 24px rgba(245,158,11,0.12); }
         .btn-mco:disabled { opacity:0.6; cursor:not-allowed; }
 
-        .dash-inp:focus { border-color:rgba(108,99,255,0.65)!important; box-shadow:0 0 0 3px rgba(108,99,255,0.12)!important; outline:none; }
+        .dash-inp:focus { border-color:rgba(108,99,255,0.6)!important; box-shadow:0 0 0 3px rgba(108,99,255,0.1)!important; outline:none; }
 
-        .toast-glass { position:fixed; bottom:2rem; right:1rem; left:1rem; max-width:400px; margin:0 auto; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.14); padding:1rem 1.5rem; border-radius:var(--radius); font-size:0.9rem; box-shadow:0 8px 24px rgba(0,0,0,0.3); animation:fadeIn 0.3s ease; z-index:1000; }
+        .toast-glass { position:fixed; bottom:2rem; right:1rem; left:1rem; max-width:400px; margin:0 auto; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); padding:1rem 1.5rem; border-radius:var(--radius); font-size:0.9rem; box-shadow:0 8px 24px rgba(0,0,0,0.3); animation:fadeIn 0.3s ease; z-index:1000; }
       `}</style>
 
       <Navbar />
@@ -200,8 +213,8 @@ export default function RecruiterDashboard() {
         </div>
 
         <div className="mobile-tabs" style={{display:"none",marginBottom:"1rem",borderRadius:"var(--radius)",overflow:"hidden",border:"1px solid rgba(255,255,255,0.08)"}}>
-          <button onClick={()=>setShowApplicants(false)} style={{flex:1,padding:"0.75rem",border:"none",cursor:"pointer",background:!showApplicants?"rgba(108,99,255,0.2)":"rgba(255,255,255,0.03)",color:!showApplicants?"#c4c0ff":"var(--text2)",fontWeight:600,fontSize:"0.875rem"}}>My Jobs</button>
-          <button onClick={()=>setShowApplicants(true)} style={{flex:1,padding:"0.75rem",border:"none",cursor:"pointer",background:showApplicants?"rgba(108,99,255,0.2)":"rgba(255,255,255,0.03)",color:showApplicants?"#c4c0ff":"var(--text2)",fontWeight:600,fontSize:"0.875rem"}}>Applicants</button>
+          <button onClick={()=>setShowApplicants(false)} style={{flex:1,padding:"0.75rem",border:"none",cursor:"pointer",background:!showApplicants?"rgba(108,99,255,0.15)":"rgba(255,255,255,0.03)",color:!showApplicants?"#c4c0ff":"var(--text2)",fontWeight:600,fontSize:"0.875rem"}}>My Jobs</button>
+          <button onClick={()=>setShowApplicants(true)} style={{flex:1,padding:"0.75rem",border:"none",cursor:"pointer",background:showApplicants?"rgba(108,99,255,0.15)":"rgba(255,255,255,0.03)",color:showApplicants?"#c4c0ff":"var(--text2)",fontWeight:600,fontSize:"0.875rem"}}>Applicants</button>
         </div>
 
         <div className="dashboard-grid" style={{display:"grid",gridTemplateColumns:"1fr 1.6fr",gap:"1.5rem",alignItems:"start"}}>
@@ -213,8 +226,8 @@ export default function RecruiterDashboard() {
             </div>
             <div style={{padding:"1rem"}}>
               {jobs.length===0
-                ? <div style={{padding:"2rem",textAlign:"center",color:"var(--text2)",fontSize:"0.875rem"}}>No jobs posted yet.<br/>Click "Post a Job" to start.</div>
-                : jobs.map(job=>(
+                ?<div style={{padding:"2rem",textAlign:"center",color:"var(--text2)",fontSize:"0.875rem"}}>No jobs posted yet.<br/>Click "Post a Job" to start.</div>
+                :jobs.map(job=>(
                 <div key={job.id} onClick={()=>handleSelectJob(job)} className={`r-job-item ${selectedJob?.id===job.id?"selected":""}`}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:"0.5rem"}}>
                     <div style={{minWidth:0}}>
@@ -225,12 +238,12 @@ export default function RecruiterDashboard() {
                       </div>
                     </div>
                     <div style={{display:"flex",gap:"0.4rem",flexShrink:0}}>
-                      <button onClick={e=>handleOpenEdit(e,job)} style={{padding:"0.3rem 0.65rem",background:"rgba(108,99,255,0.12)",color:"#a09aff",border:"1px solid rgba(108,99,255,0.28)",borderRadius:"6px",fontSize:"0.75rem",cursor:"pointer",transition:"all 0.2s ease"}}
-                        onMouseEnter={e=>{e.currentTarget.style.background="rgba(108,99,255,0.25)";e.currentTarget.style.color="#fff";}}
-                        onMouseLeave={e=>{e.currentTarget.style.background="rgba(108,99,255,0.12)";e.currentTarget.style.color="#a09aff";}}>Edit</button>
-                      <button onClick={e=>handleDelete(e,job.id)} style={{padding:"0.3rem 0.65rem",background:"rgba(255,101,132,0.1)",color:"#ff6584",border:"1px solid rgba(255,101,132,0.25)",borderRadius:"6px",fontSize:"0.75rem",cursor:"pointer",transition:"all 0.2s ease"}}
-                        onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,101,132,0.22)";}}
-                        onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,101,132,0.1)";}}>Delete</button>
+                      <button onClick={e=>handleOpenEdit(e,job)} style={{padding:"0.3rem 0.65rem",background:"rgba(108,99,255,0.1)",color:"#a09aff",border:"1px solid rgba(108,99,255,0.25)",borderRadius:"6px",fontSize:"0.75rem",cursor:"pointer",backdropFilter:"blur(6px)",transition:"all 0.2s ease"}}
+                        onMouseEnter={e=>{e.currentTarget.style.background="rgba(108,99,255,0.22)";e.currentTarget.style.borderColor="rgba(108,99,255,0.5)";e.currentTarget.style.color="#fff";}}
+                        onMouseLeave={e=>{e.currentTarget.style.background="rgba(108,99,255,0.1)";e.currentTarget.style.borderColor="rgba(108,99,255,0.25)";e.currentTarget.style.color="#a09aff";}}>Edit</button>
+                      <button onClick={e=>handleDelete(e,job.id)} style={{padding:"0.3rem 0.65rem",background:"rgba(255,101,132,0.1)",color:"#ff6584",border:"1px solid rgba(255,101,132,0.25)",borderRadius:"6px",fontSize:"0.75rem",cursor:"pointer",backdropFilter:"blur(6px)",transition:"all 0.2s ease"}}
+                        onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,101,132,0.2)";e.currentTarget.style.borderColor="rgba(255,101,132,0.5)";}}
+                        onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,101,132,0.1)";e.currentTarget.style.borderColor="rgba(255,101,132,0.25)";}}>Delete</button>
                     </div>
                   </div>
                 </div>
@@ -244,30 +257,28 @@ export default function RecruiterDashboard() {
               {selectedJob&&<span style={{fontSize:"0.8rem",color:"var(--text2)",flexShrink:0}}>{applications.length} total</span>}
             </div>
             <div style={{padding:"1rem"}}>
-              {!selectedJob
-                ? <div style={{padding:"3rem",textAlign:"center",color:"var(--text2)",fontSize:"0.875rem"}}>👈 Click a job to see its applicants</div>
-                : applications.length===0
-                ? <div style={{padding:"3rem",textAlign:"center",color:"var(--text2)",fontSize:"0.875rem"}}>No applications yet for this job</div>
-                : applications.map(app=>(
+              {!selectedJob?<div style={{padding:"3rem",textAlign:"center",color:"var(--text2)",fontSize:"0.875rem"}}>👈 Click a job to see its applicants</div>
+              :applications.length===0?<div style={{padding:"3rem",textAlign:"center",color:"var(--text2)",fontSize:"0.875rem"}}>No applications yet for this job</div>
+              :applications.map(app=>(
                 <div key={app.id} className="r-app-card">
                   <div style={{fontWeight:700,marginBottom:"0.15rem"}}>{app.candidate?.name||"Candidate"}</div>
                   <div style={{color:"var(--text2)",fontSize:"0.8rem",marginBottom:"0.75rem"}}>{app.candidate?.email}</div>
-                  {app.resumeUrl&&<a href={app.resumeUrl} target="_blank" rel="noopener noreferrer" style={{display:"inline-flex",alignItems:"center",gap:"0.4rem",padding:"0.3rem 0.85rem",marginBottom:"0.75rem",background:"rgba(108,99,255,0.1)",color:"#a09aff",border:"1px solid rgba(108,99,255,0.28)",borderRadius:"20px",fontSize:"0.78rem",fontWeight:600,textDecoration:"none"}}>📄 View Resume</a>}
+                  {app.resumeUrl&&<a href={app.resumeUrl} target="_blank" rel="noopener noreferrer" style={{display:"inline-flex",alignItems:"center",gap:"0.4rem",padding:"0.3rem 0.85rem",marginBottom:"0.75rem",background:"rgba(108,99,255,0.1)",color:"#a09aff",border:"1px solid rgba(108,99,255,0.25)",borderRadius:"20px",fontSize:"0.78rem",fontWeight:600,textDecoration:"none",backdropFilter:"blur(6px)"}}>📄 View Resume</a>}
                   <div style={{display:"flex",gap:"0.4rem",flexWrap:"wrap",marginBottom:"0.75rem"}}>
                     {["APPLIED","SHORTLISTED","REJECTED"].map(st=>(
-                      <button key={st} onClick={()=>handleStatus(app.id,st)} style={{padding:"0.3rem 0.75rem",borderRadius:"20px",cursor:"pointer",border:`1px solid ${STATUS_COLORS[st]}38`,background:app.status===st?`${STATUS_COLORS[st]}1a`:"rgba(255,255,255,0.04)",color:app.status===st?STATUS_COLORS[st]:"var(--text2)",fontSize:"0.72rem",fontWeight:600,transition:"all 0.2s ease"}}>{st}</button>
+                      <button key={st} onClick={()=>handleStatus(app.id,st)} style={{padding:"0.3rem 0.75rem",borderRadius:"20px",cursor:"pointer",border:`1px solid ${STATUS_COLORS[st]}35`,background:app.status===st?`${STATUS_COLORS[st]}18`:"rgba(255,255,255,0.04)",color:app.status===st?STATUS_COLORS[st]:"var(--text2)",fontSize:"0.72rem",fontWeight:600,transition:"all 0.2s ease",backdropFilter:"blur(6px)"}}>{st}</button>
                     ))}
                   </div>
                   <div style={{display:"flex",gap:"0.5rem",flexWrap:"wrap"}}>
-                    <button onClick={()=>setInterviewModal(app.id)} style={{padding:"0.35rem 0.85rem",borderRadius:"var(--radius)",background:"rgba(67,233,123,0.1)",color:"#43e97b",border:"1px solid rgba(67,233,123,0.28)",fontSize:"0.78rem",fontWeight:600,cursor:"pointer",transition:"all 0.2s ease"}}
-                      onMouseEnter={e=>{e.currentTarget.style.background="rgba(67,233,123,0.2)";e.currentTarget.style.borderColor="rgba(67,233,123,0.5)";e.currentTarget.style.boxShadow="0 4px 14px rgba(67,233,123,0.2)";}}
-                      onMouseLeave={e=>{e.currentTarget.style.background="rgba(67,233,123,0.1)";e.currentTarget.style.borderColor="rgba(67,233,123,0.28)";e.currentTarget.style.boxShadow="none";}}>📅 Schedule Interview</button>
-                    <button onClick={()=>setContactModal(app.id)} style={{padding:"0.35rem 0.85rem",borderRadius:"var(--radius)",background:"rgba(245,158,11,0.1)",color:"#f59e0b",border:"1px solid rgba(245,158,11,0.28)",fontSize:"0.78rem",fontWeight:600,cursor:"pointer",transition:"all 0.2s ease"}}
-                      onMouseEnter={e=>{e.currentTarget.style.background="rgba(245,158,11,0.2)";e.currentTarget.style.borderColor="rgba(245,158,11,0.5)";e.currentTarget.style.boxShadow="0 4px 14px rgba(245,158,11,0.2)";}}
-                      onMouseLeave={e=>{e.currentTarget.style.background="rgba(245,158,11,0.1)";e.currentTarget.style.borderColor="rgba(245,158,11,0.28)";e.currentTarget.style.boxShadow="none";}}>✉️ Contact</button>
+                    <button onClick={()=>setInterviewModal(app.id)} style={{padding:"0.35rem 0.85rem",borderRadius:"var(--radius)",background:"rgba(67,233,123,0.08)",color:"#43e97b",border:"1px solid rgba(67,233,123,0.22)",fontSize:"0.78rem",fontWeight:600,cursor:"pointer",backdropFilter:"blur(6px)",transition:"all 0.2s ease"}}
+                      onMouseEnter={e=>{e.currentTarget.style.background="rgba(67,233,123,0.18)";e.currentTarget.style.borderColor="rgba(67,233,123,0.5)";e.currentTarget.style.color="#fff";e.currentTarget.style.boxShadow="0 4px 12px rgba(67,233,123,0.12)";}}
+                      onMouseLeave={e=>{e.currentTarget.style.background="rgba(67,233,123,0.08)";e.currentTarget.style.borderColor="rgba(67,233,123,0.22)";e.currentTarget.style.color="#43e97b";e.currentTarget.style.boxShadow="none";}}>📅 Schedule Interview</button>
+                    <button onClick={()=>setContactModal(app.id)} style={{padding:"0.35rem 0.85rem",borderRadius:"var(--radius)",background:"rgba(245,158,11,0.08)",color:"#f59e0b",border:"1px solid rgba(245,158,11,0.22)",fontSize:"0.78rem",fontWeight:600,cursor:"pointer",backdropFilter:"blur(6px)",transition:"all 0.2s ease"}}
+                      onMouseEnter={e=>{e.currentTarget.style.background="rgba(245,158,11,0.18)";e.currentTarget.style.borderColor="rgba(245,158,11,0.5)";e.currentTarget.style.color="#fff";e.currentTarget.style.boxShadow="0 4px 12px rgba(245,158,11,0.12)";}}
+                      onMouseLeave={e=>{e.currentTarget.style.background="rgba(245,158,11,0.08)";e.currentTarget.style.borderColor="rgba(245,158,11,0.22)";e.currentTarget.style.color="#f59e0b";e.currentTarget.style.boxShadow="none";}}>✉️ Contact</button>
                   </div>
                   {app.status==="INTERVIEW_SCHEDULED"&&app.interviewScheduledAt&&(
-                    <div style={{marginTop:"0.75rem",padding:"0.6rem 0.85rem",background:"rgba(67,233,123,0.08)",border:"1px solid rgba(67,233,123,0.2)",borderRadius:"var(--radius)",fontSize:"0.8rem",color:"#43e97b"}}>
+                    <div style={{marginTop:"0.75rem",padding:"0.6rem 0.85rem",background:"rgba(67,233,123,0.08)",border:"1px solid rgba(67,233,123,0.2)",borderRadius:"var(--radius)",fontSize:"0.8rem",color:"#43e97b",backdropFilter:"blur(6px)"}}>
                       📅 {app.interviewScheduledAt.replace('T',' ').slice(0,16)}
                       {app.interviewDetails&&<div style={{color:"var(--text2)",marginTop:"0.2rem"}}>{app.interviewDetails}</div>}
                     </div>
