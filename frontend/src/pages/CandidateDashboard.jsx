@@ -14,18 +14,14 @@ export default function CandidateDashboard() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState("");
 
-  useEffect(() => {
-    fetchApplications();
-  }, []);
+  useEffect(() => { fetchApplications(); }, []);
 
-  // ✅ CHANGE 1: Extracted to reusable function so we can refresh after withdraw
   const fetchApplications = () => {
     getMyApplications()
       .then(res => { setApplications(res.data); setLoading(false); })
       .catch(() => setLoading(false));
   };
 
-  // ✅ CHANGE 2: Withdraw handler
   const handleWithdraw = async (appId) => {
     if (!window.confirm("Are you sure you want to withdraw this application?")) return;
     try {
@@ -48,6 +44,82 @@ export default function CandidateDashboard() {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-card-candidate {
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.08);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border-radius: var(--radius-lg);
+          padding: clamp(0.75rem, 3vw, 1.5rem);
+          transition: all 0.25s ease;
+        }
+        .stat-card-candidate:hover {
+          background: rgba(255,255,255,0.07);
+          transform: translateY(-2px);
+        }
+
+        .app-card {
+          padding: 1rem 1.25rem;
+          border-radius: var(--radius);
+          margin-bottom: 0.75rem;
+          border: 1px solid rgba(255,255,255,0.08);
+          background: rgba(255,255,255,0.03);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          transition: all 0.25s ease;
+          animation: fadeIn 0.3s ease;
+        }
+        .app-card:hover {
+          border-color: rgba(108,99,255,0.35);
+          background: rgba(108,99,255,0.05);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 16px rgba(108,99,255,0.08);
+        }
+
+        .btn-withdraw {
+          margin-top: 0.75rem;
+          padding: 0.3rem 0.85rem;
+          background: rgba(255,101,132,0.08);
+          color: #ff6584;
+          border: 1px solid rgba(255,101,132,0.22);
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          cursor: pointer;
+          backdrop-filter: blur(8px);
+          transition: all 0.2s ease;
+        }
+        .btn-withdraw:hover {
+          background: rgba(255,101,132,0.18);
+          border-color: rgba(255,101,132,0.45);
+          color: #fff;
+          box-shadow: 0 3px 12px rgba(255,101,132,0.18);
+        }
+
+        .toast-glass {
+          position: fixed;
+          bottom: 2rem; right: 1rem; left: 1rem;
+          max-width: 400px; margin: 0 auto;
+          background: rgba(255,255,255,0.07);
+          border: 1px solid rgba(255,255,255,0.12);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          padding: 1rem 1.5rem;
+          border-radius: var(--radius);
+          font-size: 0.9rem;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+          animation: fadeIn 0.3s ease;
+          z-index: 1000;
+        }
+      `}</style>
+
       <Navbar />
       <main style={{ maxWidth: "900px", margin: "0 auto", padding: "clamp(1rem, 4vw, 2.5rem) clamp(1rem, 3vw, 2rem)" }}>
 
@@ -65,11 +137,8 @@ export default function CandidateDashboard() {
             { label: "Interview",   val: counts.INTERVIEW_SCHEDULED, color: "#43e97b" },
             { label: "Rejected",    val: counts.REJECTED,            color: "#ff6584" },
           ].map((s, i) => (
-            <div key={i} style={{
-              background: "var(--surface)", border: "1px solid var(--border)",
-              borderRadius: "var(--radius-lg)", padding: "clamp(0.75rem, 3vw, 1.5rem)",
-              borderTop: `3px solid ${s.color}`,
-            }}>
+            <div key={i} className="stat-card-candidate"
+              style={{ borderTop: `3px solid ${s.color}` }}>
               <div style={{ fontSize: "clamp(1.5rem, 5vw, 2.5rem)", fontWeight: 800, fontFamily: "var(--font-head)", color: s.color }}>{s.val}</div>
               <div style={{ color: "var(--text2)", fontSize: "clamp(0.65rem, 2vw, 0.875rem)", marginTop: "0.25rem" }}>{s.label}</div>
             </div>
@@ -77,8 +146,19 @@ export default function CandidateDashboard() {
         </div>
 
         {/* Applications List */}
-        <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", overflow: "hidden" }}>
-          <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          borderRadius: "var(--radius-lg)",
+          overflow: "hidden",
+        }}>
+          <div style={{
+            padding: "1.25rem 1.5rem",
+            borderBottom: "1px solid rgba(255,255,255,0.07)",
+            display: "flex", justifyContent: "space-between", alignItems: "center",
+          }}>
             <span style={{ fontFamily: "var(--font-head)", fontWeight: 700 }}>Application History</span>
             <span style={{ fontSize: "0.8rem", color: "var(--text2)" }}>{applications.length} total</span>
           </div>
@@ -95,14 +175,7 @@ export default function CandidateDashboard() {
                 <p style={{ marginTop: "0.5rem", fontSize: "0.875rem" }}>Browse jobs and start applying!</p>
               </div>
             ) : applications.map(app => (
-              <div key={app.id}
-                onMouseEnter={e => e.currentTarget.style.borderColor = "var(--accent)"}
-                onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}
-                style={{
-                  padding: "1rem 1.25rem", borderRadius: "var(--radius)", marginBottom: "0.75rem",
-                  border: "1px solid var(--border)", background: "var(--surface2)",
-                  transition: "var(--transition)", animation: "fadeIn 0.3s ease",
-                }}>
+              <div key={app.id} className="app-card">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "0.75rem", flexWrap: "wrap" }}>
                   <div style={{ minWidth: 0, flex: 1 }}>
                     <div style={{ fontWeight: 700, fontSize: "1rem", fontFamily: "var(--font-head)", marginBottom: "0.3rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -118,7 +191,9 @@ export default function CandidateDashboard() {
                     {app.status === "INTERVIEW_SCHEDULED" && app.interviewScheduledAt && (
                       <div style={{
                         marginTop: "0.75rem", padding: "0.75rem 1rem",
-                        background: "rgba(67,233,123,0.08)", border: "1px solid rgba(67,233,123,0.2)",
+                        background: "rgba(67,233,123,0.06)",
+                        border: "1px solid rgba(67,233,123,0.18)",
+                        backdropFilter: "blur(8px)",
                         borderRadius: "var(--radius)", fontSize: "0.82rem",
                       }}>
                         <div style={{ color: "#43e97b", fontWeight: 700, marginBottom: "0.25rem" }}>
@@ -130,21 +205,8 @@ export default function CandidateDashboard() {
                       </div>
                     )}
 
-                    {/* ✅ CHANGE 3: Withdraw button — only show for APPLIED status */}
                     {app.status === "APPLIED" && (
-                      <button
-                        onClick={() => handleWithdraw(app.id)}
-                        style={{
-                          marginTop: "0.75rem",
-                          padding: "0.3rem 0.85rem",
-                          background: "rgba(255,101,132,0.1)",
-                          color: "#ff6584",
-                          border: "1px solid rgba(255,101,132,0.3)",
-                          borderRadius: "20px",
-                          fontSize: "0.75rem",
-                          fontWeight: 600,
-                          cursor: "pointer",
-                        }}>
+                      <button onClick={() => handleWithdraw(app.id)} className="btn-withdraw">
                         ✕ Withdraw
                       </button>
                     )}
@@ -152,10 +214,12 @@ export default function CandidateDashboard() {
 
                   <div style={{
                     padding: "0.4rem 1rem", borderRadius: "20px",
-                    background: STATUS_CONFIG[app.status]?.bg || "var(--surface)",
+                    background: STATUS_CONFIG[app.status]?.bg || "rgba(255,255,255,0.05)",
                     color: STATUS_CONFIG[app.status]?.color || "var(--text2)",
                     fontWeight: 700, fontSize: "0.78rem", letterSpacing: "0.5px",
                     textTransform: "uppercase", whiteSpace: "nowrap", flexShrink: 0,
+                    backdropFilter: "blur(8px)",
+                    border: `1px solid ${STATUS_CONFIG[app.status]?.color}25` || "transparent",
                   }}>
                     {STATUS_CONFIG[app.status]?.icon} {app.status?.replace("_", " ")}
                   </div>
@@ -166,16 +230,7 @@ export default function CandidateDashboard() {
         </div>
       </main>
 
-      {/* Toast */}
-      {toast && (
-        <div style={{
-          position: "fixed", bottom: "2rem", right: "1rem", left: "1rem",
-          maxWidth: "400px", margin: "0 auto",
-          background: "var(--surface2)", border: "1px solid var(--border)",
-          padding: "1rem 1.5rem", borderRadius: "var(--radius)",
-          fontSize: "0.9rem", boxShadow: "var(--shadow)", animation: "fadeIn 0.3s ease", zIndex: 1000,
-        }}>{toast}</div>
-      )}
+      {toast && <div className="toast-glass">{toast}</div>}
     </div>
   );
 }
