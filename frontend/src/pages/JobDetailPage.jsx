@@ -61,162 +61,140 @@ export default function JobDetailPage() {
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
         }
-
         .btn-back {
-          background: none;
-          border: none;
-          color: var(--accent);
-          cursor: pointer;
-          font-size: 0.9rem;
-          margin-bottom: 1.5rem;
-          padding: 0;
-          display: flex;
-          align-items: center;
-          gap: 0.4rem;
+          background: none; border: none; color: var(--accent);
+          cursor: pointer; font-size: 0.9rem; margin-bottom: 1.5rem;
+          padding: 0; display: flex; align-items: center; gap: 0.4rem;
           transition: all 0.2s ease;
         }
-        .btn-back:hover {
-          opacity: 0.75;
-          transform: translateX(-2px);
-        }
+        .btn-back:hover { opacity: 0.75; transform: translateX(-2px); }
 
-        .job-card {
+        .job-detail-card {
           background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.09);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255,255,255,0.1);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
           border-radius: var(--radius-lg);
           padding: clamp(1.5rem, 4vw, 2.5rem);
           margin-bottom: 1.5rem;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.2);
         }
-
         .meta-pill {
-          background: rgba(255,255,255,0.05);
+          background: rgba(255,255,255,0.06);
           border: 1px solid rgba(255,255,255,0.1);
           backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
           padding: 0.4rem 1rem;
           border-radius: 20px;
           font-size: 0.85rem;
           color: var(--text2);
         }
-
+        .salary-tag {
+          background: rgba(67,233,123,0.1);
+          border: 1px solid rgba(67,233,123,0.25);
+          backdrop-filter: blur(8px);
+          color: #43e97b;
+          padding: 0.5rem 1.2rem;
+          border-radius: 20px;
+          font-size: 1rem;
+          font-weight: 700;
+          white-space: nowrap;
+        }
         .btn-apply-now {
-          width: 100%;
-          padding: 0.85rem;
-          border: 1px solid rgba(108,99,255,0.4);
+          width: 100%; padding: 0.85rem;
+          border: 1px solid rgba(108,99,255,0.45);
           background: rgba(108,99,255,0.18);
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
           color: #d0cdff;
           border-radius: var(--radius);
-          font-weight: 700;
-          font-size: 1rem;
+          font-weight: 700; font-size: 1rem;
           font-family: var(--font-head);
           cursor: pointer;
           transition: all 0.25s ease;
           box-shadow: 0 2px 12px rgba(108,99,255,0.15);
         }
         .btn-apply-now:hover {
-          background: rgba(108,99,255,0.28);
-          border-color: rgba(108,99,255,0.65);
+          background: rgba(108,99,255,0.3);
+          border-color: rgba(108,99,255,0.7);
           color: #fff;
           transform: translateY(-2px);
-          box-shadow: 0 6px 22px rgba(108,99,255,0.25);
+          box-shadow: 0 6px 24px rgba(108,99,255,0.28);
         }
-
-        /* Modal */
         .apply-modal {
-          background: rgba(18,18,28,0.88);
-          border: 1px solid rgba(255,255,255,0.1);
-          backdrop-filter: blur(28px);
-          -webkit-backdrop-filter: blur(28px);
+          background: rgba(12,12,20,0.9);
+          border: 1px solid rgba(255,255,255,0.12);
+          backdrop-filter: blur(32px);
+          -webkit-backdrop-filter: blur(32px);
           border-radius: var(--radius-lg);
           padding: 2rem;
-          width: 100%;
-          max-width: 480px;
+          width: 100%; max-width: 480px;
           animation: fadeIn 0.3s ease;
-          box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(108,99,255,0.1);
+          box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(108,99,255,0.12);
         }
-
-        /* Resume upload zone — keep the dashed colored border */
         .upload-zone {
           border-radius: var(--radius);
-          padding: 2rem;
-          text-align: center;
-          cursor: pointer;
-          margin-bottom: 1.5rem;
+          padding: 2rem; text-align: center;
+          cursor: pointer; margin-bottom: 1.5rem;
           transition: all 0.25s ease;
           backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
         }
         .upload-zone:hover {
-          background: rgba(108,99,255,0.08) !important;
+          background: rgba(108,99,255,0.1) !important;
         }
-
         .btn-modal-cancel {
           flex: 1; padding: 0.75rem;
           background: rgba(255,255,255,0.05);
           color: var(--text2);
           border: 1px solid rgba(255,255,255,0.1);
           border-radius: var(--radius);
-          cursor: pointer;
-          font-weight: 600;
+          cursor: pointer; font-weight: 600;
           backdrop-filter: blur(8px);
           transition: all 0.25s ease;
         }
         .btn-modal-cancel:hover {
-          background: rgba(255,255,255,0.09);
+          background: rgba(255,255,255,0.1);
           color: var(--text);
         }
-
-        .btn-modal-submit-active {
+        .btn-submit-active {
           flex: 2; padding: 0.75rem;
-          border: 1px solid rgba(108,99,255,0.4);
+          border: 1px solid rgba(108,99,255,0.45);
           background: rgba(108,99,255,0.2);
           backdrop-filter: blur(12px);
           color: #d0cdff;
           border-radius: var(--radius);
-          font-weight: 700;
-          font-family: var(--font-head);
-          cursor: pointer;
-          transition: all 0.25s ease;
+          font-weight: 700; font-family: var(--font-head);
+          cursor: pointer; transition: all 0.25s ease;
         }
-        .btn-modal-submit-active:hover:not(:disabled) {
-          background: rgba(108,99,255,0.32);
-          border-color: rgba(108,99,255,0.7);
+        .btn-submit-active:hover:not(:disabled) {
+          background: rgba(108,99,255,0.35);
+          border-color: rgba(108,99,255,0.75);
           color: #fff;
-          box-shadow: 0 4px 18px rgba(108,99,255,0.25);
+          box-shadow: 0 4px 18px rgba(108,99,255,0.28);
         }
-        .btn-modal-submit-active:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-        .btn-modal-submit-inactive {
+        .btn-submit-active:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-submit-inactive {
           flex: 2; padding: 0.75rem;
           background: rgba(255,255,255,0.04);
           color: var(--text2);
           border: 1px solid rgba(255,255,255,0.08);
           border-radius: var(--radius);
-          font-weight: 700;
-          font-family: var(--font-head);
+          font-weight: 700; font-family: var(--font-head);
           cursor: not-allowed;
           backdrop-filter: blur(8px);
         }
-
         .toast-glass {
-          position: fixed;
-          bottom: 2rem; right: 1rem; left: 1rem;
+          position: fixed; bottom: 2rem; right: 1rem; left: 1rem;
           max-width: 400px; margin: 0 auto;
-          background: rgba(255,255,255,0.07);
-          border: 1px solid rgba(255,255,255,0.12);
+          background: rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.14);
           backdrop-filter: blur(20px);
           -webkit-backdrop-filter: blur(20px);
-          padding: 1rem 1.5rem;
-          border-radius: var(--radius);
+          padding: 1rem 1.5rem; border-radius: var(--radius);
           font-size: 0.9rem;
           box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-          animation: fadeIn 0.3s ease;
-          z-index: 1000;
+          animation: fadeIn 0.3s ease; z-index: 1000;
         }
       `}</style>
 
@@ -225,8 +203,7 @@ export default function JobDetailPage() {
 
         <button onClick={() => navigate("/jobs")} className="btn-back">← Back to Jobs</button>
 
-        {/* Job Card */}
-        <div className="job-card">
+        <div className="job-detail-card">
 
           {/* Header */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "1rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
@@ -234,18 +211,7 @@ export default function JobDetailPage() {
               <h1 style={{ fontSize: "clamp(1.4rem, 4vw, 2rem)", marginBottom: "0.4rem", fontFamily: "var(--font-head)" }}>{job.title}</h1>
               <div style={{ color: "var(--accent)", fontWeight: 600, fontSize: "1rem" }}>{job.recruiter?.name || "Company"}</div>
             </div>
-            {job.salary && (
-              <span style={{
-                background: "rgba(67,233,123,0.1)",
-                border: "1px solid rgba(67,233,123,0.25)",
-                backdropFilter: "blur(8px)",
-                color: "#43e97b",
-                padding: "0.5rem 1.2rem", borderRadius: "20px",
-                fontSize: "1rem", fontWeight: 700, whiteSpace: "nowrap",
-              }}>
-                ₹{(job.salary / 100000).toFixed(1)}L / year
-              </span>
-            )}
+            {job.salary && <span className="salary-tag">₹{(job.salary / 100000).toFixed(1)}L / year</span>}
           </div>
 
           {/* Meta Pills */}
@@ -255,7 +221,7 @@ export default function JobDetailPage() {
             {job.postedDate && <span className="meta-pill">📅 Posted {new Date(job.postedDate).toLocaleDateString()}</span>}
           </div>
 
-          <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", marginBottom: "2rem" }} />
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", marginBottom: "2rem" }} />
 
           {/* Description */}
           <div style={{ marginBottom: "2rem" }}>
@@ -265,7 +231,7 @@ export default function JobDetailPage() {
             </p>
           </div>
 
-          {/* Apply Button */}
+          {/* Apply */}
           {role === "CANDIDATE" && (
             applied ? (
               <div style={{
@@ -273,15 +239,10 @@ export default function JobDetailPage() {
                 background: "rgba(67,233,123,0.08)", color: "#43e97b",
                 border: "1px solid rgba(67,233,123,0.25)",
                 backdropFilter: "blur(8px)",
-                borderRadius: "var(--radius)",
-                fontWeight: 600, fontSize: "1rem",
-              }}>
-                ✓ Application Submitted!
-              </div>
+                borderRadius: "var(--radius)", fontWeight: 600, fontSize: "1rem",
+              }}>✓ Application Submitted!</div>
             ) : (
-              <button onClick={() => setShowApplyModal(true)} className="btn-apply-now">
-                Apply Now
-              </button>
+              <button onClick={() => setShowApplyModal(true)} className="btn-apply-now">Apply Now</button>
             )
           )}
         </div>
@@ -292,25 +253,21 @@ export default function JobDetailPage() {
       {/* Apply Modal */}
       {showApplyModal && (
         <div onClick={() => setShowApplyModal(false)} style={{
-          position: "fixed", inset: 0,
-          background: "rgba(0,0,0,0.65)",
-          backdropFilter: "blur(6px)",
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)",
+          backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
           display: "flex", alignItems: "center", justifyContent: "center",
           zIndex: 200, padding: "1rem",
         }}>
           <div onClick={e => e.stopPropagation()} className="apply-modal">
             <h2 style={{ marginBottom: "0.5rem", fontFamily: "var(--font-head)" }}>Apply for {job.title}</h2>
             <p style={{ color: "var(--text2)", fontSize: "0.875rem", marginBottom: "1.5rem" }}>
-              Resume is <strong style={{ color: "#ff6584" }}>required</strong> to apply for this position.
+              Resume is <strong style={{ color: "#ff6584" }}>required</strong> to apply.
             </p>
 
-            {/* Resume Upload — colored dashed border preserved */}
-            <div
-              onClick={() => fileRef.current.click()}
-              className="upload-zone"
+            <div onClick={() => fileRef.current.click()} className="upload-zone"
               style={{
-                border: `2px dashed ${resume ? "var(--accent)" : "rgba(255,255,255,0.2)"}`,
-                background: resume ? "rgba(108,99,255,0.08)" : "rgba(255,255,255,0.03)",
+                border: `2px dashed ${resume ? "#6c63ff" : "rgba(255,255,255,0.22)"}`,
+                background: resume ? "rgba(108,99,255,0.1)" : "rgba(255,255,255,0.03)",
               }}>
               <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>📄</div>
               {resume ? (
@@ -330,15 +287,10 @@ export default function JobDetailPage() {
 
             <div style={{ display: "flex", gap: "0.75rem" }}>
               <button onClick={() => setShowApplyModal(false)} className="btn-modal-cancel">Cancel</button>
-              {resume ? (
-                <button onClick={handleApply} disabled={applying} className="btn-modal-submit-active">
-                  {applying ? "Submitting..." : "Submit Application"}
-                </button>
-              ) : (
-                <button disabled className="btn-modal-submit-inactive">
-                  Upload Resume First
-                </button>
-              )}
+              {resume
+                ? <button onClick={handleApply} disabled={applying} className="btn-submit-active">{applying ? "Submitting..." : "Submit Application"}</button>
+                : <button disabled className="btn-submit-inactive">Upload Resume First</button>
+              }
             </div>
           </div>
         </div>
