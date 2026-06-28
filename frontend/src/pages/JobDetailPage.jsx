@@ -26,7 +26,6 @@ export default function JobDetailPage() {
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
 
   const handleApply = async () => {
-    // ✅ CHANGE 1: Resume is now mandatory
     if (!resume) return showToast("❌ Please upload your resume before applying");
     setApplying(true);
     try {
@@ -56,17 +55,178 @@ export default function JobDetailPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", flexDirection: "column" }}>
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-back {
+          background: none;
+          border: none;
+          color: var(--accent);
+          cursor: pointer;
+          font-size: 0.9rem;
+          margin-bottom: 1.5rem;
+          padding: 0;
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          transition: all 0.2s ease;
+        }
+        .btn-back:hover {
+          opacity: 0.75;
+          transform: translateX(-2px);
+        }
+
+        .job-card {
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.09);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border-radius: var(--radius-lg);
+          padding: clamp(1.5rem, 4vw, 2.5rem);
+          margin-bottom: 1.5rem;
+        }
+
+        .meta-pill {
+          background: rgba(255,255,255,0.05);
+          border: 1px solid rgba(255,255,255,0.1);
+          backdrop-filter: blur(8px);
+          padding: 0.4rem 1rem;
+          border-radius: 20px;
+          font-size: 0.85rem;
+          color: var(--text2);
+        }
+
+        .btn-apply-now {
+          width: 100%;
+          padding: 0.85rem;
+          border: 1px solid rgba(108,99,255,0.4);
+          background: rgba(108,99,255,0.18);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          color: #d0cdff;
+          border-radius: var(--radius);
+          font-weight: 700;
+          font-size: 1rem;
+          font-family: var(--font-head);
+          cursor: pointer;
+          transition: all 0.25s ease;
+          box-shadow: 0 2px 12px rgba(108,99,255,0.15);
+        }
+        .btn-apply-now:hover {
+          background: rgba(108,99,255,0.28);
+          border-color: rgba(108,99,255,0.65);
+          color: #fff;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 22px rgba(108,99,255,0.25);
+        }
+
+        /* Modal */
+        .apply-modal {
+          background: rgba(18,18,28,0.88);
+          border: 1px solid rgba(255,255,255,0.1);
+          backdrop-filter: blur(28px);
+          -webkit-backdrop-filter: blur(28px);
+          border-radius: var(--radius-lg);
+          padding: 2rem;
+          width: 100%;
+          max-width: 480px;
+          animation: fadeIn 0.3s ease;
+          box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(108,99,255,0.1);
+        }
+
+        /* Resume upload zone — keep the dashed colored border */
+        .upload-zone {
+          border-radius: var(--radius);
+          padding: 2rem;
+          text-align: center;
+          cursor: pointer;
+          margin-bottom: 1.5rem;
+          transition: all 0.25s ease;
+          backdrop-filter: blur(8px);
+        }
+        .upload-zone:hover {
+          background: rgba(108,99,255,0.08) !important;
+        }
+
+        .btn-modal-cancel {
+          flex: 1; padding: 0.75rem;
+          background: rgba(255,255,255,0.05);
+          color: var(--text2);
+          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: var(--radius);
+          cursor: pointer;
+          font-weight: 600;
+          backdrop-filter: blur(8px);
+          transition: all 0.25s ease;
+        }
+        .btn-modal-cancel:hover {
+          background: rgba(255,255,255,0.09);
+          color: var(--text);
+        }
+
+        .btn-modal-submit-active {
+          flex: 2; padding: 0.75rem;
+          border: 1px solid rgba(108,99,255,0.4);
+          background: rgba(108,99,255,0.2);
+          backdrop-filter: blur(12px);
+          color: #d0cdff;
+          border-radius: var(--radius);
+          font-weight: 700;
+          font-family: var(--font-head);
+          cursor: pointer;
+          transition: all 0.25s ease;
+        }
+        .btn-modal-submit-active:hover:not(:disabled) {
+          background: rgba(108,99,255,0.32);
+          border-color: rgba(108,99,255,0.7);
+          color: #fff;
+          box-shadow: 0 4px 18px rgba(108,99,255,0.25);
+        }
+        .btn-modal-submit-active:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        .btn-modal-submit-inactive {
+          flex: 2; padding: 0.75rem;
+          background: rgba(255,255,255,0.04);
+          color: var(--text2);
+          border: 1px solid rgba(255,255,255,0.08);
+          border-radius: var(--radius);
+          font-weight: 700;
+          font-family: var(--font-head);
+          cursor: not-allowed;
+          backdrop-filter: blur(8px);
+        }
+
+        .toast-glass {
+          position: fixed;
+          bottom: 2rem; right: 1rem; left: 1rem;
+          max-width: 400px; margin: 0 auto;
+          background: rgba(255,255,255,0.07);
+          border: 1px solid rgba(255,255,255,0.12);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          padding: 1rem 1.5rem;
+          border-radius: var(--radius);
+          font-size: 0.9rem;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+          animation: fadeIn 0.3s ease;
+          z-index: 1000;
+        }
+      `}</style>
+
       <Navbar />
       <main style={{ flex: 1, maxWidth: "800px", width: "100%", margin: "0 auto", padding: "clamp(1rem, 4vw, 2.5rem) clamp(1rem, 3vw, 2rem)" }}>
 
-        {/* Back */}
-        <button onClick={() => navigate("/jobs")} style={{
-          background: "none", border: "none", color: "var(--accent)", cursor: "pointer",
-          fontSize: "0.9rem", marginBottom: "1.5rem", padding: 0, display: "flex", alignItems: "center", gap: "0.4rem"
-        }}>← Back to Jobs</button>
+        <button onClick={() => navigate("/jobs")} className="btn-back">← Back to Jobs</button>
 
         {/* Job Card */}
-        <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: "clamp(1.5rem, 4vw, 2.5rem)", marginBottom: "1.5rem" }}>
+        <div className="job-card">
 
           {/* Header */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "1rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
@@ -75,7 +235,14 @@ export default function JobDetailPage() {
               <div style={{ color: "var(--accent)", fontWeight: 600, fontSize: "1rem" }}>{job.recruiter?.name || "Company"}</div>
             </div>
             {job.salary && (
-              <span style={{ background: "rgba(67,233,123,0.12)", color: "#43e97b", padding: "0.5rem 1.2rem", borderRadius: "20px", fontSize: "1rem", fontWeight: 700, whiteSpace: "nowrap" }}>
+              <span style={{
+                background: "rgba(67,233,123,0.1)",
+                border: "1px solid rgba(67,233,123,0.25)",
+                backdropFilter: "blur(8px)",
+                color: "#43e97b",
+                padding: "0.5rem 1.2rem", borderRadius: "20px",
+                fontSize: "1rem", fontWeight: 700, whiteSpace: "nowrap",
+              }}>
                 ₹{(job.salary / 100000).toFixed(1)}L / year
               </span>
             )}
@@ -83,25 +250,12 @@ export default function JobDetailPage() {
 
           {/* Meta Pills */}
           <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "2rem" }}>
-            {job.location && (
-              <span style={{ background: "var(--surface2)", border: "1px solid var(--border)", padding: "0.4rem 1rem", borderRadius: "20px", fontSize: "0.85rem", color: "var(--text2)" }}>
-                📍 {job.location}
-              </span>
-            )}
-            {job.jobType && (
-              <span style={{ background: "var(--surface2)", border: "1px solid var(--border)", padding: "0.4rem 1rem", borderRadius: "20px", fontSize: "0.85rem", color: "var(--text2)" }}>
-                💼 {job.jobType}
-              </span>
-            )}
-            {job.postedDate && (
-              <span style={{ background: "var(--surface2)", border: "1px solid var(--border)", padding: "0.4rem 1rem", borderRadius: "20px", fontSize: "0.85rem", color: "var(--text2)" }}>
-                📅 Posted {new Date(job.postedDate).toLocaleDateString()}
-              </span>
-            )}
+            {job.location && <span className="meta-pill">📍 {job.location}</span>}
+            {job.jobType && <span className="meta-pill">💼 {job.jobType}</span>}
+            {job.postedDate && <span className="meta-pill">📅 Posted {new Date(job.postedDate).toLocaleDateString()}</span>}
           </div>
 
-          {/* Divider */}
-          <div style={{ borderTop: "1px solid var(--border)", marginBottom: "2rem" }} />
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", marginBottom: "2rem" }} />
 
           {/* Description */}
           <div style={{ marginBottom: "2rem" }}>
@@ -116,22 +270,16 @@ export default function JobDetailPage() {
             applied ? (
               <div style={{
                 padding: "1rem", textAlign: "center",
-                background: "rgba(67,233,123,0.1)", color: "#43e97b",
-                border: "1px solid rgba(67,233,123,0.3)", borderRadius: "var(--radius)",
+                background: "rgba(67,233,123,0.08)", color: "#43e97b",
+                border: "1px solid rgba(67,233,123,0.25)",
+                backdropFilter: "blur(8px)",
+                borderRadius: "var(--radius)",
                 fontWeight: 600, fontSize: "1rem",
               }}>
                 ✓ Application Submitted!
               </div>
             ) : (
-              <button onClick={() => setShowApplyModal(true)} style={{
-                width: "100%", padding: "0.85rem",
-                background: "linear-gradient(135deg, var(--accent), #8b85ff)",
-                color: "#fff", border: "none", borderRadius: "var(--radius)",
-                fontWeight: 700, fontSize: "1rem", fontFamily: "var(--font-head)",
-                cursor: "pointer", transition: "var(--transition)",
-              }}
-                onMouseEnter={e => e.target.style.opacity = "0.85"}
-                onMouseLeave={e => e.target.style.opacity = "1"}>
+              <button onClick={() => setShowApplyModal(true)} className="btn-apply-now">
                 Apply Now
               </button>
             )
@@ -144,29 +292,25 @@ export default function JobDetailPage() {
       {/* Apply Modal */}
       {showApplyModal && (
         <div onClick={() => setShowApplyModal(false)} style={{
-          position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)",
-          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: "1rem",
+          position: "fixed", inset: 0,
+          background: "rgba(0,0,0,0.65)",
+          backdropFilter: "blur(6px)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          zIndex: 200, padding: "1rem",
         }}>
-          <div onClick={e => e.stopPropagation()} style={{
-            background: "var(--surface)", border: "1px solid var(--border)",
-            borderRadius: "var(--radius-lg)", padding: "2rem",
-            width: "100%", maxWidth: "480px", animation: "fadeIn 0.3s ease",
-          }}>
+          <div onClick={e => e.stopPropagation()} className="apply-modal">
             <h2 style={{ marginBottom: "0.5rem", fontFamily: "var(--font-head)" }}>Apply for {job.title}</h2>
-
-            {/* ✅ CHANGE 2: Updated subtitle to make resume mandatory clear */}
             <p style={{ color: "var(--text2)", fontSize: "0.875rem", marginBottom: "1.5rem" }}>
               Resume is <strong style={{ color: "#ff6584" }}>required</strong> to apply for this position.
             </p>
 
-            {/* Resume Upload */}
+            {/* Resume Upload — colored dashed border preserved */}
             <div
               onClick={() => fileRef.current.click()}
+              className="upload-zone"
               style={{
-                border: `2px dashed ${resume ? "var(--accent)" : "var(--border)"}`,
-                borderRadius: "var(--radius)", padding: "2rem", textAlign: "center",
-                cursor: "pointer", marginBottom: "1.5rem", transition: "var(--transition)",
-                background: resume ? "rgba(108,99,255,0.05)" : "var(--surface2)",
+                border: `2px dashed ${resume ? "var(--accent)" : "rgba(255,255,255,0.2)"}`,
+                background: resume ? "rgba(108,99,255,0.08)" : "rgba(255,255,255,0.03)",
               }}>
               <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>📄</div>
               {resume ? (
@@ -185,41 +329,22 @@ export default function JobDetailPage() {
             </div>
 
             <div style={{ display: "flex", gap: "0.75rem" }}>
-              <button onClick={() => setShowApplyModal(false)} style={{
-                flex: 1, padding: "0.75rem", background: "var(--surface2)",
-                color: "var(--text2)", border: "1px solid var(--border)",
-                borderRadius: "var(--radius)", cursor: "pointer", fontWeight: 600,
-              }}>Cancel</button>
-
-              {/* ✅ CHANGE 3: Button disabled and greyed out until resume uploaded */}
-              <button onClick={handleApply} disabled={applying || !resume} style={{
-                flex: 2, padding: "0.75rem",
-                background: resume
-                  ? "linear-gradient(135deg, var(--accent), #8b85ff)"
-                  : "var(--surface2)",
-                color: resume ? "#fff" : "var(--text2)",
-                border: "none", borderRadius: "var(--radius)",
-                fontWeight: 700, fontFamily: "var(--font-head)",
-                cursor: resume ? "pointer" : "not-allowed",
-                transition: "var(--transition)",
-              }}>
-                {applying ? "Submitting..." : resume ? "Submit Application" : "Upload Resume First"}
-              </button>
+              <button onClick={() => setShowApplyModal(false)} className="btn-modal-cancel">Cancel</button>
+              {resume ? (
+                <button onClick={handleApply} disabled={applying} className="btn-modal-submit-active">
+                  {applying ? "Submitting..." : "Submit Application"}
+                </button>
+              ) : (
+                <button disabled className="btn-modal-submit-inactive">
+                  Upload Resume First
+                </button>
+              )}
             </div>
           </div>
         </div>
       )}
 
-      {/* Toast */}
-      {toast && (
-        <div style={{
-          position: "fixed", bottom: "2rem", right: "1rem", left: "1rem",
-          maxWidth: "400px", margin: "0 auto",
-          background: "var(--surface2)", border: "1px solid var(--border)",
-          padding: "1rem 1.5rem", borderRadius: "var(--radius)",
-          fontSize: "0.9rem", boxShadow: "var(--shadow)", animation: "fadeIn 0.3s ease", zIndex: 1000,
-        }}>{toast}</div>
-      )}
+      {toast && <div className="toast-glass">{toast}</div>}
     </div>
   );
 }
