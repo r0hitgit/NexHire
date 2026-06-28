@@ -50,7 +50,12 @@ export default function CandidateDashboard() {
           box-shadow: 0 4px 20px rgba(0,0,0,0.15);
           transition: all 0.25s ease;
         }
-        .c-stat-card:hover { background:rgba(255,255,255,0.08); transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,0.2); }
+        .c-stat-card:hover {
+          background: rgba(255,255,255,0.09);
+          transform: translateY(-3px);
+          box-shadow: 0 10px 32px rgba(0,0,0,0.25);
+          border-color: rgba(255,255,255,0.18);
+        }
 
         .c-panel {
           background: rgba(255,255,255,0.05);
@@ -69,12 +74,13 @@ export default function CandidateDashboard() {
           box-shadow: 0 2px 12px rgba(0,0,0,0.12);
           transition: all 0.25s ease;
           animation: fadeIn 0.3s ease;
+          cursor: default;
         }
         .c-app-card:hover {
-          border-color: rgba(108,99,255,0.3);
-          background: rgba(108,99,255,0.06);
-          transform: translateY(-1px);
-          box-shadow: 0 6px 20px rgba(108,99,255,0.1);
+          border-color: rgba(108,99,255,0.5);
+          background: rgba(108,99,255,0.08);
+          transform: translateY(-3px);
+          box-shadow: 0 8px 28px rgba(108,99,255,0.2), 0 0 0 1px rgba(108,99,255,0.15);
         }
 
         .btn-withdraw {
@@ -84,9 +90,18 @@ export default function CandidateDashboard() {
           font-size: 0.75rem; font-weight: 600; cursor: pointer;
           transition: all 0.2s ease;
         }
-        .btn-withdraw:hover { background:rgba(255,101,132,0.22); border-color:rgba(255,101,132,0.55); color:#fff; box-shadow:0 3px 12px rgba(255,101,132,0.22); }
+        .btn-withdraw:hover {
+          background: rgba(255,101,132,0.22); border-color: rgba(255,101,132,0.55);
+          color: #fff; box-shadow: 0 3px 12px rgba(255,101,132,0.22);
+        }
 
-        .toast-glass { position:fixed; bottom:2rem; right:1rem; left:1rem; max-width:400px; margin:0 auto; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.14); padding:1rem 1.5rem; border-radius:var(--radius); font-size:0.9rem; box-shadow:0 8px 24px rgba(0,0,0,0.3); animation:fadeIn 0.3s ease; z-index:1000; }
+        .toast-glass {
+          position: fixed; bottom: 2rem; right: 1rem; left: 1rem;
+          max-width: 400px; margin: 0 auto;
+          background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
+          padding: 1rem 1.5rem; border-radius: var(--radius); font-size: 0.9rem;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.3); animation: fadeIn 0.3s ease; z-index: 1000;
+        }
       `}</style>
 
       <Navbar />
@@ -153,7 +168,7 @@ export default function CandidateDashboard() {
                     )}
                   </div>
 
-                  <div style={{ padding:"0.4rem 1rem", borderRadius:"20px", background:STATUS_CONFIG[app.status]?.bg||"rgba(255,255,255,0.05)", color:STATUS_CONFIG[app.status]?.color||"var(--text2)", fontWeight:700, fontSize:"0.78rem", letterSpacing:"0.5px", textTransform:"uppercase", whiteSpace:"nowrap", flexShrink:0, border:`1px solid ${STATUS_CONFIG[app.status]?.color}30`, boxShadow:`0 2px 8px ${STATUS_CONFIG[app.status]?.color}15` }}>
+                  <div style={{ padding:"0.4rem 1rem", borderRadius:"20px", background:STATUS_CONFIG[app.status]?.bg||"rgba(255,255,255,0.05)", color:STATUS_CONFIG[app.status]?.color||"var(--text2)", fontWeight:700, fontSize:"0.78rem", letterSpacing:"0.5px", textTransform:"uppercase", whiteSpace:"nowrap", flexShrink:0, border:`1px solid ${STATUS_CONFIG[app.status]?.color}30`, boxShadow:`0 2px 8px ${STATUS_CONFIG[app.status]?.color}18` }}>
                     {STATUS_CONFIG[app.status]?.icon} {app.status?.replace("_"," ")}
                   </div>
                 </div>

@@ -18,12 +18,12 @@ export default function RecruiterDashboard() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [applications, setApplications] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState({ title: "", description: "", location: "", salary: "" });
+  const [form, setForm] = useState({ title:"", description:"", location:"", salary:"" });
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState("");
   const [showApplicants, setShowApplicants] = useState(false);
   const [editModal, setEditModal] = useState(null);
-  const [editForm, setEditForm] = useState({ title: "", description: "", location: "", salary: "" });
+  const [editForm, setEditForm] = useState({ title:"", description:"", location:"", salary:"" });
   const [editLoading, setEditLoading] = useState(false);
   const [interviewModal, setInterviewModal] = useState(null);
   const [interviewAt, setInterviewAt] = useState("");
@@ -36,36 +36,36 @@ export default function RecruiterDashboard() {
 
   useEffect(() => { fetchJobs(); }, []);
 
-  const fetchJobs = async () => { const res = await getMyJobs(); setJobs(Array.isArray(res.data) ? res.data : []); };
+  const fetchJobs = async () => { const res = await getMyJobs(); setJobs(Array.isArray(res.data)?res.data:[]); };
   const fetchApplications = async (jobId) => { try { const res = await getApplicationsForJob(jobId); setApplications(res.data); } catch { setApplications([]); } };
   const handleSelectJob = (job) => { setSelectedJob(job); fetchApplications(job.id); setShowApplicants(true); };
   const handleCreateJob = async (e) => {
     e.preventDefault(); setLoading(true);
-    try { await createJob({ ...form, salary: parseFloat(form.salary)||0 }); setShowModal(false); setForm({ title:"",description:"",location:"",salary:"" }); fetchJobs(); showToast("✅ Job posted!"); }
+    try { await createJob({...form,salary:parseFloat(form.salary)||0}); setShowModal(false); setForm({title:"",description:"",location:"",salary:""}); fetchJobs(); showToast("✅ Job posted!"); }
     catch { showToast("❌ Failed to create job"); } finally { setLoading(false); }
   };
-  const handleOpenEdit = (e, job) => { e.stopPropagation(); setEditModal(job); setEditForm({ title:job.title||"",description:job.description||"",location:job.location||"",salary:job.salary||"" }); };
+  const handleOpenEdit = (e,job) => { e.stopPropagation(); setEditModal(job); setEditForm({title:job.title||"",description:job.description||"",location:job.location||"",salary:job.salary||""}); };
   const handleEditJob = async (e) => {
     e.preventDefault(); setEditLoading(true);
-    try { await updateJob(editModal.id, { ...editForm, salary: parseFloat(editForm.salary)||0 }); setEditModal(null); fetchJobs(); showToast("✅ Job updated!"); }
+    try { await updateJob(editModal.id,{...editForm,salary:parseFloat(editForm.salary)||0}); setEditModal(null); fetchJobs(); showToast("✅ Job updated!"); }
     catch { showToast("❌ Failed to update job"); } finally { setEditLoading(false); }
   };
-  const handleDelete = async (e, jobId) => {
-    e.stopPropagation(); if (!window.confirm("Delete this job posting?")) return;
-    await deleteJob(jobId); if (selectedJob?.id===jobId) { setSelectedJob(null); setApplications([]); } fetchJobs(); showToast("🗑️ Job deleted");
+  const handleDelete = async (e,jobId) => {
+    e.stopPropagation(); if(!window.confirm("Delete this job posting?")) return;
+    await deleteJob(jobId); if(selectedJob?.id===jobId){setSelectedJob(null);setApplications([]);} fetchJobs(); showToast("🗑️ Job deleted");
   };
-  const handleStatus = async (appId, status) => { try { await updateApplicationStatus(appId, status); fetchApplications(selectedJob.id); showToast("✅ Status updated"); } catch { showToast("❌ Failed"); } };
+  const handleStatus = async (appId,status) => { try { await updateApplicationStatus(appId,status); fetchApplications(selectedJob.id); showToast("✅ Status updated"); } catch { showToast("❌ Failed"); } };
   const handleScheduleInterview = async () => {
-    if (!interviewAt) return showToast("❌ Please select date and time"); setInterviewLoading(true);
-    try { await scheduleInterview(interviewModal, interviewAt.slice(0,19), interviewDetails); fetchApplications(selectedJob.id); setInterviewModal(null); setInterviewAt(""); setInterviewDetails(""); showToast("✅ Interview scheduled!"); }
+    if(!interviewAt) return showToast("❌ Please select date and time"); setInterviewLoading(true);
+    try { await scheduleInterview(interviewModal,interviewAt.slice(0,19),interviewDetails); fetchApplications(selectedJob.id); setInterviewModal(null); setInterviewAt(""); setInterviewDetails(""); showToast("✅ Interview scheduled!"); }
     catch { showToast("❌ Failed"); } finally { setInterviewLoading(false); }
   };
   const handleContact = async () => {
-    if (!contactSubject||!contactMessage) return showToast("❌ Fill subject and message"); setContactLoading(true);
-    try { await contactCandidate(contactModal, contactSubject, contactMessage); setContactModal(null); setContactSubject(""); setContactMessage(""); showToast("✅ Message sent!"); }
+    if(!contactSubject||!contactMessage) return showToast("❌ Fill subject and message"); setContactLoading(true);
+    try { await contactCandidate(contactModal,contactSubject,contactMessage); setContactModal(null); setContactSubject(""); setContactMessage(""); showToast("✅ Message sent!"); }
     catch { showToast("❌ Failed"); } finally { setContactLoading(false); }
   };
-  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
+  const showToast = (msg) => { setToast(msg); setTimeout(()=>setToast(""),3000); };
 
   const inputStyle = {
     width:"100%", padding:"0.65rem 0.9rem", marginBottom:"0.85rem",
@@ -88,7 +88,12 @@ export default function RecruiterDashboard() {
           box-shadow: 0 4px 20px rgba(0,0,0,0.15);
           transition: all 0.25s ease;
         }
-        .r-stat-card:hover { background:rgba(255,255,255,0.08); transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,0.2); }
+        .r-stat-card:hover {
+          background: rgba(255,255,255,0.09);
+          transform: translateY(-3px);
+          box-shadow: 0 10px 32px rgba(0,0,0,0.25);
+          border-color: rgba(255,255,255,0.18);
+        }
 
         .r-panel {
           background: rgba(255,255,255,0.05);
@@ -98,6 +103,7 @@ export default function RecruiterDashboard() {
           overflow: hidden;
         }
 
+        /* Job items — same glow as JobListings cards */
         .r-job-item {
           padding: 1rem; border-radius: var(--radius); margin-bottom: 0.75rem;
           cursor: pointer; transition: all 0.25s ease;
@@ -105,18 +111,33 @@ export default function RecruiterDashboard() {
           border: 1px solid rgba(255,255,255,0.08);
           box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        .r-job-item:hover { background:rgba(108,99,255,0.08); border-color:rgba(108,99,255,0.3); transform:translateY(-1px); }
-        .r-job-item.selected { background:rgba(108,99,255,0.12); border-color:rgba(108,99,255,0.5); box-shadow:0 0 0 1px rgba(108,99,255,0.2), 0 4px 16px rgba(108,99,255,0.1); }
+        .r-job-item:hover {
+          background: rgba(108,99,255,0.1);
+          border-color: rgba(108,99,255,0.5);
+          transform: translateY(-3px);
+          box-shadow: 0 8px 28px rgba(108,99,255,0.2), 0 0 0 1px rgba(108,99,255,0.15);
+        }
+        .r-job-item.selected {
+          background: rgba(108,99,255,0.12);
+          border-color: rgba(108,99,255,0.55);
+          box-shadow: 0 0 0 1px rgba(108,99,255,0.2), 0 6px 20px rgba(108,99,255,0.15);
+        }
 
+        /* Applicant cards — same glow */
         .r-app-card {
           padding: 1.25rem; border-radius: var(--radius); margin-bottom: 0.75rem;
           border: 1px solid rgba(255,255,255,0.08);
           background: rgba(255,255,255,0.04);
           box-shadow: 0 2px 12px rgba(0,0,0,0.12);
           animation: fadeIn 0.3s ease;
-          transition: all 0.2s ease;
+          transition: all 0.25s ease;
         }
-        .r-app-card:hover { background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.14); }
+        .r-app-card:hover {
+          border-color: rgba(108,99,255,0.5);
+          background: rgba(108,99,255,0.08);
+          transform: translateY(-3px);
+          box-shadow: 0 8px 28px rgba(108,99,255,0.2), 0 0 0 1px rgba(108,99,255,0.15);
+        }
 
         .btn-post-job {
           padding: 0.6rem 1.4rem;
@@ -128,7 +149,11 @@ export default function RecruiterDashboard() {
           transition: all 0.25s ease;
           box-shadow: 0 2px 12px rgba(108,99,255,0.15);
         }
-        .btn-post-job:hover { background:rgba(108,99,255,0.3); border-color:rgba(108,99,255,0.7); color:#fff; transform:translateY(-2px); box-shadow:0 6px 22px rgba(108,99,255,0.28); }
+        .btn-post-job:hover {
+          background: rgba(108,99,255,0.3); border-color: rgba(108,99,255,0.7);
+          color: #fff; transform: translateY(-2px);
+          box-shadow: 0 6px 24px rgba(108,99,255,0.3);
+        }
 
         .r-glass-modal {
           background: rgba(12,12,20,0.92);
@@ -162,7 +187,7 @@ export default function RecruiterDashboard() {
 
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"1.5rem", flexWrap:"wrap", gap:"1rem" }}>
           <h1 style={{ fontSize:"clamp(1.4rem,5vw,2rem)" }}>Recruiter Dashboard</h1>
-          <button onClick={() => setShowModal(true)} className="btn-post-job">+ Post a Job</button>
+          <button onClick={()=>setShowModal(true)} className="btn-post-job">+ Post a Job</button>
         </div>
 
         <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"0.75rem", marginBottom:"1.5rem" }}>
@@ -187,8 +212,9 @@ export default function RecruiterDashboard() {
               <span style={{fontSize:"0.8rem",color:"var(--text2)"}}>{jobs.length} total</span>
             </div>
             <div style={{padding:"1rem"}}>
-              {jobs.length===0 ? <div style={{padding:"2rem",textAlign:"center",color:"var(--text2)",fontSize:"0.875rem"}}>No jobs posted yet.<br/>Click "Post a Job" to start.</div>
-              : jobs.map(job=>(
+              {jobs.length===0
+                ? <div style={{padding:"2rem",textAlign:"center",color:"var(--text2)",fontSize:"0.875rem"}}>No jobs posted yet.<br/>Click "Post a Job" to start.</div>
+                : jobs.map(job=>(
                 <div key={job.id} onClick={()=>handleSelectJob(job)} className={`r-job-item ${selectedJob?.id===job.id?"selected":""}`}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:"0.5rem"}}>
                     <div style={{minWidth:0}}>
@@ -218,9 +244,11 @@ export default function RecruiterDashboard() {
               {selectedJob&&<span style={{fontSize:"0.8rem",color:"var(--text2)",flexShrink:0}}>{applications.length} total</span>}
             </div>
             <div style={{padding:"1rem"}}>
-              {!selectedJob ? <div style={{padding:"3rem",textAlign:"center",color:"var(--text2)",fontSize:"0.875rem"}}>👈 Click a job to see its applicants</div>
-              : applications.length===0 ? <div style={{padding:"3rem",textAlign:"center",color:"var(--text2)",fontSize:"0.875rem"}}>No applications yet for this job</div>
-              : applications.map(app=>(
+              {!selectedJob
+                ? <div style={{padding:"3rem",textAlign:"center",color:"var(--text2)",fontSize:"0.875rem"}}>👈 Click a job to see its applicants</div>
+                : applications.length===0
+                ? <div style={{padding:"3rem",textAlign:"center",color:"var(--text2)",fontSize:"0.875rem"}}>No applications yet for this job</div>
+                : applications.map(app=>(
                 <div key={app.id} className="r-app-card">
                   <div style={{fontWeight:700,marginBottom:"0.15rem"}}>{app.candidate?.name||"Candidate"}</div>
                   <div style={{color:"var(--text2)",fontSize:"0.8rem",marginBottom:"0.75rem"}}>{app.candidate?.email}</div>
@@ -232,11 +260,11 @@ export default function RecruiterDashboard() {
                   </div>
                   <div style={{display:"flex",gap:"0.5rem",flexWrap:"wrap"}}>
                     <button onClick={()=>setInterviewModal(app.id)} style={{padding:"0.35rem 0.85rem",borderRadius:"var(--radius)",background:"rgba(67,233,123,0.1)",color:"#43e97b",border:"1px solid rgba(67,233,123,0.28)",fontSize:"0.78rem",fontWeight:600,cursor:"pointer",transition:"all 0.2s ease"}}
-                      onMouseEnter={e=>{e.currentTarget.style.background="rgba(67,233,123,0.2)";e.currentTarget.style.borderColor="rgba(67,233,123,0.5)";}}
-                      onMouseLeave={e=>{e.currentTarget.style.background="rgba(67,233,123,0.1)";e.currentTarget.style.borderColor="rgba(67,233,123,0.28)";}}>📅 Schedule Interview</button>
+                      onMouseEnter={e=>{e.currentTarget.style.background="rgba(67,233,123,0.2)";e.currentTarget.style.borderColor="rgba(67,233,123,0.5)";e.currentTarget.style.boxShadow="0 4px 14px rgba(67,233,123,0.2)";}}
+                      onMouseLeave={e=>{e.currentTarget.style.background="rgba(67,233,123,0.1)";e.currentTarget.style.borderColor="rgba(67,233,123,0.28)";e.currentTarget.style.boxShadow="none";}}>📅 Schedule Interview</button>
                     <button onClick={()=>setContactModal(app.id)} style={{padding:"0.35rem 0.85rem",borderRadius:"var(--radius)",background:"rgba(245,158,11,0.1)",color:"#f59e0b",border:"1px solid rgba(245,158,11,0.28)",fontSize:"0.78rem",fontWeight:600,cursor:"pointer",transition:"all 0.2s ease"}}
-                      onMouseEnter={e=>{e.currentTarget.style.background="rgba(245,158,11,0.2)";e.currentTarget.style.borderColor="rgba(245,158,11,0.5)";}}
-                      onMouseLeave={e=>{e.currentTarget.style.background="rgba(245,158,11,0.1)";e.currentTarget.style.borderColor="rgba(245,158,11,0.28)";}}>✉️ Contact</button>
+                      onMouseEnter={e=>{e.currentTarget.style.background="rgba(245,158,11,0.2)";e.currentTarget.style.borderColor="rgba(245,158,11,0.5)";e.currentTarget.style.boxShadow="0 4px 14px rgba(245,158,11,0.2)";}}
+                      onMouseLeave={e=>{e.currentTarget.style.background="rgba(245,158,11,0.1)";e.currentTarget.style.borderColor="rgba(245,158,11,0.28)";e.currentTarget.style.boxShadow="none";}}>✉️ Contact</button>
                   </div>
                   {app.status==="INTERVIEW_SCHEDULED"&&app.interviewScheduledAt&&(
                     <div style={{marginTop:"0.75rem",padding:"0.6rem 0.85rem",background:"rgba(67,233,123,0.08)",border:"1px solid rgba(67,233,123,0.2)",borderRadius:"var(--radius)",fontSize:"0.8rem",color:"#43e97b"}}>
