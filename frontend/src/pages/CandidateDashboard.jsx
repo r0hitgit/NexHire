@@ -59,17 +59,27 @@ export default function CandidateDashboard() {
           box-shadow: 0 8px 24px rgba(108,99,255,0.1);
         }
 
+        /* Panel has NO background — cards render directly on page bg */
         .c-panel {
-          background: rgba(255,255,255,0.04);
           border: 1px solid rgba(255,255,255,0.08);
           backdrop-filter: blur(14px);
           -webkit-backdrop-filter: blur(14px);
           border-radius: var(--radius-lg);
           overflow: hidden;
           animation: fadeIn 0.4s ease;
+          background: transparent;
         }
 
-        /* EXACT copy of .job-card and .job-card:hover from JobListings */
+        .c-panel-header {
+          padding: 1.25rem 1.5rem;
+          border-bottom: 1px solid rgba(255,255,255,0.08);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: rgba(255,255,255,0.02);
+        }
+
+        /* Cards match EXACTLY with job cards — same dark base, same hover */
         .c-app-card {
           background: rgba(255,255,255,0.04);
           border: 1px solid rgba(255,255,255,0.08);
@@ -80,6 +90,7 @@ export default function CandidateDashboard() {
           transition: all 0.25s ease;
           animation: fadeIn 0.4s ease;
           margin-bottom: 0.75rem;
+          cursor: default;
         }
         .c-app-card:hover {
           border-color: rgba(108,99,255,0.4);
@@ -90,17 +101,16 @@ export default function CandidateDashboard() {
 
         .btn-withdraw {
           margin-top: 0.75rem; padding: 0.3rem 0.85rem;
-          background: rgba(255,101,132,0.1); color: #ff6584;
+          background: rgba(255,101,132,0.08); color: #ff6584;
           border: 1px solid rgba(255,101,132,0.22); border-radius: 20px;
           font-size: 0.75rem; font-weight: 600; cursor: pointer;
-          backdrop-filter: blur(6px);
-          transition: all 0.2s ease;
+          backdrop-filter: blur(6px); transition: all 0.2s ease;
         }
         .btn-withdraw:hover {
-          background: rgba(255,101,132,0.2);
-          border-color: rgba(255,101,132,0.5);
+          background: rgba(255,101,132,0.18);
+          border-color: rgba(255,101,132,0.45);
           color: #fff;
-          box-shadow: 0 4px 12px rgba(255,101,132,0.15);
+          box-shadow: 0 4px 12px rgba(255,101,132,0.1);
         }
 
         .toast-glass {
@@ -136,7 +146,7 @@ export default function CandidateDashboard() {
         </div>
 
         <div className="c-panel">
-          <div style={{ padding:"1.25rem 1.5rem", borderBottom:"1px solid rgba(255,255,255,0.08)", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+          <div className="c-panel-header">
             <span style={{ fontFamily:"var(--font-head)", fontWeight:700 }}>Application History</span>
             <span style={{ fontSize:"0.8rem", color:"var(--text2)" }}>{applications.length} total</span>
           </div>
