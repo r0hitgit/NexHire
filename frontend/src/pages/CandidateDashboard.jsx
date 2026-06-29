@@ -5,7 +5,7 @@ import { getMyApplications, withdrawApplication } from "../api/axios";
 const STATUS_CONFIG = {
   APPLIED:              { color: "#6c63ff", bg: "rgba(108,99,255,0.12)",  icon: "📋", label: "Applied" },
   SHORTLISTED:          { color: "#f59e0b", bg: "rgba(245,158,11,0.12)",  icon: "⭐", label: "Shortlisted" },
-  INTERVIEW_SCHEDULED:  { color: "#43e97b", bg: "rgba(67,233,123,0.12)",  icon: "📅", label: "Scheduled" },
+  INTERVIEW_SCHEDULED:  { color: "#43e97b", bg: "rgba(67,233,123,0.12)",  icon: "📅", label: "Interview Scheduled" },
   REJECTED:             { color: "#ff6584", bg: "rgba(255,101,132,0.12)", icon: "✕",  label: "Rejected" },
 };
 
@@ -41,8 +41,7 @@ export default function CandidateDashboard() {
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <style>{`
         @keyframes fadeIn { from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);} }
-
-        * { box-sizing: border-box; }
+        *, *::before, *::after { box-sizing: border-box; }
 
         .c-stat-card {
           background: rgba(255,255,255,0.04);
@@ -90,19 +89,19 @@ export default function CandidateDashboard() {
           box-shadow: 0 8px 24px rgba(108,99,255,0.1);
         }
 
-        /* Top row: title left, badge right — badge NEVER overflows */
+        /* Top row — flex, wraps on tiny screens */
         .c-card-top {
           display: flex;
           align-items: flex-start;
-          gap: 0.5rem;
+          justify-content: space-between;
+          gap: 0.75rem;
           width: 100%;
-          min-width: 0;
+          flex-wrap: wrap;
         }
 
         .c-card-left {
           flex: 1;
           min-width: 0;
-          overflow: hidden;
         }
 
         .c-card-title {
@@ -120,31 +119,27 @@ export default function CandidateDashboard() {
           gap: 0.5rem;
           flex-wrap: wrap;
         }
-
         .c-card-meta span {
           color: var(--text2);
           font-size: clamp(0.72rem, 2vw, 0.8rem);
           white-space: nowrap;
         }
 
-        /* Status badge — fixed max width, never overflows */
+        /* Badge — full text, scales font down on mobile */
         .c-badge {
           flex-shrink: 0;
-          padding: 0.35rem 0.7rem;
+          padding: 0.35rem 0.85rem;
           border-radius: 20px;
           font-weight: 700;
-          font-size: clamp(0.6rem, 1.8vw, 0.72rem);
+          font-size: clamp(0.6rem, 1.5vw, 0.72rem);
           letter-spacing: 0.3px;
           text-transform: uppercase;
           white-space: nowrap;
           backdrop-filter: blur(6px);
-          max-width: min(140px, 38vw);
-          overflow: hidden;
-          text-overflow: ellipsis;
-          text-align: center;
+          align-self: flex-start;
         }
 
-        /* Interview box — always full width inside card */
+        /* Interview box — always full width, contained */
         .c-interview-box {
           margin-top: 0.75rem;
           padding: 0.75rem 1rem;
@@ -154,7 +149,6 @@ export default function CandidateDashboard() {
           width: 100%;
           overflow: hidden;
         }
-
         .c-interview-date {
           color: #43e97b;
           font-weight: 700;
@@ -162,7 +156,6 @@ export default function CandidateDashboard() {
           margin-bottom: 0.25rem;
           word-break: break-word;
         }
-
         .c-interview-loc {
           color: var(--text2);
           font-size: clamp(0.72rem, 2vw, 0.8rem);
@@ -205,7 +198,6 @@ export default function CandidateDashboard() {
           <p style={{ color: "var(--text2)", fontSize: "0.9rem" }}>Track your job application status</p>
         </div>
 
-        {/* Stat Cards */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "0.75rem", marginBottom: "2rem" }}>
           {[
             { label:"Applied",     val:counts.APPLIED,             color:"#6c63ff" },
@@ -220,7 +212,6 @@ export default function CandidateDashboard() {
           ))}
         </div>
 
-        {/* Application History */}
         <div className="c-history-header">
           <span style={{ fontFamily:"var(--font-head)", fontWeight:700, fontSize:"1.1rem" }}>Application History</span>
           <span style={{ fontSize:"0.8rem", color:"var(--text2)" }}>{applications.length} total</span>
@@ -240,8 +231,6 @@ export default function CandidateDashboard() {
           const cfg = STATUS_CONFIG[app.status];
           return (
             <div key={app.id} className="c-app-card">
-
-              {/* Top row */}
               <div className="c-card-top">
                 <div className="c-card-left">
                   <div className="c-card-title">{app.job?.title || "Job"}</div>
@@ -251,21 +240,19 @@ export default function CandidateDashboard() {
                     {app.job?.salary && <span>💰 ₹{(app.job.salary/100000).toFixed(1)}L</span>}
                   </div>
                 </div>
-
                 <div className="c-badge" style={{
                   background: cfg?.bg || "rgba(255,255,255,0.05)",
                   color: cfg?.color || "var(--text2)",
                   border: `1px solid ${cfg?.color || "#fff"}35`,
                 }}>
-                  {cfg?.icon} {cfg?.label || app.status}
+                  {cfg?.icon} {cfg?.label}
                 </div>
               </div>
 
-              {/* Interview box */}
               {app.status === "INTERVIEW_SCHEDULED" && app.interviewScheduledAt && (
                 <div className="c-interview-box">
                   <div className="c-interview-date">
-                    📅 {app.interviewScheduledAt.replace('T',' ').slice(0,16)}
+                    📅 Interview: {app.interviewScheduledAt.replace('T',' ').slice(0,16)}
                   </div>
                   {app.interviewDetails && (
                     <div className="c-interview-loc">{app.interviewDetails}</div>
@@ -276,11 +263,9 @@ export default function CandidateDashboard() {
               {app.status === "APPLIED" && (
                 <button onClick={() => handleWithdraw(app.id)} className="btn-withdraw">✕ Withdraw</button>
               )}
-
             </div>
           );
         })}
-
       </main>
 
       {toast && <div className="toast-glass">{toast}</div>}
