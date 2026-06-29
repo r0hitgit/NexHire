@@ -5,7 +5,7 @@ import { getMyApplications, withdrawApplication } from "../api/axios";
 const STATUS_CONFIG = {
   APPLIED:              { color: "#6c63ff", bg: "rgba(108,99,255,0.12)",  icon: "📋", label: "Applied" },
   SHORTLISTED:          { color: "#f59e0b", bg: "rgba(245,158,11,0.12)",  icon: "⭐", label: "Shortlisted" },
-  INTERVIEW_SCHEDULED:  { color: "#43e97b", bg: "rgba(67,233,123,0.12)",  icon: "📅", label: "Interview" },
+  INTERVIEW_SCHEDULED:  { color: "#43e97b", bg: "rgba(67,233,123,0.12)",  icon: "📅", label: "Scheduled" },
   REJECTED:             { color: "#ff6584", bg: "rgba(255,101,132,0.12)", icon: "✕",  label: "Rejected" },
 };
 
