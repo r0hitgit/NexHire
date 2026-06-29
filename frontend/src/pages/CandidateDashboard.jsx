@@ -59,27 +59,17 @@ export default function CandidateDashboard() {
           box-shadow: 0 8px 24px rgba(108,99,255,0.1);
         }
 
-        /* Panel has NO background — cards render directly on page bg */
-        .c-panel {
-          border: 1px solid rgba(255,255,255,0.08);
-          backdrop-filter: blur(14px);
-          -webkit-backdrop-filter: blur(14px);
-          border-radius: var(--radius-lg);
-          overflow: hidden;
-          animation: fadeIn 0.4s ease;
-          background: transparent;
-        }
-
-        .c-panel-header {
-          padding: 1.25rem 1.5rem;
-          border-bottom: 1px solid rgba(255,255,255,0.08);
+        /* Application History header row only */
+        .c-history-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          background: rgba(255,255,255,0.02);
+          padding: 1rem 0;
+          margin-bottom: 0.75rem;
+          border-bottom: 1px solid rgba(255,255,255,0.08);
         }
 
-        /* Cards match EXACTLY with job cards — same dark base, same hover */
+        /* Cards exactly like .job-card in JobListings — no panel wrapper */
         .c-app-card {
           background: rgba(255,255,255,0.04);
           border: 1px solid rgba(255,255,255,0.08);
@@ -131,7 +121,8 @@ export default function CandidateDashboard() {
           <p style={{ color: "var(--text2)", fontSize: "0.9rem" }}>Track your job application status</p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "0.75rem", marginBottom: "1.5rem" }}>
+        {/* Stat Cards */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "0.75rem", marginBottom: "2rem" }}>
           {[
             { label:"Applied",     val:counts.APPLIED,             color:"#6c63ff" },
             { label:"Shortlisted", val:counts.SHORTLISTED,         color:"#f59e0b" },
@@ -145,64 +136,62 @@ export default function CandidateDashboard() {
           ))}
         </div>
 
-        <div className="c-panel">
-          <div className="c-panel-header">
-            <span style={{ fontFamily:"var(--font-head)", fontWeight:700 }}>Application History</span>
-            <span style={{ fontSize:"0.8rem", color:"var(--text2)" }}>{applications.length} total</span>
-          </div>
-
-          <div style={{ padding: "1rem" }}>
-            {loading ? (
-              [...Array(4)].map((_,i) => <div key={i} className="skeleton" style={{ height:"80px", marginBottom:"0.75rem" }}/>)
-            ) : applications.length === 0 ? (
-              <div style={{ padding:"4rem 1rem", textAlign:"center", color:"var(--text2)" }}>
-                <div style={{ fontSize:"3rem", marginBottom:"1rem" }}>📭</div>
-                <p>No applications yet.</p>
-                <p style={{ marginTop:"0.5rem", fontSize:"0.875rem" }}>Browse jobs and start applying!</p>
-              </div>
-            ) : applications.map(app => (
-              <div key={app.id} className="c-app-card">
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:"0.75rem", flexWrap:"wrap" }}>
-                  <div style={{ minWidth:0, flex:1 }}>
-                    <div style={{ fontWeight:700, fontSize:"1rem", fontFamily:"var(--font-head)", marginBottom:"0.3rem", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
-                      {app.job?.title || "Job"}
-                    </div>
-                    <div style={{ display:"flex", gap:"0.75rem", flexWrap:"wrap" }}>
-                      {app.job?.recruiter?.name && <span style={{ color:"var(--text2)", fontSize:"0.8rem" }}>🏢 {app.job.recruiter.name}</span>}
-                      {app.job?.location && <span style={{ color:"var(--text2)", fontSize:"0.8rem" }}>📍 {app.job.location}</span>}
-                      {app.job?.salary && <span style={{ color:"var(--text2)", fontSize:"0.8rem" }}>💰 ₹{(app.job.salary/100000).toFixed(1)}L</span>}
-                    </div>
-
-                    {app.status === "INTERVIEW_SCHEDULED" && app.interviewScheduledAt && (
-                      <div style={{ marginTop:"0.75rem", padding:"0.75rem 1rem", background:"rgba(67,233,123,0.08)", border:"1px solid rgba(67,233,123,0.2)", borderRadius:"var(--radius)", fontSize:"0.82rem" }}>
-                        <div style={{ color:"#43e97b", fontWeight:700, marginBottom:"0.25rem" }}>
-                          📅 Interview: {app.interviewScheduledAt.replace('T',' ').slice(0,16)}
-                        </div>
-                        {app.interviewDetails && <div style={{ color:"var(--text2)" }}>{app.interviewDetails}</div>}
-                      </div>
-                    )}
-
-                    {app.status === "APPLIED" && (
-                      <button onClick={() => handleWithdraw(app.id)} className="btn-withdraw">✕ Withdraw</button>
-                    )}
-                  </div>
-
-                  <div style={{
-                    padding:"0.4rem 1rem", borderRadius:"20px",
-                    background: STATUS_CONFIG[app.status]?.bg || "rgba(255,255,255,0.05)",
-                    color: STATUS_CONFIG[app.status]?.color || "var(--text2)",
-                    fontWeight:700, fontSize:"0.78rem", letterSpacing:"0.5px",
-                    textTransform:"uppercase", whiteSpace:"nowrap", flexShrink:0,
-                    border:`1px solid ${STATUS_CONFIG[app.status]?.color}35`,
-                    backdropFilter:"blur(6px)",
-                  }}>
-                    {STATUS_CONFIG[app.status]?.icon} {app.status?.replace("_"," ")}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+        {/* Application History — NO wrapper panel, cards go directly on page bg */}
+        <div className="c-history-header">
+          <span style={{ fontFamily:"var(--font-head)", fontWeight:700, fontSize:"1.1rem" }}>Application History</span>
+          <span style={{ fontSize:"0.8rem", color:"var(--text2)" }}>{applications.length} total</span>
         </div>
+
+        {loading ? (
+          [...Array(4)].map((_,i) => <div key={i} className="skeleton" style={{ height:"80px", marginBottom:"0.75rem", borderRadius:"var(--radius-lg)" }}/>)
+        ) : applications.length === 0 ? (
+          <div style={{ padding:"4rem 1rem", textAlign:"center", color:"var(--text2)" }}>
+            <div style={{ fontSize:"3rem", marginBottom:"1rem" }}>📭</div>
+            <p>No applications yet.</p>
+            <p style={{ marginTop:"0.5rem", fontSize:"0.875rem" }}>Browse jobs and start applying!</p>
+          </div>
+        ) : applications.map(app => (
+          <div key={app.id} className="c-app-card">
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:"0.75rem", flexWrap:"wrap" }}>
+              <div style={{ minWidth:0, flex:1 }}>
+                <div style={{ fontWeight:700, fontSize:"1rem", fontFamily:"var(--font-head)", marginBottom:"0.3rem", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+                  {app.job?.title || "Job"}
+                </div>
+                <div style={{ display:"flex", gap:"0.75rem", flexWrap:"wrap" }}>
+                  {app.job?.recruiter?.name && <span style={{ color:"var(--text2)", fontSize:"0.8rem" }}>🏢 {app.job.recruiter.name}</span>}
+                  {app.job?.location && <span style={{ color:"var(--text2)", fontSize:"0.8rem" }}>📍 {app.job.location}</span>}
+                  {app.job?.salary && <span style={{ color:"var(--text2)", fontSize:"0.8rem" }}>💰 ₹{(app.job.salary/100000).toFixed(1)}L</span>}
+                </div>
+
+                {app.status === "INTERVIEW_SCHEDULED" && app.interviewScheduledAt && (
+                  <div style={{ marginTop:"0.75rem", padding:"0.75rem 1rem", background:"rgba(67,233,123,0.08)", border:"1px solid rgba(67,233,123,0.2)", borderRadius:"var(--radius)", fontSize:"0.82rem" }}>
+                    <div style={{ color:"#43e97b", fontWeight:700, marginBottom:"0.25rem" }}>
+                      📅 Interview: {app.interviewScheduledAt.replace('T',' ').slice(0,16)}
+                    </div>
+                    {app.interviewDetails && <div style={{ color:"var(--text2)" }}>{app.interviewDetails}</div>}
+                  </div>
+                )}
+
+                {app.status === "APPLIED" && (
+                  <button onClick={() => handleWithdraw(app.id)} className="btn-withdraw">✕ Withdraw</button>
+                )}
+              </div>
+
+              <div style={{
+                padding:"0.4rem 1rem", borderRadius:"20px",
+                background: STATUS_CONFIG[app.status]?.bg || "rgba(255,255,255,0.05)",
+                color: STATUS_CONFIG[app.status]?.color || "var(--text2)",
+                fontWeight:700, fontSize:"0.78rem", letterSpacing:"0.5px",
+                textTransform:"uppercase", whiteSpace:"nowrap", flexShrink:0,
+                border:`1px solid ${STATUS_CONFIG[app.status]?.color}35`,
+                backdropFilter:"blur(6px)",
+              }}>
+                {STATUS_CONFIG[app.status]?.icon} {app.status?.replace("_"," ")}
+              </div>
+            </div>
+          </div>
+        ))}
+
       </main>
 
       {toast && <div className="toast-glass">{toast}</div>}
