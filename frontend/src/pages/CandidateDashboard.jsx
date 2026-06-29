@@ -59,7 +59,6 @@ export default function CandidateDashboard() {
           box-shadow: 0 8px 24px rgba(108,99,255,0.1);
         }
 
-        /* Application History header row only */
         .c-history-header {
           display: flex;
           justify-content: space-between;
@@ -69,7 +68,6 @@ export default function CandidateDashboard() {
           border-bottom: 1px solid rgba(255,255,255,0.08);
         }
 
-        /* Cards exactly like .job-card in JobListings — no panel wrapper */
         .c-app-card {
           background: rgba(255,255,255,0.04);
           border: 1px solid rgba(255,255,255,0.08);
@@ -81,6 +79,10 @@ export default function CandidateDashboard() {
           animation: fadeIn 0.4s ease;
           margin-bottom: 0.75rem;
           cursor: default;
+          /* Critical: prevent overflow */
+          overflow: hidden;
+          width: 100%;
+          box-sizing: border-box;
         }
         .c-app-card:hover {
           border-color: rgba(108,99,255,0.4);
@@ -89,12 +91,94 @@ export default function CandidateDashboard() {
           box-shadow: 0 8px 24px rgba(108,99,255,0.1);
         }
 
+        /* Top row: title + status badge */
+        .c-card-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 0.75rem;
+          width: 100%;
+          box-sizing: border-box;
+          flex-wrap: nowrap;
+        }
+
+        .c-card-info {
+          min-width: 0;
+          flex: 1;
+          overflow: hidden;
+        }
+
+        .c-card-title {
+          font-weight: 700;
+          font-size: 1rem;
+          font-family: var(--font-head);
+          margin-bottom: 0.3rem;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          width: 100%;
+        }
+
+        .c-card-meta {
+          display: flex;
+          gap: 0.6rem;
+          flex-wrap: wrap;
+        }
+
+        .c-status-badge {
+          flex-shrink: 0;
+          padding: 0.4rem 0.75rem;
+          border-radius: 20px;
+          font-weight: 700;
+          font-size: 0.72rem;
+          letter-spacing: 0.5px;
+          text-transform: uppercase;
+          white-space: nowrap;
+          backdrop-filter: blur(6px);
+          max-width: 160px;
+          text-align: center;
+        }
+
+        /* Interview box — full width rectangle, no overflow */
+        .c-interview-box {
+          margin-top: 0.75rem;
+          padding: 0.75rem 1rem;
+          background: rgba(67,233,123,0.08);
+          border: 1px solid rgba(67,233,123,0.2);
+          border-radius: var(--radius);
+          font-size: 0.82rem;
+          width: 100%;
+          box-sizing: border-box;
+          overflow: hidden;
+        }
+
+        .c-interview-date {
+          color: #43e97b;
+          font-weight: 700;
+          margin-bottom: 0.25rem;
+          word-break: break-word;
+          white-space: normal;
+        }
+
+        .c-interview-details {
+          color: var(--text2);
+          word-break: break-word;
+          white-space: normal;
+        }
+
         .btn-withdraw {
-          margin-top: 0.75rem; padding: 0.3rem 0.85rem;
-          background: rgba(255,101,132,0.08); color: #ff6584;
-          border: 1px solid rgba(255,101,132,0.22); border-radius: 20px;
-          font-size: 0.75rem; font-weight: 600; cursor: pointer;
-          backdrop-filter: blur(6px); transition: all 0.2s ease;
+          margin-top: 0.75rem;
+          padding: 0.3rem 0.85rem;
+          background: rgba(255,101,132,0.08);
+          color: #ff6584;
+          border: 1px solid rgba(255,101,132,0.22);
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          cursor: pointer;
+          backdrop-filter: blur(6px);
+          transition: all 0.2s ease;
+          display: inline-block;
         }
         .btn-withdraw:hover {
           background: rgba(255,101,132,0.18);
@@ -110,6 +194,18 @@ export default function CandidateDashboard() {
           backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
           padding: 1rem 1.5rem; border-radius: var(--radius); font-size: 0.9rem;
           box-shadow: 0 8px 24px rgba(0,0,0,0.3); animation: fadeIn 0.3s ease; z-index: 1000;
+        }
+
+        /* Mobile fixes */
+        @media (max-width: 480px) {
+          .c-status-badge {
+            font-size: 0.65rem;
+            padding: 0.35rem 0.6rem;
+            max-width: 130px;
+          }
+          .c-card-title {
+            font-size: 0.92rem;
+          }
         }
       `}</style>
 
@@ -136,7 +232,7 @@ export default function CandidateDashboard() {
           ))}
         </div>
 
-        {/* Application History — NO wrapper panel, cards go directly on page bg */}
+        {/* Application History */}
         <div className="c-history-header">
           <span style={{ fontFamily:"var(--font-head)", fontWeight:700, fontSize:"1.1rem" }}>Application History</span>
           <span style={{ fontSize:"0.8rem", color:"var(--text2)" }}>{applications.length} total</span>
@@ -152,43 +248,45 @@ export default function CandidateDashboard() {
           </div>
         ) : applications.map(app => (
           <div key={app.id} className="c-app-card">
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:"0.75rem", flexWrap:"wrap" }}>
-              <div style={{ minWidth:0, flex:1 }}>
-                <div style={{ fontWeight:700, fontSize:"1rem", fontFamily:"var(--font-head)", marginBottom:"0.3rem", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
-                  {app.job?.title || "Job"}
-                </div>
-                <div style={{ display:"flex", gap:"0.75rem", flexWrap:"wrap" }}>
+
+            {/* Top row */}
+            <div className="c-card-top">
+              <div className="c-card-info">
+                <div className="c-card-title">{app.job?.title || "Job"}</div>
+                <div className="c-card-meta">
                   {app.job?.recruiter?.name && <span style={{ color:"var(--text2)", fontSize:"0.8rem" }}>🏢 {app.job.recruiter.name}</span>}
                   {app.job?.location && <span style={{ color:"var(--text2)", fontSize:"0.8rem" }}>📍 {app.job.location}</span>}
                   {app.job?.salary && <span style={{ color:"var(--text2)", fontSize:"0.8rem" }}>💰 ₹{(app.job.salary/100000).toFixed(1)}L</span>}
                 </div>
-
-                {app.status === "INTERVIEW_SCHEDULED" && app.interviewScheduledAt && (
-                  <div style={{ marginTop:"0.75rem", padding:"0.75rem 1rem", background:"rgba(67,233,123,0.08)", border:"1px solid rgba(67,233,123,0.2)", borderRadius:"var(--radius)", fontSize:"0.82rem" }}>
-                    <div style={{ color:"#43e97b", fontWeight:700, marginBottom:"0.25rem" }}>
-                      📅 Interview: {app.interviewScheduledAt.replace('T',' ').slice(0,16)}
-                    </div>
-                    {app.interviewDetails && <div style={{ color:"var(--text2)" }}>{app.interviewDetails}</div>}
-                  </div>
-                )}
-
-                {app.status === "APPLIED" && (
-                  <button onClick={() => handleWithdraw(app.id)} className="btn-withdraw">✕ Withdraw</button>
-                )}
               </div>
 
-              <div style={{
-                padding:"0.4rem 1rem", borderRadius:"20px",
-                background: STATUS_CONFIG[app.status]?.bg || "rgba(255,255,255,0.05)",
-                color: STATUS_CONFIG[app.status]?.color || "var(--text2)",
-                fontWeight:700, fontSize:"0.78rem", letterSpacing:"0.5px",
-                textTransform:"uppercase", whiteSpace:"nowrap", flexShrink:0,
-                border:`1px solid ${STATUS_CONFIG[app.status]?.color}35`,
-                backdropFilter:"blur(6px)",
-              }}>
+              <div
+                className="c-status-badge"
+                style={{
+                  background: STATUS_CONFIG[app.status]?.bg || "rgba(255,255,255,0.05)",
+                  color: STATUS_CONFIG[app.status]?.color || "var(--text2)",
+                  border:`1px solid ${STATUS_CONFIG[app.status]?.color}35`,
+                }}>
                 {STATUS_CONFIG[app.status]?.icon} {app.status?.replace("_"," ")}
               </div>
             </div>
+
+            {/* Interview box — full width, properly contained */}
+            {app.status === "INTERVIEW_SCHEDULED" && app.interviewScheduledAt && (
+              <div className="c-interview-box">
+                <div className="c-interview-date">
+                  📅 Interview: {app.interviewScheduledAt.replace('T',' ').slice(0,16)}
+                </div>
+                {app.interviewDetails && (
+                  <div className="c-interview-details">{app.interviewDetails}</div>
+                )}
+              </div>
+            )}
+
+            {app.status === "APPLIED" && (
+              <button onClick={() => handleWithdraw(app.id)} className="btn-withdraw">✕ Withdraw</button>
+            )}
+
           </div>
         ))}
 
