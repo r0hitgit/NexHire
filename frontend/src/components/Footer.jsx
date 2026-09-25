@@ -121,7 +121,7 @@ export default function Footer() {
       }}>
         <span style={{ color: "var(--text2)", fontSize: "0.825rem" }}>
           © 2026 NexHire. All rights reserved. Built with{" "}
-          <span style={{ color: "#ff6584" }}>❤️</span>{" "}
+          <span style={{ color: "#ff6584" }}>♥</span>{" "}
           by{" "}
           <a href="https://www.linkedin.com/in/r0hitin" target="_blank" rel="noreferrer"
             style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}>
@@ -129,7 +129,15 @@ export default function Footer() {
           </a>
         </span>
 
-        {/* ✅ CHANGE: Version badge added */}
+        <a href="/privacy-policy" style={{
+          color: "var(--text2)", fontSize: "0.8rem", textDecoration: "none",
+          transition: "var(--transition)",
+        }}
+          onMouseEnter={e => e.currentTarget.style.color = "var(--accent)"}
+          onMouseLeave={e => e.currentTarget.style.color = "var(--text2)"}
+        >Privacy Policy</a>
+
+        {/*  CHANGE: Version badge added */}
         <span style={{
           color: "var(--text2)", fontSize: "0.75rem",
           background: "var(--surface2)", border: "1px solid var(--border)",

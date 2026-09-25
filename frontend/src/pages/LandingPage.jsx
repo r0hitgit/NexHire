@@ -175,18 +175,29 @@ export default function LandingPage() {
         </div>
 
         {/* Headline */}
-        <h1 style={{
-          fontFamily: "var(--font-head)", fontWeight: 800,
-          fontSize: "clamp(2.2rem, 7vw, 4.5rem)",
-          lineHeight: 1.1, marginBottom: "1.5rem",
-          animation: "fadeIn 0.6s ease",
-        }}>
+        <h1
+          style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontWeight: 600,
+            fontStyle: "italic",
+            fontSize: "clamp(3rem, 7vw, 5.5rem)",
+            lineHeight: 0.95,
+            marginBottom: "1.5rem",
+            animation: "fadeIn 0.6s ease",
+          }}
+        >
           Find Your{" "}
-          <span style={{
-            background: "linear-gradient(135deg, #6c63ff, #ff6584)",
-            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-          }}>Dream Job</span>
-          <br />or Perfect Hire
+          <span
+            style={{
+              background: "linear-gradient(135deg, #6c63ff, #ff6584)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            Dream Job
+          </span>
+          <br />
+          or Perfect Hire
         </h1>
 
         {/* Subtitle */}
@@ -225,9 +236,8 @@ export default function LandingPage() {
             <div key={i} style={{ textAlign: "center" }}>
               <div style={{
                 fontSize: "clamp(1.8rem, 4vw, 2.5rem)", fontWeight: 800,
-                fontFamily: "var(--font-head)",
-                background: "linear-gradient(135deg, #6c63ff, #ff6584)",
-                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+                fontFamily: "'TikTok Sans', sans-serif",
+                color: "var(--text)",
               }}>{s.val}</div>
               <div style={{ color: "var(--text2)", fontSize: "0.875rem", marginTop: "0.25rem" }}>{s.label}</div>
             </div>
@@ -236,24 +246,77 @@ export default function LandingPage() {
 
         {/* Feature Cards */}
         <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(min(260px, 100%), 1fr))",
-          gap: "1.25rem", width: "100%", maxWidth: "900px",
-          animation: "fadeIn 1s ease",
-        }}>
-          {[
-            { icon: "🔍", title: "Smart Job Search", desc: "Search and filter jobs by title, location, and salary. Find the perfect match instantly." },
-            { icon: "🏢", title: "Post Jobs Easily", desc: "Recruiters can post jobs, manage applicants, and shortlist candidates — all in one dashboard." },
-            { icon: "📊", title: "Track Applications", desc: "Candidates can track their application status in real time — Applied, Shortlisted, or Rejected." },
-            { icon: "🔒", title: "Secure & Verified", desc: "Email OTP verification ensures every account is genuine and your data stays safe." },
-          ].map((f, i) => (
-            <div key={i} className="feature-card">
-              <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>{f.icon}</div>
-              <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: "1.05rem", marginBottom: "0.5rem" }}>{f.title}</div>
-              <div style={{ color: "var(--text2)", fontSize: "0.875rem", lineHeight: 1.6 }}>{f.desc}</div>
-            </div>
-          ))}
-        </div>
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))",
+                  gap: "1rem",
+                  width: "100%",
+                  maxWidth: "900px",
+                }}>
+                  {[
+                    {
+                      icon: (
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                        </svg>
+                      ),
+                      title: "Smart Job Search",
+                      desc: "Search and filter jobs by title, location, and salary. Find the perfect match instantly.",
+                    },
+                    {
+                      icon: (
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                        </svg>
+                      ),
+                      title: "Post Jobs Easily",
+                      desc: "Recruiters can post jobs, manage applicants, and shortlist candidates — all in one dashboard.",
+                    },
+                    {
+                      icon: (
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+                        </svg>
+                      ),
+                      title: "Track Applications",
+                      desc: "Candidates can track their application status in real time — Applied, Shortlisted, or Rejected.",
+                    },
+                    {
+                      icon: (
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                      ),
+                      title: "Secure & Verified",
+                      desc: "Email OTP verification ensures every account is genuine and your data stays safe.",
+                    },
+                  ].map((f, i) => (
+                    <div key={i} className="feature-card">
+                      <div style={{
+                        width: "40px", height: "40px",
+                        borderRadius: "10px",
+                        background: "rgba(108,99,255,0.12)",
+                        border: "1px solid rgba(108,99,255,0.2)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        color: "#8b85ff",
+                        marginBottom: "1rem",
+                      }}>
+                        {f.icon}
+                      </div>
+                      <div style={{
+                        fontFamily: "var(--font-head)",
+                        fontWeight: 700,
+                        fontSize: "1rem",
+                        marginBottom: "0.5rem",
+                        color: "#fff",
+                      }}>{f.title}</div>
+                      <div style={{
+                        color: "rgba(255,255,255,0.4)",
+                        fontSize: "0.875rem",
+                        lineHeight: 1.65,
+                      }}>{f.desc}</div>
+                    </div>
+                  ))}
+                </div>
       </main>
 
       <Footer />

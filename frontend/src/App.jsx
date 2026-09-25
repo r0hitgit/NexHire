@@ -7,6 +7,7 @@ import CandidateDashboard from "./pages/CandidateDashboard";
 import LandingPage from "./pages/LandingPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import JobDetailPage from "./pages/JobDetailPage";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const PrivateRoute = ({ children, roles }) => {
   const token = localStorage.getItem("token");
@@ -28,6 +29,7 @@ function App() {
         <Route path="/jobs/:id" element={<PrivateRoute><JobDetailPage /></PrivateRoute>} />
         <Route path="/recruiter" element={<PrivateRoute roles={["RECRUITER"]}><RecruiterDashboard /></PrivateRoute>} />
         <Route path="/candidate" element={<PrivateRoute roles={["CANDIDATE"]}><CandidateDashboard /></PrivateRoute>} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
     </BrowserRouter>
   );
