@@ -2,46 +2,124 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import { getMyApplications, withdrawApplication } from "../api/axios";
 
+import {
+  ClipboardList,
+  Star,
+  CalendarDays,
+  X,
+  Building2,
+  MapPin,
+  IndianRupee,
+  Inbox,
+  Undo2,
+  XCircle,
+} from "lucide-react";
+
+
 const STATUS_CONFIG = {
-  APPLIED:              { color: "#6c63ff", bg: "rgba(108,99,255,0.12)",  icon: "📋", label: "Applied" },
-  SHORTLISTED:          { color: "#f59e0b", bg: "rgba(245,158,11,0.12)",  icon: "⭐", label: "Shortlisted" },
-  INTERVIEW_SCHEDULED:  { color: "#43e97b", bg: "rgba(67,233,123,0.12)",  icon: "📅", label: "Interview Scheduled" },
-  REJECTED:             { color: "#ff6584", bg: "rgba(255,101,132,0.12)", icon: "✕",  label: "Rejected" },
+  APPLIED: {
+    color: "#6c63ff",
+    bg: "rgba(108,99,255,0.12)",
+    icon: ClipboardList,
+    label: "Applied",
+  },
+
+  SHORTLISTED: {
+    color: "#f59e0b",
+    bg: "rgba(245,158,11,0.12)",
+    icon: Star,
+    label: "Shortlisted",
+  },
+
+  INTERVIEW_SCHEDULED: {
+    color: "#43e97b",
+    bg: "rgba(67,233,123,0.12)",
+    icon: CalendarDays,
+    label: "Interview Scheduled",
+  },
+
+  REJECTED: {
+    color: "#ff6584",
+    bg: "rgba(255,101,132,0.12)",
+    icon: X,
+    label: "Rejected",
+  },
 };
+
 
 export default function CandidateDashboard() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [toast, setToast] = useState("");
+  const [toast, setToast] = useState(null);
 
-  useEffect(() => { fetchApplications(); }, []);
+
+  useEffect(() => {
+    fetchApplications();
+  }, []);
+
 
   const fetchApplications = () => {
     getMyApplications()
-      .then(res => { setApplications(res.data); setLoading(false); })
+      .then(res => {
+        setApplications(res.data);
+        setLoading(false);
+      })
       .catch(() => setLoading(false));
   };
 
+
+  const showToast = (message, Icon) => {
+    setToast({ message, Icon });
+
+    setTimeout(() => {
+      setToast(null);
+    }, 3000);
+  };
+
+
   const handleWithdraw = async (appId) => {
     if (!window.confirm("Are you sure you want to withdraw?")) return;
-    try { await withdrawApplication(appId); fetchApplications(); showToast("✅ Withdrawn"); }
-    catch { showToast("❌ Failed"); }
+
+    try {
+      await withdrawApplication(appId);
+      fetchApplications();
+      showToast("Withdrawn", Undo2);
+    } catch {
+      showToast("Failed", XCircle);
+    }
   };
 
-  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
 
   const counts = {
-    APPLIED:             applications.filter(a => a.status === "APPLIED").length,
-    SHORTLISTED:         applications.filter(a => a.status === "SHORTLISTED").length,
-    INTERVIEW_SCHEDULED: applications.filter(a => a.status === "INTERVIEW_SCHEDULED").length,
-    REJECTED:            applications.filter(a => a.status === "REJECTED").length,
+    APPLIED: applications.filter(a => a.status === "APPLIED").length,
+    SHORTLISTED: applications.filter(a => a.status === "SHORTLISTED").length,
+    INTERVIEW_SCHEDULED: applications.filter(
+      a => a.status === "INTERVIEW_SCHEDULED"
+    ).length,
+    REJECTED: applications.filter(a => a.status === "REJECTED").length,
   };
+
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
+
       <style>{`
-        @keyframes fadeIn { from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);} }
-        *, *::before, *::after { box-sizing: border-box; }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        *, *::before, *::after {
+          box-sizing: border-box;
+        }
+
 
         .c-stat-card {
           background: rgba(255,255,255,0.04);
@@ -53,12 +131,15 @@ export default function CandidateDashboard() {
           transition: all 0.25s ease;
           animation: fadeIn 0.4s ease;
         }
+
+
         .c-stat-card:hover {
           border-color: rgba(108,99,255,0.4);
           background: rgba(108,99,255,0.06);
           transform: translateY(-3px);
           box-shadow: 0 8px 24px rgba(108,99,255,0.1);
         }
+
 
         .c-history-header {
           display: flex;
@@ -68,6 +149,7 @@ export default function CandidateDashboard() {
           margin-bottom: 0.75rem;
           border-bottom: 1px solid rgba(255,255,255,0.08);
         }
+
 
         .c-app-card {
           background: rgba(255,255,255,0.04);
@@ -82,6 +164,8 @@ export default function CandidateDashboard() {
           overflow: hidden;
           width: 100%;
         }
+
+
         .c-app-card:hover {
           border-color: rgba(108,99,255,0.4);
           background: rgba(108,99,255,0.06);
@@ -89,7 +173,7 @@ export default function CandidateDashboard() {
           box-shadow: 0 8px 24px rgba(108,99,255,0.1);
         }
 
-        /* Top row — flex, wraps on tiny screens */
+
         .c-card-top {
           display: flex;
           align-items: flex-start;
@@ -99,10 +183,12 @@ export default function CandidateDashboard() {
           flex-wrap: wrap;
         }
 
+
         .c-card-left {
           flex: 1;
           min-width: 0;
         }
+
 
         .c-card-title {
           font-weight: 700;
@@ -114,18 +200,24 @@ export default function CandidateDashboard() {
           white-space: nowrap;
         }
 
+
         .c-card-meta {
           display: flex;
           gap: 0.5rem;
           flex-wrap: wrap;
         }
+
+
         .c-card-meta span {
           color: var(--text2);
           font-size: clamp(0.72rem, 2vw, 0.8rem);
           white-space: nowrap;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
         }
 
-        /* Badge — full text, scales font down on mobile */
+
         .c-badge {
           flex-shrink: 0;
           padding: 0.35rem 0.85rem;
@@ -137,9 +229,11 @@ export default function CandidateDashboard() {
           white-space: nowrap;
           backdrop-filter: blur(6px);
           align-self: flex-start;
+          display: inline-flex;
+          align-items: center;
         }
 
-        /* Interview box — always full width, contained */
+
         .c-interview-box {
           margin-top: 0.75rem;
           padding: 0.75rem 1rem;
@@ -149,18 +243,26 @@ export default function CandidateDashboard() {
           width: 100%;
           overflow: hidden;
         }
+
+
         .c-interview-date {
           color: #43e97b;
           font-weight: 700;
           font-size: clamp(0.78rem, 2.2vw, 0.85rem);
           margin-bottom: 0.25rem;
           word-break: break-word;
+          display: flex;
+          align-items: center;
+          gap: 5px;
         }
+
+
         .c-interview-loc {
           color: var(--text2);
           font-size: clamp(0.72rem, 2vw, 0.8rem);
           word-break: break-word;
         }
+
 
         .btn-withdraw {
           margin-top: 0.75rem;
@@ -173,102 +275,331 @@ export default function CandidateDashboard() {
           font-weight: 600;
           cursor: pointer;
           transition: all 0.2s ease;
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
         }
+
+
         .btn-withdraw:hover {
           background: rgba(255,101,132,0.18);
           border-color: rgba(255,101,132,0.45);
           color: #fff;
         }
 
+
         .toast-glass {
-          position: fixed; bottom: 2rem; right: 1rem; left: 1rem;
-          max-width: 400px; margin: 0 auto;
-          background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
-          backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-          padding: 1rem 1.5rem; border-radius: var(--radius); font-size: 0.9rem;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.3); animation: fadeIn 0.3s ease; z-index: 1000;
+          position: fixed;
+          bottom: 2rem;
+          right: 1rem;
+          left: 1rem;
+          max-width: 400px;
+          margin: 0 auto;
+          background: rgba(255,255,255,0.07);
+          border: 1px solid rgba(255,255,255,0.12);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          padding: 1rem 1.5rem;
+          border-radius: var(--radius);
+          font-size: 0.9rem;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+          animation: fadeIn 0.3s ease;
+          z-index: 1000;
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
       `}</style>
 
+
       <Navbar />
-      <main style={{ maxWidth: "900px", margin: "0 auto", padding: "clamp(1rem,4vw,2.5rem) clamp(1rem,3vw,2rem)" }}>
+
+
+      <main
+        style={{
+          maxWidth: "900px",
+          margin: "0 auto",
+          padding: "clamp(1rem,4vw,2.5rem) clamp(1rem,3vw,2rem)"
+        }}
+      >
 
         <div style={{ marginBottom: "1.5rem" }}>
-          <h1 style={{ fontSize: "clamp(1.4rem,5vw,2rem)", marginBottom: "0.4rem" }}>My Applications</h1>
-          <p style={{ color: "var(--text2)", fontSize: "0.9rem" }}>Track your job application status</p>
+          <h1
+            style={{
+              fontSize: "clamp(1.4rem,5vw,2rem)",
+              marginBottom: "0.4rem"
+            }}
+          >
+            My Applications
+          </h1>
+
+          <p
+            style={{
+              color: "var(--text2)",
+              fontSize: "0.9rem"
+            }}
+          >
+            Track your job application status
+          </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "0.75rem", marginBottom: "2rem" }}>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4,1fr)",
+            gap: "0.75rem",
+            marginBottom: "2rem"
+          }}
+        >
           {[
-            { label:"Applied",     val:counts.APPLIED,             color:"#6c63ff" },
-            { label:"Shortlisted", val:counts.SHORTLISTED,         color:"#f59e0b" },
-            { label:"Interview",   val:counts.INTERVIEW_SCHEDULED, color:"#43e97b" },
-            { label:"Rejected",    val:counts.REJECTED,            color:"#ff6584" },
-          ].map((s,i) => (
-            <div key={i} className="c-stat-card" style={{ borderTop: `3px solid ${s.color}` }}>
-              <div style={{ fontSize:"clamp(1.5rem,5vw,2.5rem)", fontWeight:800, fontFamily:"var(--font-head)", color:s.color }}>{s.val}</div>
-              <div style={{ color:"var(--text2)", fontSize:"clamp(0.6rem,1.8vw,0.875rem)", marginTop:"0.25rem" }}>{s.label}</div>
+            {
+              label: "Applied",
+              val: counts.APPLIED,
+              color: "#6c63ff"
+            },
+            {
+              label: "Shortlisted",
+              val: counts.SHORTLISTED,
+              color: "#f59e0b"
+            },
+            {
+              label: "Interview",
+              val: counts.INTERVIEW_SCHEDULED,
+              color: "#43e97b"
+            },
+            {
+              label: "Rejected",
+              val: counts.REJECTED,
+              color: "#ff6584"
+            },
+          ].map((s, i) => (
+            <div
+              key={i}
+              className="c-stat-card"
+              style={{
+                borderTop: `3px solid ${s.color}`
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "clamp(1.5rem,5vw,2.5rem)",
+                  fontWeight: 800,
+                  fontFamily: "var(--font-body)",
+                  color: s.color
+                }}
+              >
+                {s.val}
+              </div>
+
+              <div
+                style={{
+                  color: "var(--text2)",
+                  fontSize: "clamp(0.6rem,1.8vw,0.875rem)",
+                  marginTop: "0.25rem"
+                }}
+              >
+                {s.label}
+              </div>
             </div>
           ))}
         </div>
 
+
         <div className="c-history-header">
-          <span style={{ fontFamily:"var(--font-head)", fontWeight:700, fontSize:"1.1rem" }}>Application History</span>
-          <span style={{ fontSize:"0.8rem", color:"var(--text2)" }}>{applications.length} total</span>
+          <span
+            style={{
+              fontFamily: "var(--font-head)",
+              fontWeight: 700,
+              fontSize: "1.1rem"
+            }}
+          >
+            Application History
+          </span>
+
+          <span
+            style={{
+              fontSize: "0.8rem",
+              color: "var(--text2)"
+            }}
+          >
+            {applications.length} total
+          </span>
         </div>
 
+
         {loading ? (
-          [...Array(4)].map((_,i) => (
-            <div key={i} className="skeleton" style={{ height:"80px", marginBottom:"0.75rem", borderRadius:"var(--radius-lg)" }}/>
+          [...Array(4)].map((_, i) => (
+            <div
+              key={i}
+              className="skeleton"
+              style={{
+                height: "80px",
+                marginBottom: "0.75rem",
+                borderRadius: "var(--radius-lg)"
+              }}
+            />
           ))
+
         ) : applications.length === 0 ? (
-          <div style={{ padding:"4rem 1rem", textAlign:"center", color:"var(--text2)" }}>
-            <div style={{ fontSize:"3rem", marginBottom:"1rem" }}>📭</div>
+
+          <div
+            style={{
+              padding: "4rem 1rem",
+              textAlign: "center",
+              color: "var(--text2)"
+            }}
+          >
+            <div
+              style={{
+                marginBottom: "1rem",
+                display: "flex",
+                justifyContent: "center"
+              }}
+            >
+              <Inbox size={48} strokeWidth={1.5} />
+            </div>
+
             <p>No applications yet.</p>
-            <p style={{ marginTop:"0.5rem", fontSize:"0.875rem" }}>Browse jobs and start applying!</p>
+
+            <p
+              style={{
+                marginTop: "0.5rem",
+                fontSize: "0.875rem"
+              }}
+            >
+              Browse jobs and start applying!
+            </p>
           </div>
+
         ) : applications.map(app => {
+
           const cfg = STATUS_CONFIG[app.status];
+          const StatusIcon = cfg?.icon;
+
           return (
-            <div key={app.id} className="c-app-card">
+            <div
+              key={app.id}
+              className="c-app-card"
+            >
+
               <div className="c-card-top">
+
                 <div className="c-card-left">
-                  <div className="c-card-title">{app.job?.title || "Job"}</div>
-                  <div className="c-card-meta">
-                    {app.job?.recruiter?.name && <span>🏢 {app.job.recruiter.name}</span>}
-                    {app.job?.location && <span>📍 {app.job.location}</span>}
-                    {app.job?.salary && <span>💰 ₹{(app.job.salary/100000).toFixed(1)}L</span>}
+
+                  <div className="c-card-title">
+                    {app.job?.title || "Job"}
                   </div>
+
+
+                  <div className="c-card-meta">
+
+                    {app.job?.recruiter?.name && (
+                      <span>
+                        <Building2 size={13} strokeWidth={2} />
+                        {app.job.recruiter.name}
+                      </span>
+                    )}
+
+                    {app.job?.location && (
+                      <span>
+                        <MapPin size={13} strokeWidth={2} />
+                        {app.job.location}
+                      </span>
+                    )}
+
+                    {app.job?.salary && (
+                      <span>
+                        <IndianRupee size={13} strokeWidth={2} />
+                        ₹{(app.job.salary / 100000).toFixed(1)}L
+                      </span>
+                    )}
+
+                  </div>
+
                 </div>
-                <div className="c-badge" style={{
-                  background: cfg?.bg || "rgba(255,255,255,0.05)",
-                  color: cfg?.color || "var(--text2)",
-                  border: `1px solid ${cfg?.color || "#fff"}35`,
-                }}>
-                  {cfg?.icon} {cfg?.label}
+
+
+                <div
+                  className="c-badge"
+                  style={{
+                    background: cfg?.bg || "rgba(255,255,255,0.05)",
+                    color: cfg?.color || "var(--text2)",
+                    border: `1px solid ${cfg?.color || "#fff"}35`,
+                  }}
+                >
+                  {StatusIcon && (
+                    <StatusIcon
+                      size={14}
+                      strokeWidth={2}
+                      style={{ marginRight: "5px" }}
+                    />
+                  )}
+
+                  {cfg?.label}
                 </div>
+
               </div>
 
-              {app.status === "INTERVIEW_SCHEDULED" && app.interviewScheduledAt && (
-                <div className="c-interview-box">
-                  <div className="c-interview-date">
-                    📅 Interview: {app.interviewScheduledAt.replace('T',' ').slice(0,16)}
+
+              {app.status === "INTERVIEW_SCHEDULED" &&
+                app.interviewScheduledAt && (
+
+                  <div className="c-interview-box">
+
+                    <div className="c-interview-date">
+                      <CalendarDays
+                        size={14}
+                        strokeWidth={2}
+                      />
+
+                      Interview:{" "}
+                      {app.interviewScheduledAt
+                        .replace("T", " ")
+                        .slice(0, 16)}
+                    </div>
+
+
+                    {app.interviewDetails && (
+                      <div className="c-interview-loc">
+                        {app.interviewDetails}
+                      </div>
+                    )}
+
                   </div>
-                  {app.interviewDetails && (
-                    <div className="c-interview-loc">{app.interviewDetails}</div>
-                  )}
-                </div>
-              )}
+                )}
+
 
               {app.status === "APPLIED" && (
-                <button onClick={() => handleWithdraw(app.id)} className="btn-withdraw">✕ Withdraw</button>
+                <button
+                  onClick={() => handleWithdraw(app.id)}
+                  className="btn-withdraw"
+                >
+                  <Undo2 size={14} strokeWidth={2} />
+                  Withdraw
+                </button>
               )}
+
             </div>
           );
         })}
+
       </main>
 
-      {toast && <div className="toast-glass">{toast}</div>}
+
+      {toast && (
+        <div className="toast-glass">
+          {toast.Icon && (
+            <toast.Icon
+              size={17}
+              strokeWidth={2}
+            />
+          )}
+
+          <span>{toast.message}</span>
+        </div>
+      )}
+
     </div>
   );
 }
