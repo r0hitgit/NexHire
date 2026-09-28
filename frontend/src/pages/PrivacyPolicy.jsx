@@ -103,7 +103,7 @@ export default function PrivacyPolicy() {
           </Section>
 
           <Section title="8. Data Retention">
-            <p>We retain your data as long as your account is active. If you wish to delete your account and all associated data, please contact us at rv87919@gmail.com.</p>
+            <p>We retain your data as long as your account is active. If you wish to delete your account and all associated data, please contact us at r0hiitverma1095@gmail.com.</p>
           </Section>
 
           <Section title="9. Contact Us">
