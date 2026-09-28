@@ -38,7 +38,7 @@ export default function PrivacyPolicy() {
             WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
           }}>Privacy Policy</h1>
           <p style={{ color: "var(--text2)", fontSize: "0.875rem" }}>
-            Last updated: July 28, 2026
+            Last updated: September 29, 2026
           </p>
         </div>
 
