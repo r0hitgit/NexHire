@@ -21,7 +21,7 @@ export default function Footer() {
         {/* Brand */}
         <div>
           <div style={{
-            fontFamily: "var(--font-head)", fontSize: "1.4rem", fontWeight: 800,
+            fontFamily: "'Saira', sans-serif", fontSize: "1.7rem", fontWeight: 600,
             background: "linear-gradient(135deg, #6c63ff, #ff6584)",
             WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
             marginBottom: "0.75rem",
