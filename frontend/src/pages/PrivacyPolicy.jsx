@@ -109,8 +109,8 @@ export default function PrivacyPolicy() {
           <Section title="9. Contact Us">
             <p>If you have any questions about this Privacy Policy, please contact us at:</p>
             <p style={{ marginTop: "0.5rem" }}>
-              <strong style={{ color: "var(--text)" }}>Email:</strong> rv87919@gmail.com<br />
-              <strong style={{ color: "var(--text)" }}>Website:</strong> nexhire.me<br />
+              <strong style={{ color: "var(--text)" }}>Email:</strong> r0hiitverma1095@gmail.com<br />
+              <strong style={{ color: "var(--text)" }}>Website:</strong> r0hithiside.vercel.app<br />
               <strong style={{ color: "var(--text)" }}>Developer:</strong> Rohit Verma
             </p>
           </Section>
