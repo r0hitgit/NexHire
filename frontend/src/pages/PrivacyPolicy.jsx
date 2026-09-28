@@ -32,8 +32,8 @@ export default function PrivacyPolicy() {
         {/* Header */}
         <div style={{ marginBottom: "2.5rem" }}>
           <h1 style={{
-            fontSize: "clamp(1.6rem, 5vw, 2.2rem)", fontFamily: "var(--font-head)",
-            fontWeight: 800, marginBottom: "0.5rem",
+            fontSize: "clamp(1.6rem, 5vw, 2.2rem)", fontFamily: "'Saira', sans-serif",
+            fontWeight: 600, marginBottom: "0.5rem",
             background: "linear-gradient(135deg, #6c63ff, #ff6584)",
             WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
           }}>Privacy Policy</h1>
