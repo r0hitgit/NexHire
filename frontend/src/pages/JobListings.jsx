@@ -139,6 +139,7 @@ export default function JobListings() {
           margin-bottom: 1.5rem;
         }
 
+
         .search-icon {
           position: absolute;
           left: 1rem;
@@ -146,6 +147,7 @@ export default function JobListings() {
           transform: translateY(-50%);
           color: var(--text2);
           pointer-events: none;
+          z-index: 2;
         }
 
         .search-input {
@@ -196,6 +198,7 @@ export default function JobListings() {
 
         {/* Search */}
         <div className="search-wrapper">
+          {/* This icon is now visible because .search-icon has z-index: 2 (see CSS above) */}
           <Search
             className="search-icon"
             size={18}

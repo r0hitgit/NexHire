@@ -680,7 +680,7 @@ export default function RecruiterDashboard() {
                 style={{
                   fontSize: "clamp(1.5rem,5vw,2.5rem)",
                   fontWeight: 800,
-                  fontFamily: "var(--font-head)",
+                  fontFamily: "var(--font-body)",
                   color: s.color
                 }}
               >
