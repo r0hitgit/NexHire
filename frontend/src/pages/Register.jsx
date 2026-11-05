@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { register, verifyOtp } from "../api/axios";
 
 import {
@@ -8,68 +8,47 @@ import {
   User,
   Building2,
   ArrowRight,
+  ShieldCheck,
+  Eye,
+  EyeOff
 } from "lucide-react";
-
+import Logo from "../components/Logo";
 
 // Password strength checker
 const getPasswordStrength = (password) => {
   if (!password) return { score: 0, label: "", color: "" };
 
   let score = 0;
-
   if (password.length >= 8) score++;
   if (/[A-Z]/.test(password)) score++;
   if (/[a-z]/.test(password)) score++;
   if (/[0-9]/.test(password)) score++;
-  if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) score++;
+  if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) score++;
 
   if (score <= 1) {
-    return {
-      score,
-      label: "Very Weak",
-      color: "#ff6584",
-    };
+    return { score, label: "Needs Improvement", color: "#DC2626" };
   }
-
   if (score === 2) {
-    return {
-      score,
-      label: "Weak",
-      color: "#ff9f43",
-    };
+    return { score, label: "Weak", color: "#EA580C" };
   }
-
   if (score === 3) {
-    return {
-      score,
-      label: "Fair",
-      color: "#f59e0b",
-    };
+    return { score, label: "Fair", color: "#D97706" };
   }
-
   if (score === 4) {
-    return {
-      score,
-      label: "Strong",
-      color: "#43e97b",
-    };
+    return { score, label: "Good", color: "#16A34A" };
   }
-
-  return {
-    score: 5,
-    label: "Very Strong",
-    color: "#00d2ff",
-  };
+  return { score: 5, label: "Strong & Secure", color: "#177A59" };
 };
 
-
 export default function Register() {
+  const [searchParams] = useSearchParams();
+  const initialRole = searchParams.get("role") === "RECRUITER" ? "RECRUITER" : "CANDIDATE";
 
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
-    role: "CANDIDATE",
+    role: initialRole,
   });
 
   const [otp, setOtp] = useState("");
@@ -80,233 +59,174 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
-
-
-  // Password strength
   const strength = getPasswordStrength(form.password);
-
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
     setError("");
     setSuccess("");
     setLoading(true);
 
-    // Block submit if password is not strong enough
     if (strength.score < 5) {
-      setError(
-        "Please create a stronger password meeting all requirements."
-      );
-
+      setError("Please create a strong password meeting all five security criteria below.");
       setLoading(false);
       return;
     }
 
     try {
-
       await register(form);
-
-      setSuccess(
-        "OTP sent to your email! Please check your inbox."
-      );
-
+      setSuccess("A 6-digit verification code has been sent to your email!");
       setStep("verify");
-
     } catch (err) {
-
       const msg = err.response?.data;
-
       setError(
         msg === "Email already registered"
           ? "This email is already registered. Please sign in instead."
-          : msg || "Registration failed. Try again."
+          : msg || "Registration failed. Please check your details and try again."
       );
-
     } finally {
       setLoading(false);
     }
   };
 
-
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-
     setError("");
     setLoading(true);
 
     try {
-
       await verifyOtp({
         email: form.email,
         otp,
       });
 
-      setSuccess(
-        "Email verified! Redirecting to login..."
-      );
-
-      setTimeout(() => navigate("/login"), 1500);
-
+      setSuccess("Account successfully verified! Redirecting to login...");
+      setTimeout(() => navigate("/login"), 1400);
     } catch (err) {
-
       const msg = err.response?.data;
-
-      setError(
-        msg || "Invalid OTP. Please try again."
-      );
-
+      setError(msg || "Invalid verification code. Please check and try again.");
     } finally {
       setLoading(false);
     }
   };
 
-
   const inputStyle = {
     width: "100%",
-    padding: "0.75rem 1rem",
-    marginBottom: "1.2rem",
-    background: "var(--surface2)",
-    border: "1px solid var(--border)",
-    borderRadius: "var(--radius)",
-    color: "var(--text)",
+    padding: "0.8rem 1rem",
+    marginBottom: "1rem",
+    background: "#FFFFFF",
+    border: "1px solid var(--border-color)",
+    borderRadius: "var(--radius-sm)",
+    color: "var(--text-main)",
     fontSize: "0.95rem",
     outline: "none",
     boxSizing: "border-box",
+    transition: "border-color 0.2s ease, box-shadow 0.2s ease"
   };
-
 
   const labelStyle = {
     display: "block",
-    fontSize: "0.78rem",
-    fontWeight: 600,
-    color: "var(--text2)",
-    marginBottom: "0.4rem",
+    fontSize: "0.8rem",
+    fontWeight: 700,
+    color: "var(--text-secondary)",
+    marginBottom: "0.45rem",
     textTransform: "uppercase",
-    letterSpacing: "0.5px",
+    letterSpacing: "0.04em"
   };
-
-
-  // Eye icons
-  const EyeIcon = () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-
-
-  const EyeOffIcon = () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
-      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
-      <line x1="1" y1="1" x2="23" y2="23" />
-    </svg>
-  );
-
 
   return (
     <div
       style={{
-        minHeight: "100dvh",
+        minHeight: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background:
-          "radial-gradient(ellipse at 40% 80%, rgba(255,101,132,0.07) 0%, transparent 60%), var(--bg)",
-        padding: "1rem",
+        backgroundColor: "var(--bg-soft)",
+        padding: "1.5rem"
       }}
     >
+      <style>{`
+        .register-card {
+          width: 100%;
+          max-width: 460px;
+          background: #FFFFFF;
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-lg);
+          padding: clamp(2rem, 5vw, 2.75rem);
+          box-shadow: var(--shadow-md);
+          animation: fadeIn 0.35s ease;
+        }
 
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "440px",
-          background: "var(--surface)",
-          border: "1px solid var(--border)",
-          borderRadius: "var(--radius-lg)",
-          padding: "clamp(1.25rem, 5vw, 2.5rem)",
-          boxShadow: "var(--shadow)",
-          animation: "fadeIn 0.5s ease",
-        }}
-      >
+        .auth-input:focus {
+          border-color: var(--primary) !important;
+          box-shadow: 0 0 0 3px rgba(23, 122, 89, 0.12) !important;
+        }
 
-        {/* Logo */}
+        .role-btn {
+          flex: 1;
+          padding: 0.85rem;
+          border-radius: var(--radius-md);
+          border: 1px solid var(--border-color);
+          background: #FFFFFF;
+          color: var(--text-secondary);
+          font-weight: 700;
+          font-size: 0.92rem;
+          cursor: pointer;
+          transition: var(--transition);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+
+        .role-btn.active {
+          border-color: var(--primary);
+          background: var(--primary-subtle);
+          color: var(--primary-dark);
+          box-shadow: 0 2px 6px rgba(23, 122, 89, 0.1);
+        }
+      `}</style>
+
+      <div className="register-card">
+        {/* Brand Logo */}
         <div
-          style={{
-            fontFamily: "'Saira', sans-serif",
-            fontSize: "clamp(1.6rem, 5vw, 1.8rem)",
-            fontWeight: 600,
-            background:
-              "linear-gradient(135deg, #6c63ff, #ff6584)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            marginBottom: "0.25rem",
-          }}
+          onClick={() => navigate("/")}
+          style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem", marginBottom: "1.5rem", cursor: "pointer" }}
         >
-          NexHire
+          <Logo size={36} variant="badge" />
+          <span style={{ fontFamily: "var(--font-head)", fontSize: "1.35rem", fontWeight: 800, color: "var(--text-main)" }}>
+            Nex<span style={{ color: "var(--primary)" }}>Hire</span>
+          </span>
         </div>
 
-
         {step === "register" ? (
-
           <>
-            <p
-              style={{
-                color: "var(--text2)",
-                fontSize: "0.9rem",
-                marginBottom: "1.5rem",
-              }}
-            >
+            <h1 style={{ fontSize: "1.6rem", fontWeight: 800, color: "var(--text-main)", marginBottom: "0.35rem" }}>
               Create your account
+            </h1>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.92rem", marginBottom: "1.75rem" }}>
+              Join thousands of job seekers and verified hiring teams.
             </p>
 
-
-            {/* Error */}
+            {/* Error banner */}
             {error && (
               <div
                 style={{
-                  background: "rgba(255,101,132,0.1)",
-                  border:
-                    "1px solid rgba(255,101,132,0.3)",
-                  color: "#ff6584",
-                  padding: "0.75rem 1rem",
-                  borderRadius: "var(--radius)",
-                  fontSize: "0.875rem",
-                  marginBottom: "1rem",
+                  background: "#FEF2F2",
+                  border: "1px solid #FECACA",
+                  color: "#B91C1C",
+                  padding: "0.8rem 1rem",
+                  borderRadius: "var(--radius-sm)",
+                  fontSize: "0.88rem",
+                  marginBottom: "1.25rem",
+                  fontWeight: 500
                 }}
               >
                 {error}
-
                 {error.includes("already registered") && (
                   <span>
                     {" "}
-                    <Link
-                      to="/login"
-                      style={{
-                        color: "#ff6584",
-                        fontWeight: 700,
-                        textDecoration: "underline",
-                      }}
-                    >
+                    <Link to="/login" style={{ color: "var(--primary-dark)", fontWeight: 700, textDecoration: "underline" }}>
                       Sign in here
                     </Link>
                   </span>
@@ -314,647 +234,231 @@ export default function Register() {
               </div>
             )}
 
-
-            {/* Success */}
+            {/* Success banner */}
             {success && (
               <div
                 style={{
-                  background: "rgba(67,233,123,0.1)",
-                  border:
-                    "1px solid rgba(67,233,123,0.3)",
-                  color: "#43e97b",
-                  padding: "0.75rem 1rem",
-                  borderRadius: "var(--radius)",
-                  fontSize: "0.875rem",
-                  marginBottom: "1rem",
+                  background: "var(--primary-subtle)",
+                  border: "1px solid #BCE0D1",
+                  color: "var(--primary-dark)",
+                  padding: "0.8rem 1rem",
+                  borderRadius: "var(--radius-sm)",
+                  fontSize: "0.88rem",
+                  marginBottom: "1.25rem",
+                  fontWeight: 600
                 }}
               >
                 {success}
               </div>
             )}
 
-
             <form onSubmit={handleRegister}>
-
-              {/* Full Name */}
-              <label style={labelStyle}>
-                Full Name
-              </label>
-
-              <input
-                style={inputStyle}
-                type="text"
-                placeholder="Your Name"
-                value={form.name}
-                onChange={e =>
-                  setForm({
-                    ...form,
-                    name: e.target.value,
-                  })
-                }
-                required
-                onFocus={e =>
-                  (e.target.style.borderColor =
-                    "var(--accent)")
-                }
-                onBlur={e =>
-                  (e.target.style.borderColor =
-                    "var(--border)")
-                }
-              />
-
-
-              {/* Email */}
-              <label style={labelStyle}>
-                Email
-              </label>
-
-              <input
-                style={inputStyle}
-                type="email"
-                placeholder="you@example.com"
-                value={form.email}
-                onChange={e =>
-                  setForm({
-                    ...form,
-                    email: e.target.value,
-                  })
-                }
-                required
-                onFocus={e =>
-                  (e.target.style.borderColor =
-                    "var(--accent)")
-                }
-                onBlur={e =>
-                  (e.target.style.borderColor =
-                    "var(--border)")
-                }
-              />
-
-
-              {/* Password */}
-              <label style={labelStyle}>
-                Password
-              </label>
-
-              <div
-                style={{
-                  position: "relative",
-                  marginBottom: "0.5rem",
-                }}
-              >
-
-                <input
-                  type={
-                    showPassword
-                      ? "text"
-                      : "password"
-                  }
-                  placeholder="Min. 8 characters"
-                  value={form.password}
-                  onChange={e =>
-                    setForm({
-                      ...form,
-                      password: e.target.value,
-                    })
-                  }
-                  required
-                  onFocus={e =>
-                    (e.target.style.borderColor =
-                      "var(--accent)")
-                  }
-                  onBlur={e =>
-                    (e.target.style.borderColor =
-                      "var(--border)")
-                  }
-                  style={{
-                    ...inputStyle,
-                    marginBottom: 0,
-                    paddingRight: "3rem",
-                  }}
-                />
-
+              {/* Role Selection */}
+              <label style={labelStyle}>I want to...</label>
+              <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.25rem" }}>
+                <button
+                  type="button"
+                  className={`role-btn ${form.role === "CANDIDATE" ? "active" : ""}`}
+                  onClick={() => setForm({ ...form, role: "CANDIDATE" })}
+                >
+                  <User size={18} />
+                  <span>Find a Job</span>
+                </button>
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowPassword(!showPassword)
-                  }
-                  style={{
-                    position: "absolute",
-                    right: "0.75rem",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    color: "var(--text2)",
-                    padding: "0.25rem",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
+                  className={`role-btn ${form.role === "RECRUITER" ? "active" : ""}`}
+                  onClick={() => setForm({ ...form, role: "RECRUITER" })}
                 >
-                  {showPassword ? (
-                    <EyeOffIcon />
-                  ) : (
-                    <EyeIcon />
-                  )}
+                  <Building2 size={18} />
+                  <span>Hire Talent</span>
                 </button>
-
               </div>
 
+              {/* Full Name */}
+              <div>
+                <label style={labelStyle}>Full Name *</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Alex Morgan"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  required
+                  className="auth-input"
+                  style={inputStyle}
+                />
+              </div>
 
-              {/* Password Strength */}
-              {form.password && (
-                <div
-                  style={{
-                    marginBottom: "1rem",
-                  }}
-                >
+              {/* Email */}
+              <div>
+                <label style={labelStyle}>Email Address *</label>
+                <input
+                  type="email"
+                  placeholder="alex@company.com"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  required
+                  className="auth-input"
+                  style={inputStyle}
+                />
+              </div>
 
-                  {/* Strength Bars */}
-                  <div
+              {/* Password */}
+              <div>
+                <label style={labelStyle}>Password *</label>
+                <div style={{ position: "relative", marginBottom: "0.5rem" }}>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Min. 8 characters"
+                    value={form.password}
+                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                    required
+                    className="auth-input"
+                    style={{ ...inputStyle, paddingRight: "3rem", marginBottom: 0 }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
                     style={{
+                      position: "absolute",
+                      right: "0.75rem",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      background: "none",
+                      border: "none",
+                      color: "var(--text-muted)",
+                      padding: "0.25rem",
                       display: "flex",
-                      gap: "4px",
-                      marginBottom: "0.4rem",
+                      alignItems: "center"
                     }}
                   >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
 
-                    {[1, 2, 3, 4, 5].map(i => (
+              {/* Password Strength Checklist */}
+              {form.password && (
+                <div style={{ background: "var(--bg-soft)", padding: "0.85rem", borderRadius: "var(--radius-sm)", border: "1px solid var(--border-color)", marginBottom: "1.25rem" }}>
+                  <div style={{ display: "flex", gap: "4px", marginBottom: "0.4rem" }}>
+                    {[1, 2, 3, 4, 5].map((i) => (
                       <div
                         key={i}
                         style={{
                           flex: 1,
                           height: "4px",
                           borderRadius: "2px",
-                          background:
-                            i <= strength.score
-                              ? strength.color
-                              : "var(--border)",
-                          transition:
-                            "background 0.3s ease",
+                          background: i <= strength.score ? strength.color : "#CBD5E1",
+                          transition: "background 0.3s ease"
                         }}
                       />
                     ))}
-
                   </div>
 
-
-                  {/* Strength Label */}
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-
-                    <span
-                      style={{
-                        fontSize: "0.75rem",
-                        color: strength.color,
-                        fontWeight: 600,
-                      }}
-                    >
-                      {strength.label}
-                    </span>
-
-                    <span
-                      style={{
-                        fontSize: "0.7rem",
-                        color: "var(--text2)",
-                      }}
-                    >
-                      {strength.score}/5
-                    </span>
-
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.76rem", fontWeight: 700, color: strength.color, marginBottom: "0.5rem" }}>
+                    <span>{strength.label}</span>
+                    <span>{strength.score}/5</span>
                   </div>
 
-
-                  {/* Requirements */}
-                  <div
-                    style={{
-                      marginTop: "0.5rem",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "0.25rem",
-                    }}
-                  >
-
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
                     {[
-                      {
-                        label: "At least 8 characters",
-                        met:
-                          form.password.length >= 8,
-                      },
-                      {
-                        label:
-                          "One uppercase letter (A-Z)",
-                        met: /[A-Z]/.test(
-                          form.password
-                        ),
-                      },
-                      {
-                        label:
-                          "One lowercase letter (a-z)",
-                        met: /[a-z]/.test(
-                          form.password
-                        ),
-                      },
-                      {
-                        label: "One number (0-9)",
-                        met: /[0-9]/.test(
-                          form.password
-                        ),
-                      },
-                      {
-                        label:
-                          "One special character (!@#$...)",
-                        met: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(
-                          form.password
-                        ),
-                      },
+                      { label: "At least 8 characters", met: form.password.length >= 8 },
+                      { label: "One uppercase letter (A-Z)", met: /[A-Z]/.test(form.password) },
+                      { label: "One lowercase letter (a-z)", met: /[a-z]/.test(form.password) },
+                      { label: "One number (0-9)", met: /[0-9]/.test(form.password) },
+                      { label: "One special character (!@#$...)", met: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(form.password) }
                     ].map((req, i) => (
-
-                      <div
-                        key={i}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "0.4rem",
-                          fontSize: "0.75rem",
-                        }}
-                      >
-
-                        <span
-                          style={{
-                            color: req.met
-                              ? "#43e97b"
-                              : "var(--text2)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent:
-                              "center",
-                          }}
-                        >
-                          {req.met ? (
-                            <Check
-                              size={12}
-                              strokeWidth={2.5}
-                            />
-                          ) : (
-                            <Circle
-                              size={9}
-                              strokeWidth={2}
-                            />
-                          )}
-                        </span>
-
-                        <span
-                          style={{
-                            color: req.met
-                              ? "#43e97b"
-                              : "var(--text2)",
-                          }}
-                        >
-                          {req.label}
-                        </span>
-
+                      <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.76rem", color: req.met ? "var(--primary)" : "var(--text-muted)" }}>
+                        {req.met ? <Check size={12} strokeWidth={3} /> : <Circle size={8} />}
+                        <span style={{ fontWeight: req.met ? 600 : 400 }}>{req.label}</span>
                       </div>
-
                     ))}
-
                   </div>
-
                 </div>
               )}
 
-
-              {/* Role */}
-              <label style={labelStyle}>
-                I am a...
-              </label>
-
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns:
-                    "1fr 1fr",
-                  gap: "0.75rem",
-                  marginBottom: "1.5rem",
-                }}
-              >
-
-                {[
-                  "CANDIDATE",
-                  "RECRUITER",
-                ].map(r => (
-
-                  <button
-                    key={r}
-                    type="button"
-                    onClick={() =>
-                      setForm({
-                        ...form,
-                        role: r,
-                      })
-                    }
-                    style={{
-                      padding: "0.75rem 0.5rem",
-                      borderRadius:
-                        "var(--radius)",
-                      border: `2px solid ${
-                        form.role === r
-                          ? "var(--accent)"
-                          : "var(--border)"
-                      }`,
-                      background:
-                        form.role === r
-                          ? "rgba(108,99,255,0.1)"
-                          : "var(--surface2)",
-                      color:
-                        form.role === r
-                          ? "var(--accent)"
-                          : "var(--text2)",
-                      fontWeight: 600,
-                      fontSize:
-                        "clamp(0.75rem, 3vw, 0.875rem)",
-                      cursor: "pointer",
-                      transition:
-                        "var(--transition)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "0.4rem",
-                    }}
-                  >
-
-                    {r === "CANDIDATE" ? (
-                      <User
-                        size={16}
-                        strokeWidth={2}
-                      />
-                    ) : (
-                      <Building2
-                        size={16}
-                        strokeWidth={2}
-                      />
-                    )}
-
-                    {r === "CANDIDATE"
-                      ? "Candidate"
-                      : "Recruiter"}
-
-                  </button>
-
-                ))}
-
-              </div>
-
-
-              {/* Create Account */}
               <button
                 type="submit"
                 disabled={loading}
-                style={{
-                  width: "100%",
-                  padding: "0.85rem",
-                  background:
-                    "linear-gradient(135deg, #ff6584, #ff8fa3)",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "var(--radius)",
-                  fontSize: "1rem",
-                  fontWeight: 600,
-                  fontFamily: "var(--font-head)",
-                  cursor: loading
-                    ? "not-allowed"
-                    : "pointer",
-                  opacity: loading ? 0.7 : 1,
-                  boxShadow:
-                    "0 4px 20px rgba(255,101,132,0.35)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "0.4rem",
-                }}
+                className="btn-primary"
+                style={{ width: "100%", padding: "0.85rem", fontSize: "1rem", marginTop: "0.5rem" }}
               >
-                {loading ? (
-                  "Creating account..."
-                ) : (
-                  <>
-                    Create Account
-                    <ArrowRight
-                      size={17}
-                      strokeWidth={2}
-                    />
-                  </>
-                )}
+                <span>{loading ? "Creating account..." : "Create Free Account"}</span>
+                <ArrowRight size={17} />
               </button>
-
             </form>
 
-
-            {/* Login Link */}
-            <p
-              style={{
-                textAlign: "center",
-                marginTop: "1.5rem",
-                fontSize: "0.875rem",
-                color: "var(--text2)",
-              }}
-            >
+            <p style={{ textAlign: "center", marginTop: "1.75rem", fontSize: "0.9rem", color: "var(--text-secondary)" }}>
               Already have an account?{" "}
-
-              <Link
-                to="/login"
-                style={{
-                  color: "var(--accent)",
-                  fontWeight: 500,
-                }}
-              >
+              <Link to="/login" style={{ color: "var(--primary-dark)", fontWeight: 700 }}>
                 Sign in
               </Link>
-
             </p>
-
           </>
-
         ) : (
-
-          /* OTP Verification */
-
+          /* Step 2: OTP Verification */
           <>
-            <p
-              style={{
-                color: "var(--text2)",
-                fontSize: "0.9rem",
-                marginBottom: "2rem",
-              }}
-            >
-              Enter the 6-digit OTP sent to{" "}
-
-              <strong
-                style={{
-                  color: "var(--text)",
-                  wordBreak: "break-all",
-                }}
-              >
-                {form.email}
-              </strong>
-
+            <h1 style={{ fontSize: "1.6rem", fontWeight: 800, color: "var(--text-main)", marginBottom: "0.35rem" }}>
+              Verify your email
+            </h1>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.92rem", marginBottom: "1.75rem" }}>
+              We've emailed a 6-digit confirmation code to <strong style={{ color: "var(--text-main)" }}>{form.email}</strong>.
             </p>
 
-
-            {/* Error */}
             {error && (
-              <div
-                style={{
-                  background:
-                    "rgba(255,101,132,0.1)",
-                  border:
-                    "1px solid rgba(255,101,132,0.3)",
-                  color: "#ff6584",
-                  padding: "0.75rem 1rem",
-                  borderRadius: "var(--radius)",
-                  fontSize: "0.875rem",
-                  marginBottom: "1rem",
-                }}
-              >
+              <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", color: "#B91C1C", padding: "0.8rem 1rem", borderRadius: "var(--radius-sm)", fontSize: "0.88rem", marginBottom: "1.25rem" }}>
                 {error}
               </div>
             )}
 
-
-            {/* Success */}
             {success && (
-              <div
-                style={{
-                  background:
-                    "rgba(67,233,123,0.1)",
-                  border:
-                    "1px solid rgba(67,233,123,0.3)",
-                  color: "#43e97b",
-                  padding: "0.75rem 1rem",
-                  borderRadius: "var(--radius)",
-                  fontSize: "0.875rem",
-                  marginBottom: "1rem",
-                }}
-              >
+              <div style={{ background: "var(--primary-subtle)", border: "1px solid #BCE0D1", color: "var(--primary-dark)", padding: "0.8rem 1rem", borderRadius: "var(--radius-sm)", fontSize: "0.88rem", marginBottom: "1.25rem" }}>
                 {success}
               </div>
             )}
 
-
             <form onSubmit={handleVerifyOtp}>
-
-              <label style={labelStyle}>
-                Enter OTP
-              </label>
-
+              <label style={labelStyle}>Enter 6-digit Code</label>
               <input
                 style={{
                   ...inputStyle,
-                  fontSize: "1.5rem",
+                  fontSize: "1.6rem",
                   letterSpacing: "0.5rem",
                   textAlign: "center",
+                  fontWeight: 700
                 }}
                 type="text"
-                placeholder="______"
+                placeholder="••••••"
                 maxLength={6}
                 value={otp}
-                onChange={e =>
-                  setOtp(e.target.value)
-                }
+                onChange={(e) => setOtp(e.target.value)}
                 required
-                onFocus={e =>
-                  (e.target.style.borderColor =
-                    "var(--accent)")
-                }
-                onBlur={e =>
-                  (e.target.style.borderColor =
-                    "var(--border)")
-                }
+                className="auth-input"
               />
 
-
-              {/* Verify OTP */}
               <button
                 type="submit"
                 disabled={loading}
-                style={{
-                  width: "100%",
-                  padding: "0.85rem",
-                  background:
-                    "linear-gradient(135deg, #6c63ff, #a78bfa)",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "var(--radius)",
-                  fontSize: "1rem",
-                  fontWeight: 600,
-                  fontFamily: "var(--font-head)",
-                  cursor: loading
-                    ? "not-allowed"
-                    : "pointer",
-                  opacity: loading ? 0.7 : 1,
-                  boxShadow:
-                    "0 4px 20px rgba(108,99,255,0.35)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "0.4rem",
-                }}
+                className="btn-primary"
+                style={{ width: "100%", padding: "0.85rem", fontSize: "1rem", marginTop: "0.5rem" }}
               >
-                {loading ? (
-                  "Verifying..."
-                ) : (
-                  <>
-                    Verify OTP
-                    <ArrowRight
-                      size={17}
-                      strokeWidth={2}
-                    />
-                  </>
-                )}
+                <span>{loading ? "Verifying..." : "Verify & Get Started"}</span>
+                <ArrowRight size={17} />
               </button>
-
             </form>
 
-
-            {/* Back */}
-            <p
-              style={{
-                textAlign: "center",
-                marginTop: "1.5rem",
-                fontSize: "0.875rem",
-                color: "var(--text2)",
-              }}
-            >
-              Didn't receive OTP?{" "}
-
+            <p style={{ textAlign: "center", marginTop: "1.75rem", fontSize: "0.88rem", color: "var(--text-secondary)" }}>
+              Didn't receive code?{" "}
               <span
-                onClick={() =>
-                  setStep("register")
-                }
-                style={{
-                  color: "var(--accent)",
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}
+                onClick={() => setStep("register")}
+                style={{ color: "var(--primary)", fontWeight: 700, cursor: "pointer" }}
               >
-                Go back
+                Go back to re-enter email
               </span>
-
             </p>
-
           </>
-
         )}
-
       </div>
-
     </div>
   );
 }

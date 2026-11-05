@@ -32,3 +32,8 @@ build/
 ### VS Code ###
 .vscode/
 .DS_Store
+
+# Local secrets & prompt files
+ANTIGRAVITY_UI_REDESIGN_PROMPT.md
+application-local.properties
+untitled/

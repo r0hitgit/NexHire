@@ -8,6 +8,7 @@ import LandingPage from "./pages/LandingPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import JobDetailPage from "./pages/JobDetailPage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import CareerResources from "./pages/CareerResources";
 
 const PrivateRoute = ({ children, roles }) => {
   const token = localStorage.getItem("token");
@@ -30,6 +31,8 @@ function App() {
         <Route path="/recruiter" element={<PrivateRoute roles={["RECRUITER"]}><RecruiterDashboard /></PrivateRoute>} />
         <Route path="/candidate" element={<PrivateRoute roles={["CANDIDATE"]}><CandidateDashboard /></PrivateRoute>} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/career-resources" element={<CareerResources />} />
+        <Route path="/resources" element={<CareerResources />} />
       </Routes>
     </BrowserRouter>
   );

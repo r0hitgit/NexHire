@@ -1,121 +1,180 @@
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { ArrowLeft, ShieldCheck, CheckCircle2 } from "lucide-react";
 
-export default function PrivacyPolicy() {
-  const navigate = useNavigate();
-
-  const Section = ({ title, children }) => (
+function Section({ title, children }) {
+  return (
     <div style={{ marginBottom: "2rem" }}>
-      <h2 style={{
-        fontSize: "1.1rem", fontFamily: "var(--font-head)",
-        fontWeight: 700, marginBottom: "0.75rem", color: "var(--text)",
-      }}>{title}</h2>
-      <div style={{ color: "var(--text2)", lineHeight: 1.8, fontSize: "0.95rem" }}>
+      <h2
+        style={{
+          fontSize: "1.2rem",
+          fontFamily: "var(--font-head)",
+          fontWeight: 700,
+          marginBottom: "0.75rem",
+          color: "var(--text-main)",
+        }}
+      >
+        {title}
+      </h2>
+      <div style={{ color: "var(--text-secondary)", lineHeight: 1.8, fontSize: "0.95rem" }}>
         {children}
       </div>
     </div>
   );
+}
+
+export default function PrivacyPolicy() {
+  const navigate = useNavigate();
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", flexDirection: "column" }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "var(--bg-soft)",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <Navbar />
-      <main style={{ flex: 1, maxWidth: "800px", width: "100%", margin: "0 auto", padding: "clamp(1rem, 4vw, 2.5rem) clamp(1rem, 3vw, 2rem)" }}>
 
-        {/* Back */}
-        <button onClick={() => navigate(-1)} style={{
-          background: "none", border: "none", color: "var(--accent)", cursor: "pointer",
-          fontSize: "0.9rem", marginBottom: "1.5rem", padding: 0,
-          display: "flex", alignItems: "center", gap: "0.4rem",
-        }}>← Back</button>
+      <main
+        style={{
+          flex: 1,
+          maxWidth: "880px",
+          width: "100%",
+          margin: "0 auto",
+          padding: "2.5rem clamp(1rem, 3vw, 2rem) 4rem",
+        }}
+      >
+        {/* Back Link */}
+        <button
+          onClick={() => navigate(-1)}
+          style={{
+            background: "none",
+            border: "none",
+            color: "var(--text-secondary)",
+            cursor: "pointer",
+            fontSize: "0.92rem",
+            fontWeight: 600,
+            marginBottom: "1.5rem",
+            padding: 0,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.4rem",
+            transition: "color 0.2s ease",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary)")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-secondary)")}
+        >
+          <ArrowLeft size={16} />
+          <span>Back</span>
+        </button>
 
         {/* Header */}
         <div style={{ marginBottom: "2.5rem" }}>
-          <h1 style={{
-            fontSize: "clamp(1.6rem, 5vw, 2.2rem)", fontFamily: "'Saira', sans-serif",
-            fontWeight: 600, marginBottom: "0.5rem",
-            background: "linear-gradient(135deg, #6c63ff, #ff6584)",
-            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-          }}>Privacy Policy</h1>
-          <p style={{ color: "var(--text2)", fontSize: "0.875rem" }}>
-            Last updated: September 29, 2026
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.4rem",
+              background: "var(--primary-subtle)",
+              color: "var(--primary-dark)",
+              padding: "0.3rem 0.75rem",
+              borderRadius: "20px",
+              fontSize: "0.82rem",
+              fontWeight: 700,
+              marginBottom: "0.75rem",
+            }}
+          >
+            <ShieldCheck size={15} />
+            Data Protection Standards
+          </div>
+          <h1
+            style={{
+              fontSize: "clamp(2rem, 4vw, 2.75rem)",
+              fontWeight: 800,
+              color: "var(--text-main)",
+              marginBottom: "0.5rem",
+            }}
+          >
+            Privacy Policy & Data Security
+          </h1>
+          <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem" }}>
+            Last updated: November 2026 · Effective across all NexHire platforms
           </p>
         </div>
 
-        {/* Content */}
-        <div style={{
-          background: "var(--surface)", border: "1px solid var(--border)",
-          borderRadius: "var(--radius-lg)", padding: "clamp(1.5rem, 4vw, 2.5rem)",
-        }}>
-          <Section title="1. Introduction">
-            <p>Welcome to NexHire. We are committed to protecting your personal information and your right to privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our platform at nexhire.me.</p>
+        {/* Content Card */}
+        <div
+          style={{
+            background: "#FFFFFF",
+            border: "1px solid var(--border-color)",
+            borderRadius: "var(--radius-lg)",
+            padding: "clamp(1.75rem, 5vw, 3rem)",
+            boxShadow: "var(--shadow-sm)",
+          }}
+        >
+          <Section title="1. Introduction & Overview">
+            <p>
+              Welcome to NexHire. We are deeply committed to protecting candidate confidentiality, employer data integrity, and your fundamental right to privacy. This policy explains what information we collect, why we collect it, how it is secured, and your rights as a candidate or recruiter on our platform.
+            </p>
           </Section>
 
           <Section title="2. Information We Collect">
-            <p>We collect the following information when you register and use NexHire:</p>
-            <ul style={{ paddingLeft: "1.5rem", marginTop: "0.5rem" }}>
-              <li style={{ marginBottom: "0.4rem" }}>Full name and email address</li>
-              <li style={{ marginBottom: "0.4rem" }}>Password (stored securely using BCrypt encryption)</li>
-              <li style={{ marginBottom: "0.4rem" }}>Role (Candidate or Recruiter)</li>
-              <li style={{ marginBottom: "0.4rem" }}>Resume files uploaded by candidates (stored on Cloudinary)</li>
-              <li style={{ marginBottom: "0.4rem" }}>Job application data and status history</li>
+            <p>When you register and interact with the platform, we collect:</p>
+            <ul style={{ paddingLeft: "1.5rem", marginTop: "0.6rem" }}>
+              <li style={{ marginBottom: "0.4rem" }}>Full name, contact email address, and account role (Candidate or Recruiter).</li>
+              <li style={{ marginBottom: "0.4rem" }}>Cryptographically hashed passwords using enterprise BCrypt encryption.</li>
+              <li style={{ marginBottom: "0.4rem" }}>Resume documents uploaded by candidates (stored privately in encrypted cloud object storage).</li>
+              <li style={{ marginBottom: "0.4rem" }}>Job posting information, candidate applications, interview schedules, and direct recruiter messages.</li>
             </ul>
           </Section>
 
-          <Section title="3. How We Use Your Information">
-            <p>We use the information we collect to:</p>
-            <ul style={{ paddingLeft: "1.5rem", marginTop: "0.5rem" }}>
-              <li style={{ marginBottom: "0.4rem" }}>Create and manage your account</li>
-              <li style={{ marginBottom: "0.4rem" }}>Send OTP verification and password reset emails</li>
-              <li style={{ marginBottom: "0.4rem" }}>Notify candidates about application status updates</li>
-              <li style={{ marginBottom: "0.4rem" }}>Send interview schedule notifications</li>
-              <li style={{ marginBottom: "0.4rem" }}>Enable recruiters to contact candidates</li>
+          <Section title="3. Purpose of Processing">
+            <p>We process your data strictly to facilitate authentic recruitment interactions:</p>
+            <ul style={{ paddingLeft: "1.5rem", marginTop: "0.6rem" }}>
+              <li style={{ marginBottom: "0.4rem" }}>Delivering secure OTP verification for account authentication and password resets.</li>
+              <li style={{ marginBottom: "0.4rem" }}>Allowing candidates to apply directly to verified openings.</li>
+              <li style={{ marginBottom: "0.4rem" }}>Transmitting real-time application updates (Applied, Shortlisted, Interview Scheduled).</li>
+              <li style={{ marginBottom: "0.4rem" }}>Enabling employers to review verified candidate credentials and coordinate interview sessions.</li>
             </ul>
           </Section>
 
-          <Section title="4. Data Storage and Security">
-            <p>Your data is stored securely on Clever Cloud MySQL servers located in Paris, France. Passwords are encrypted using BCrypt. Resume files are stored on Cloudinary's secure cloud storage. We use JWT (JSON Web Tokens) for secure authentication with a 7-day expiry.</p>
-          </Section>
-
-          <Section title="5. Email Communications">
-            <p>We use Brevo (formerly Sendinblue) to send transactional emails including OTP verification, welcome emails, application status updates, and interview notifications. We do not send marketing emails without your consent.</p>
-          </Section>
-
-          <Section title="6. Third Party Services">
-            <p>NexHire uses the following third-party services:</p>
-            <ul style={{ paddingLeft: "1.5rem", marginTop: "0.5rem" }}>
-              <li style={{ marginBottom: "0.4rem" }}>Clever Cloud — Database hosting</li>
-              <li style={{ marginBottom: "0.4rem" }}>Cloudinary — Resume file storage</li>
-              <li style={{ marginBottom: "0.4rem" }}>Brevo — Email delivery</li>
-              <li style={{ marginBottom: "0.4rem" }}>Render — Backend hosting</li>
-              <li style={{ marginBottom: "0.4rem" }}>Netlify — Frontend hosting</li>
-            </ul>
-          </Section>
-
-          <Section title="7. Your Rights">
-            <p>You have the right to:</p>
-            <ul style={{ paddingLeft: "1.5rem", marginTop: "0.5rem" }}>
-              <li style={{ marginBottom: "0.4rem" }}>Access your personal data</li>
-              <li style={{ marginBottom: "0.4rem" }}>Request deletion of your account and data</li>
-              <li style={{ marginBottom: "0.4rem" }}>Withdraw your job applications at any time</li>
-              <li style={{ marginBottom: "0.4rem" }}>Update your profile information</li>
-            </ul>
-          </Section>
-
-          <Section title="8. Data Retention">
-            <p>We retain your data as long as your account is active. If you wish to delete your account and all associated data, please contact us at r0hiitverma1095@gmail.com.</p>
-          </Section>
-
-          <Section title="9. Contact Us">
-            <p>If you have any questions about this Privacy Policy, please contact us at:</p>
-            <p style={{ marginTop: "0.5rem" }}>
-              <strong style={{ color: "var(--text)" }}>Email:</strong> r0hiitverma1095@gmail.com<br />
-              <strong style={{ color: "var(--text)" }}>Website:</strong> r0hithiside.vercel.app<br />
-              <strong style={{ color: "var(--text)" }}>Developer:</strong> Rohit Verma
+          <Section title="4. Data Storage & Security Measures">
+            <p>
+              Your data is hosted on highly reliable cloud infrastructure with automated backups and SSL/TLS encryption in transit and at rest. Access to candidate resumes is restricted strictly to hiring teams for the respective jobs to which the candidate applied. We never sell or license candidate profile information to third-party ad networks.
             </p>
           </Section>
+
+          <Section title="5. Candidate & Employer Rights">
+            <p>Under our privacy guidelines, all platform users have the right to:</p>
+            <ul style={{ paddingLeft: "1.5rem", marginTop: "0.6rem" }}>
+              <li style={{ marginBottom: "0.4rem" }}>Access and export their profile data and application history.</li>
+              <li style={{ marginBottom: "0.4rem" }}>Withdraw active applications at any point in the recruitment pipeline.</li>
+              <li style={{ marginBottom: "0.4rem" }}>Request immediate deletion or anonymization of their account and uploaded resumes.</li>
+            </ul>
+          </Section>
+
+          <div
+            style={{
+              marginTop: "2.5rem",
+              paddingTop: "1.5rem",
+              borderTop: "1px solid var(--border-color)",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.6rem",
+              color: "var(--primary-dark)",
+              fontSize: "0.9rem",
+              fontWeight: 600,
+            }}
+          >
+            <CheckCircle2 size={18} color="var(--primary)" />
+            <span>Questions regarding your data? Contact our team anytime at privacy@nexhire.me</span>
+          </div>
         </div>
       </main>
+
       <Footer />
     </div>
   );

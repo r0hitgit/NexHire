@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 import {
   getMyJobs,
@@ -21,48 +22,67 @@ import {
   ArrowLeft,
   Trash2,
   CircleCheck,
-  CircleX
+  CircleX,
+  Plus,
+  Users,
+  Briefcase,
+  ExternalLink,
+  Clock,
+  X,
+  CheckCircle2,
+  Sparkles
 } from "lucide-react";
 
-
-const STATUS_COLORS = {
-  APPLIED: "#6c63ff",
-  SHORTLISTED: "#f59e0b",
-  INTERVIEW_SCHEDULED: "#43e97b",
-  REJECTED: "#ff6584",
+const STATUS_CONFIG = {
+  APPLIED: {
+    color: "#177A59",
+    bg: "#E8F5F0",
+    border: "#BCE0D1",
+    label: "Applied"
+  },
+  SHORTLISTED: {
+    color: "#B45309",
+    bg: "#FEF3C7",
+    border: "#FDE68A",
+    label: "Shortlisted"
+  },
+  INTERVIEW_SCHEDULED: {
+    color: "#0C4E3A",
+    bg: "#DFF264",
+    border: "#CBE042",
+    label: "Interview Scheduled"
+  },
+  REJECTED: {
+    color: "#B91C1C",
+    bg: "#FEE2E2",
+    border: "#FECACA",
+    label: "Not Selected"
+  }
 };
 
-
 export default function RecruiterDashboard() {
-
   const [jobs, setJobs] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [applications, setApplications] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
-
   const [form, setForm] = useState({
     title: "",
     description: "",
     location: "",
     salary: ""
   });
-
   const [loading, setLoading] = useState(false);
-
   const [toast, setToast] = useState(null);
-
   const [showApplicants, setShowApplicants] = useState(false);
 
   const [editModal, setEditModal] = useState(null);
-
   const [editForm, setEditForm] = useState({
     title: "",
     description: "",
     location: "",
     salary: ""
   });
-
   const [editLoading, setEditLoading] = useState(false);
 
   const [interviewModal, setInterviewModal] = useState(null);
@@ -75,34 +95,40 @@ export default function RecruiterDashboard() {
   const [contactMessage, setContactMessage] = useState("");
   const [contactLoading, setContactLoading] = useState(false);
 
-
-  useEffect(() => {
-    fetchJobs();
-  }, []);
-
-
-  const fetchJobs = async () => {
-    const res = await getMyJobs();
-    setJobs(Array.isArray(res.data) ? res.data : []);
-  };
-
-
   const fetchApplications = async (jobId) => {
     try {
       const res = await getApplicationsForJob(jobId);
-      setApplications(res.data);
+      setApplications(Array.isArray(res.data) ? res.data : []);
     } catch {
       setApplications([]);
     }
   };
 
+  const fetchJobs = async () => {
+    try {
+      const res = await getMyJobs();
+      const list = Array.isArray(res.data) ? res.data : [];
+      setJobs(list);
+      // Auto-select first job if none selected
+      if (list.length > 0 && !selectedJob) {
+        setSelectedJob(list[0]);
+        fetchApplications(list[0].id);
+      }
+    } catch {
+      setJobs([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchJobs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSelectJob = (job) => {
     setSelectedJob(job);
     fetchApplications(job.id);
     setShowApplicants(true);
   };
-
 
   const handleCreateJob = async (e) => {
     e.preventDefault();
@@ -115,32 +141,24 @@ export default function RecruiterDashboard() {
       });
 
       setShowModal(false);
-
       setForm({
         title: "",
         description: "",
         location: "",
         salary: ""
       });
-
-      fetchJobs();
-
-      showToast("Job posted!", CircleCheck);
-
+      await fetchJobs();
+      showToast("New job posted successfully!", CircleCheck);
     } catch {
-      showToast("Failed to create job", CircleX);
-
+      showToast("Failed to create job posting", CircleX);
     } finally {
       setLoading(false);
     }
   };
 
-
   const handleOpenEdit = (e, job) => {
     e.stopPropagation();
-
     setEditModal(job);
-
     setEditForm({
       title: job.title || "",
       description: job.description || "",
@@ -148,7 +166,6 @@ export default function RecruiterDashboard() {
       salary: job.salary || ""
     });
   };
-
 
   const handleEditJob = async (e) => {
     e.preventDefault();
@@ -161,1868 +178,922 @@ export default function RecruiterDashboard() {
       });
 
       setEditModal(null);
-
-      fetchJobs();
-
-      showToast("Job updated!", CircleCheck);
-
+      await fetchJobs();
+      if (selectedJob?.id === editModal.id) {
+        setSelectedJob((prev) => ({ ...prev, ...editForm, salary: parseFloat(editForm.salary) || 0 }));
+      }
+      showToast("Job details updated!", CircleCheck);
     } catch {
       showToast("Failed to update job", CircleX);
-
     } finally {
       setEditLoading(false);
     }
   };
 
-
   const handleDelete = async (e, jobId) => {
     e.stopPropagation();
+    if (!window.confirm("Are you sure you want to delete this job posting?")) return;
 
-    if (!window.confirm("Delete this job posting?")) return;
-
-    await deleteJob(jobId);
-
-    if (selectedJob?.id === jobId) {
-      setSelectedJob(null);
-      setApplications([]);
+    try {
+      await deleteJob(jobId);
+      if (selectedJob?.id === jobId) {
+        setSelectedJob(null);
+        setApplications([]);
+      }
+      await fetchJobs();
+      showToast("Job posting removed", Trash2);
+    } catch {
+      showToast("Failed to delete job", CircleX);
     }
-
-    fetchJobs();
-
-    showToast("Job deleted", Trash2);
   };
-
 
   const handleStatus = async (appId, status) => {
     try {
       await updateApplicationStatus(appId, status);
-
       fetchApplications(selectedJob.id);
-
-      showToast("Status updated", CircleCheck);
-
+      showToast(`Status updated to ${status}`, CircleCheck);
     } catch {
-      showToast("Failed", CircleX);
+      showToast("Failed to update status", CircleX);
     }
   };
 
-
   const handleScheduleInterview = async () => {
-
     if (!interviewAt) {
-      return showToast(
-        "Please select date and time",
-        CircleX
-      );
+      return showToast("Please select date and time", CircleX);
     }
 
     setInterviewLoading(true);
 
     try {
-
-      await scheduleInterview(
-        interviewModal,
-        interviewAt.slice(0, 19),
-        interviewDetails
-      );
-
+      await scheduleInterview(interviewModal, interviewAt.slice(0, 19), interviewDetails);
       fetchApplications(selectedJob.id);
-
       setInterviewModal(null);
       setInterviewAt("");
       setInterviewDetails("");
-
-      showToast(
-        "Interview scheduled!",
-        CircleCheck
-      );
-
+      showToast("Interview scheduled and candidate notified!", CircleCheck);
     } catch {
-      showToast("Failed", CircleX);
-
+      showToast("Failed to schedule interview", CircleX);
     } finally {
       setInterviewLoading(false);
     }
   };
 
-
   const handleContact = async () => {
-
     if (!contactSubject || !contactMessage) {
-      return showToast(
-        "Fill subject and message",
-        CircleX
-      );
+      return showToast("Please fill in both subject and message", CircleX);
     }
 
     setContactLoading(true);
 
     try {
-
-      await contactCandidate(
-        contactModal,
-        contactSubject,
-        contactMessage
-      );
-
+      await contactCandidate(contactModal, contactSubject, contactMessage);
       setContactModal(null);
       setContactSubject("");
       setContactMessage("");
-
-      showToast(
-        "Message sent!",
-        CircleCheck
-      );
-
+      showToast("Message sent to candidate!", CircleCheck);
     } catch {
-      showToast("Failed", CircleX);
-
+      showToast("Failed to send message", CircleX);
     } finally {
       setContactLoading(false);
     }
   };
 
-
   const showToast = (message, Icon) => {
-    setToast({
-      message,
-      Icon
-    });
-
+    setToast({ message, Icon });
     setTimeout(() => {
       setToast(null);
-    }, 3000);
+    }, 3200);
   };
-
 
   const inputStyle = {
     width: "100%",
-    padding: "0.65rem 0.9rem",
-    marginBottom: "0.85rem",
-    background: "rgba(255,255,255,0.05)",
-    border: "1px solid rgba(255,255,255,0.1)",
-    borderRadius: "var(--radius)",
-    color: "var(--text)",
-    fontSize: "0.9rem",
+    padding: "0.75rem 1rem",
+    marginBottom: "1rem",
+    background: "#FFFFFF",
+    border: "1px solid var(--border-color)",
+    borderRadius: "var(--radius-sm)",
+    color: "var(--text-main)",
+    fontSize: "0.92rem",
     outline: "none",
     boxSizing: "border-box",
-    transition:
-      "border-color 0.25s ease, box-shadow 0.25s ease",
+    transition: "border-color 0.2s ease, box-shadow 0.2s ease"
   };
-
 
   return (
     <div
       style={{
         minHeight: "100vh",
-        background: "var(--bg)"
+        backgroundColor: "var(--bg-soft)",
+        display: "flex",
+        flexDirection: "column"
       }}
     >
+      <Navbar />
 
       <style>{`
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+        .recruiter-container {
+          flex: 1;
+          max-width: 1240px;
+          width: 100%;
+          margin: 0 auto;
+          padding: 2.25rem clamp(1rem, 3vw, 2rem) 4rem;
         }
 
+        .recruiter-grid {
+          display: grid;
+          grid-template-columns: 380px 1fr;
+          gap: 1.75rem;
+          align-items: flex-start;
+        }
 
-        .r-stat-card {
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.08);
-          backdrop-filter: blur(14px);
-          -webkit-backdrop-filter: blur(14px);
+        .stat-card-recruiter {
+          background: #FFFFFF;
+          border: 1px solid var(--border-color);
           border-radius: var(--radius-lg);
-          padding: clamp(0.75rem,3vw,1.5rem);
-          transition: all 0.25s ease;
-          animation: fadeIn 0.4s ease;
+          padding: 1.25rem 1.5rem;
+          box-shadow: var(--shadow-xs);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          transition: var(--transition);
         }
 
-
-        .r-stat-card:hover {
-          border-color: rgba(108,99,255,0.4);
-          background: rgba(108,99,255,0.06);
-          transform: translateY(-3px);
-          box-shadow: 0 8px 24px rgba(108,99,255,0.1);
+        .stat-card-recruiter:hover {
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-sm);
         }
 
-
-        .r-panel {
-          background: transparent;
-          border: 1px solid rgba(255,255,255,0.08);
-          backdrop-filter: blur(14px);
-          -webkit-backdrop-filter: blur(14px);
+        .r-panel-card {
+          background: #FFFFFF;
+          border: 1px solid var(--border-color);
           border-radius: var(--radius-lg);
+          box-shadow: var(--shadow-xs);
           overflow: hidden;
         }
 
-
         .r-panel-header {
-          padding: 1.25rem 1.5rem;
-          border-bottom: 1px solid rgba(255,255,255,0.08);
+          padding: 1.2rem 1.5rem;
+          border-bottom: 1px solid var(--border-color);
+          background: #FFFFFF;
           display: flex;
+          align-items: center;
           justify-content: space-between;
-          background: rgba(255,255,255,0.02);
         }
 
-
-        .r-job-item {
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.08);
-          backdrop-filter: blur(14px);
-          -webkit-backdrop-filter: blur(14px);
-          border-radius: var(--radius-lg);
-          padding: 1rem;
-          margin-bottom: 0.75rem;
-          transition: all 0.25s ease;
-          animation: fadeIn 0.4s ease;
+        .r-job-card-item {
+          background: #FFFFFF;
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-md);
+          padding: 1.15rem;
+          margin-bottom: 0.85rem;
           cursor: pointer;
+          transition: var(--transition);
         }
 
-
-        .r-job-item:hover {
-          border-color: rgba(108,99,255,0.4);
-          background: rgba(108,99,255,0.06);
-          transform: translateY(-3px);
-          box-shadow: 0 8px 24px rgba(108,99,255,0.1);
+        .r-job-card-item:hover {
+          border-color: var(--primary);
+          box-shadow: var(--shadow-sm);
         }
 
-
-        .r-job-item.selected {
-          border-color: rgba(108,99,255,0.5);
-          background: rgba(108,99,255,0.08);
-          box-shadow: 0 8px 24px rgba(108,99,255,0.12);
+        .r-job-card-item.selected {
+          border-color: var(--primary);
+          background: var(--primary-subtle);
+          box-shadow: 0 2px 8px rgba(23, 122, 89, 0.12);
         }
 
-
-        .r-app-card {
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.08);
-          backdrop-filter: blur(14px);
-          -webkit-backdrop-filter: blur(14px);
-          border-radius: var(--radius-lg);
+        .r-applicant-card {
+          background: #FFFFFF;
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-md);
           padding: 1.25rem;
-          margin-bottom: 0.75rem;
-          transition: all 0.25s ease;
-          animation: fadeIn 0.4s ease;
+          margin-bottom: 1rem;
+          box-shadow: var(--shadow-xs);
+          transition: var(--transition);
         }
 
-
-        .r-app-card:hover {
-          border-color: rgba(108,99,255,0.4);
-          background: rgba(108,99,255,0.06);
-          transform: translateY(-3px);
-          box-shadow: 0 8px 24px rgba(108,99,255,0.1);
+        .r-applicant-card:hover {
+          border-color: #BCE0D1;
+          box-shadow: var(--shadow-sm);
         }
 
-
-        .btn-post-job {
-          padding: 0.6rem 1.4rem;
-          border: 1px solid rgba(108,99,255,0.4);
-          background: rgba(108,99,255,0.15);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          color: #c4c0ff;
-          border-radius: var(--radius);
-          font-weight: 600;
-          font-family: var(--font-head);
+        .status-chip-btn {
+          padding: 0.32rem 0.75rem;
+          border-radius: var(--radius-full);
+          font-size: 0.76rem;
+          font-weight: 700;
           cursor: pointer;
-          white-space: nowrap;
-          transition: all 0.25s ease;
+          transition: var(--transition);
+          border: 1px solid transparent;
         }
 
-
-        .btn-post-job:hover {
-          border-color: rgba(108,99,255,0.6);
-          background: rgba(108,99,255,0.25);
-          color: #fff;
-          transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(108,99,255,0.12);
-        }
-
-
-        .r-glass-modal {
-          background: rgba(12,12,20,0.92);
-          border: 1px solid rgba(255,255,255,0.12);
+        .modal-clean {
+          background: #FFFFFF;
+          border: 1px solid var(--border-color);
           border-radius: var(--radius-lg);
-          box-shadow:
-            0 20px 60px rgba(0,0,0,0.6),
-            0 0 0 1px rgba(108,99,255,0.1);
+          box-shadow: var(--shadow-lg);
+          padding: 2rem;
+          width: 100%;
+          max-width: 480px;
+          animation: fadeIn 0.25s ease;
         }
 
-
-        .btn-mp {
-          flex: 2;
-          padding: 0.75rem;
-          border: 1px solid rgba(108,99,255,0.4);
-          background: rgba(108,99,255,0.15);
-          color: #c4c0ff;
-          border-radius: var(--radius);
-          font-weight: 600;
-          font-family: var(--font-head);
-          cursor: pointer;
-          transition: all 0.25s ease;
-        }
-
-
-        .btn-mp:hover:not(:disabled) {
-          border-color: rgba(108,99,255,0.6);
-          background: rgba(108,99,255,0.25);
-          color: #fff;
-          box-shadow: 0 8px 24px rgba(108,99,255,0.12);
-        }
-
-
-        .btn-mp:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-
-        .btn-mc {
-          flex: 1;
-          padding: 0.75rem;
-          background: rgba(255,255,255,0.04);
-          color: var(--text2);
-          border: 1px solid rgba(255,255,255,0.08);
-          border-radius: var(--radius);
-          cursor: pointer;
-          transition: all 0.25s ease;
-        }
-
-
-        .btn-mc:hover {
-          background: rgba(255,255,255,0.08);
-          color: var(--text);
-        }
-
-
-        .btn-miv {
-          flex: 2;
-          padding: 0.75rem;
-          border: 1px solid rgba(67,233,123,0.35);
-          background: rgba(67,233,123,0.1);
-          color: #43e97b;
-          border-radius: var(--radius);
-          font-weight: 700;
-          cursor: pointer;
-          transition: all 0.25s ease;
-        }
-
-
-        .btn-miv:hover:not(:disabled) {
-          background: rgba(67,233,123,0.2);
-          border-color: rgba(67,233,123,0.55);
-          color: #fff;
-          box-shadow: 0 8px 24px rgba(67,233,123,0.1);
-        }
-
-
-        .btn-miv:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-
-        .btn-mco {
-          flex: 2;
-          padding: 0.75rem;
-          border: 1px solid rgba(245,158,11,0.35);
-          background: rgba(245,158,11,0.1);
-          color: #f59e0b;
-          border-radius: var(--radius);
-          font-weight: 700;
-          cursor: pointer;
-          transition: all 0.25s ease;
-        }
-
-
-        .btn-mco:hover:not(:disabled) {
-          background: rgba(245,158,11,0.2);
-          border-color: rgba(245,158,11,0.55);
-          color: #fff;
-          box-shadow: 0 8px 24px rgba(245,158,11,0.1);
-        }
-
-
-        .btn-mco:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-
-        .dash-inp:focus {
-          border-color: rgba(108,99,255,0.6) !important;
-          box-shadow: 0 0 0 3px rgba(108,99,255,0.1) !important;
-          outline: none;
-        }
-
-
-        .toast-glass {
+        .toast-float {
           position: fixed;
           bottom: 2rem;
-          right: 1rem;
-          left: 1rem;
-          max-width: 400px;
-          margin: 0 auto;
-          background: rgba(255,255,255,0.07);
-          border: 1px solid rgba(255,255,255,0.12);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          padding: 1rem 1.5rem;
-          border-radius: var(--radius);
-          font-size: 0.9rem;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-          animation: fadeIn 0.3s ease;
-          z-index: 1000;
+          right: 2rem;
+          background: #FFFFFF;
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-md);
+          box-shadow: var(--shadow-lg);
+          padding: 0.85rem 1.25rem;
           display: flex;
           align-items: center;
-          gap: 0.6rem;
+          gap: 0.65rem;
+          z-index: 1000;
+          animation: fadeIn 0.3s ease;
+          font-weight: 600;
+          font-size: 0.92rem;
+          color: var(--text-main);
         }
 
-
-        .icon-inline {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
+        @media (max-width: 900px) {
+          .recruiter-grid {
+            grid-template-columns: 1fr;
+          }
+          .mobile-tabs-recruiter {
+            display: flex !important;
+          }
+          .hide-on-mobile-tab {
+            display: none !important;
+          }
         }
-
       `}</style>
 
-
-      <Navbar />
-
-
-      <main
-        style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          padding:
-            "clamp(1rem,4vw,2.5rem) clamp(1rem,3vw,2rem)"
-        }}
-      >
-
-        {/* Header */}
+      <main className="recruiter-container">
+        {/* Header Bar */}
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            marginBottom: "1.5rem",
             flexWrap: "wrap",
-            gap: "1rem"
+            gap: "1.25rem",
+            marginBottom: "2rem"
           }}
         >
-
-          <h1
-            style={{
-              fontSize: "clamp(1.4rem,5vw,2rem)"
-            }}
-          >
-            Recruiter Dashboard
-          </h1>
-
+          <div>
+            <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--primary)", textTransform: "uppercase" }}>
+              Employer Operations
+            </span>
+            <h1 style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.3rem)", marginTop: "0.25rem", marginBottom: "0.3rem" }}>
+              Recruiter Dashboard
+            </h1>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem" }}>
+              Manage your company's active openings, review candidate resumes, and coordinate interviews.
+            </p>
+          </div>
 
           <button
             onClick={() => setShowModal(true)}
-            className="btn-post-job"
+            className="btn-primary"
+            style={{ padding: "0.75rem 1.4rem", fontSize: "0.95rem", gap: "0.5rem" }}
           >
-            + Post a Job
+            <Plus size={18} strokeWidth={2.5} />
+            <span>Post a New Job</span>
           </button>
-
         </div>
 
-
-        {/* Stats */}
+        {/* Overview Stats */}
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(3,1fr)",
-            gap: "0.75rem",
-            marginBottom: "1.5rem"
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: "1rem",
+            marginBottom: "2rem"
           }}
         >
-
-          {[
-            {
-              val: jobs.length,
-              label: "Jobs Posted",
-              color: "#6c63ff"
-            },
-            {
-              val: applications.length,
-              label: "Applications",
-              color: "#43e97b"
-            },
-            {
-              val: applications.filter(
-                a => a.status === "SHORTLISTED"
-              ).length,
-              label: "Shortlisted",
-              color: "#f59e0b"
-            }
-          ].map((s, i) => (
-
-            <div
-              key={i}
-              className="r-stat-card"
-            >
-
-              <div
-                style={{
-                  fontSize: "clamp(1.5rem,5vw,2.5rem)",
-                  fontWeight: 800,
-                  fontFamily: "var(--font-body)",
-                  color: s.color
-                }}
-              >
-                {s.val}
+          <div className="stat-card-recruiter">
+            <div>
+              <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text-secondary)" }}>
+                Active Job Postings
+              </span>
+              <div style={{ fontSize: "2rem", fontWeight: 800, color: "var(--text-main)", marginTop: "0.25rem" }}>
+                {jobs.length}
               </div>
-
-              <div
-                style={{
-                  color: "var(--text2)",
-                  fontSize: "clamp(0.7rem,2vw,0.875rem)",
-                  marginTop: "0.25rem"
-                }}
-              >
-                {s.label}
-              </div>
-
             </div>
+            <div style={{ width: "44px", height: "44px", borderRadius: "10px", background: "var(--primary-subtle)", color: "var(--primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Briefcase size={22} />
+            </div>
+          </div>
 
-          ))}
+          <div className="stat-card-recruiter">
+            <div>
+              <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text-secondary)" }}>
+                Selected Job Applicants
+              </span>
+              <div style={{ fontSize: "2rem", fontWeight: 800, color: "var(--text-main)", marginTop: "0.25rem" }}>
+                {applications.length}
+              </div>
+            </div>
+            <div style={{ width: "44px", height: "44px", borderRadius: "10px", background: "#EFF6FF", color: "#2563EB", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Users size={22} />
+            </div>
+          </div>
 
+          <div className="stat-card-recruiter">
+            <div>
+              <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text-secondary)" }}>
+                Shortlisted
+              </span>
+              <div style={{ fontSize: "2rem", fontWeight: 800, color: "var(--text-main)", marginTop: "0.25rem" }}>
+                {applications.filter((a) => a.status === "SHORTLISTED").length}
+              </div>
+            </div>
+            <div style={{ width: "44px", height: "44px", borderRadius: "10px", background: "#FEF3C7", color: "#B45309", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Sparkles size={22} />
+            </div>
+          </div>
         </div>
 
-
-        {/* Mobile Tabs */}
+        {/* Mobile Switcher Tab (visible only on mobile) */}
         <div
-          className="mobile-tabs"
+          className="mobile-tabs-recruiter"
           style={{
             display: "none",
-            marginBottom: "1rem",
-            borderRadius: "var(--radius)",
-            overflow: "hidden",
-            border: "1px solid rgba(255,255,255,0.08)"
+            marginBottom: "1.25rem",
+            background: "#FFFFFF",
+            border: "1px solid var(--border-color)",
+            borderRadius: "var(--radius-md)",
+            overflow: "hidden"
           }}
         >
-
           <button
             onClick={() => setShowApplicants(false)}
             style={{
               flex: 1,
               padding: "0.75rem",
-              border: "none",
-              cursor: "pointer",
-              background: !showApplicants
-                ? "rgba(108,99,255,0.15)"
-                : "transparent",
-              color: !showApplicants
-                ? "#c4c0ff"
-                : "var(--text2)",
-              fontWeight: 600,
-              fontSize: "0.875rem"
+              background: !showApplicants ? "var(--primary-subtle)" : "transparent",
+              color: !showApplicants ? "var(--primary-dark)" : "var(--text-secondary)",
+              fontWeight: 700,
+              fontSize: "0.9rem"
             }}
           >
-            My Jobs
+            My Job Postings ({jobs.length})
           </button>
-
-
           <button
             onClick={() => setShowApplicants(true)}
             style={{
               flex: 1,
               padding: "0.75rem",
-              border: "none",
-              cursor: "pointer",
-              background: showApplicants
-                ? "rgba(108,99,255,0.15)"
-                : "transparent",
-              color: showApplicants
-                ? "#c4c0ff"
-                : "var(--text2)",
-              fontWeight: 600,
-              fontSize: "0.875rem"
+              background: showApplicants ? "var(--primary-subtle)" : "transparent",
+              color: showApplicants ? "var(--primary-dark)" : "var(--text-secondary)",
+              fontWeight: 700,
+              fontSize: "0.9rem"
             }}
           >
-            Applicants
+            Applicants ({applications.length})
           </button>
-
         </div>
 
-
-        {/* Dashboard Grid */}
-        <div
-          className="dashboard-grid"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1.6fr",
-            gap: "1.5rem",
-            alignItems: "start"
-          }}
-        >
-
-          {/* Jobs Panel */}
-          <div
-            className={`panel-jobs r-panel ${
-              showApplicants ? "hide-mobile" : ""
-            }`}
-          >
-
+        {/* Two-Column Management Layout */}
+        <div className="recruiter-grid">
+          {/* Left Column: My Jobs */}
+          <div className={`r-panel-card ${showApplicants ? "hide-on-mobile-tab" : ""}`}>
             <div className="r-panel-header">
-
-              <span
-                style={{
-                  fontFamily: "var(--font-head)",
-                  fontWeight: 700
-                }}
-              >
-                My Jobs
+              <span style={{ fontWeight: 800, fontSize: "1.05rem", color: "var(--text-main)" }}>
+                My Job Postings
               </span>
-
-              <span
-                style={{
-                  fontSize: "0.8rem",
-                  color: "var(--text2)"
-                }}
-              >
-                {jobs.length} total
+              <span style={{ fontSize: "0.82rem", color: "var(--text-secondary)", fontWeight: 600 }}>
+                {jobs.length} listed
               </span>
-
             </div>
 
-
-            <div style={{ padding: "1rem" }}>
-
+            <div style={{ padding: "1.25rem" }}>
               {jobs.length === 0 ? (
-
-                <div
-                  style={{
-                    padding: "2rem",
-                    textAlign: "center",
-                    color: "var(--text2)",
-                    fontSize: "0.875rem"
-                  }}
-                >
-                  No jobs posted yet.
-                  <br />
-                  Click "Post a Job" to start.
+                <div style={{ textAlign: "center", padding: "2.5rem 1rem", color: "var(--text-secondary)" }}>
+                  <p style={{ fontSize: "0.95rem", marginBottom: "1rem" }}>No job postings created yet.</p>
+                  <button onClick={() => setShowModal(true)} className="btn-secondary" style={{ fontSize: "0.85rem" }}>
+                    + Post First Job
+                  </button>
                 </div>
-
               ) : (
-
-                jobs.map(job => (
-
-                  <div
-                    key={job.id}
-                    onClick={() => handleSelectJob(job)}
-                    className={`r-job-item ${
-                      selectedJob?.id === job.id
-                        ? "selected"
-                        : ""
-                    }`}
-                  >
-
+                jobs.map((job) => {
+                  const isSelected = selectedJob?.id === job.id;
+                  return (
                     <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
-                        gap: "0.5rem"
-                      }}
+                      key={job.id}
+                      className={`r-job-card-item ${isSelected ? "selected" : ""}`}
+                      onClick={() => handleSelectJob(job)}
                     >
-
-                      <div style={{ minWidth: 0 }}>
-
-                        <div
-                          style={{
-                            fontWeight: 700,
-                            fontSize: "0.95rem",
-                            marginBottom: "0.2rem",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap"
-                          }}
-                        >
-                          {job.title}
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "0.5rem" }}>
+                        <div style={{ minWidth: 0, flex: 1 }}>
+                          <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-main)", margin: "0 0 0.25rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {job.title}
+                          </h3>
+                          <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
+                              <MapPin size={13} color="var(--primary)" />
+                              {job.location || "Remote"}
+                            </span>
+                            {job.salary && (
+                              <span>• ₹{(job.salary / 100000).toFixed(1)}L / yr</span>
+                            )}
+                          </div>
                         </div>
 
-
-                        <div
-                          style={{
-                            color: "var(--text2)",
-                            fontSize: "0.8rem",
-                            display: "flex",
-                            gap: "0.75rem",
-                            flexWrap: "wrap"
-                          }}
-                        >
-
-                          <span
+                        {/* Edit & Delete Actions */}
+                        <div style={{ display: "flex", gap: "0.35rem", flexShrink: 0 }}>
+                          <button
+                            type="button"
+                            onClick={(e) => handleOpenEdit(e, job)}
                             style={{
+                              padding: "0.3rem 0.55rem",
+                              background: "#FFFFFF",
+                              border: "1px solid var(--border-color)",
+                              borderRadius: "6px",
+                              color: "var(--text-main)",
+                              fontSize: "0.78rem",
+                              fontWeight: 600,
                               display: "inline-flex",
                               alignItems: "center",
                               gap: "0.25rem"
                             }}
+                            title="Edit job"
                           >
-                            <MapPin
-                              size={13}
-                              strokeWidth={2}
-                            />
-                            {job.location || "Remote"}
-                          </span>
+                            <Pencil size={13} />
+                            <span>Edit</span>
+                          </button>
 
-
-                          {job.salary && (
-                            <span>
-                              ₹
-                              {(job.salary / 100000).toFixed(1)}
-                              L
-                            </span>
-                          )}
-
+                          <button
+                            type="button"
+                            onClick={(e) => handleDelete(e, job.id)}
+                            style={{
+                              padding: "0.3rem 0.55rem",
+                              background: "#FEF2F2",
+                              border: "1px solid #FECACA",
+                              borderRadius: "6px",
+                              color: "#DC2626",
+                              fontSize: "0.78rem",
+                              fontWeight: 600,
+                              display: "inline-flex",
+                              alignItems: "center"
+                            }}
+                            title="Delete job"
+                          >
+                            <Trash2 size={13} />
+                          </button>
                         </div>
-
                       </div>
-
-
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: "0.4rem",
-                          flexShrink: 0
-                        }}
-                      >
-
-                        <button
-                          onClick={e =>
-                            handleOpenEdit(e, job)
-                          }
-                          style={{
-                            padding: "0.3rem 0.65rem",
-                            background:
-                              "rgba(108,99,255,0.1)",
-                            color: "#a09aff",
-                            border:
-                              "1px solid rgba(108,99,255,0.25)",
-                            borderRadius: "6px",
-                            fontSize: "0.75rem",
-                            cursor: "pointer",
-                            backdropFilter: "blur(6px)",
-                            transition:
-                              "all 0.2s ease",
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "0.3rem"
-                          }}
-                          onMouseEnter={e => {
-                            e.currentTarget.style.background =
-                              "rgba(108,99,255,0.22)";
-                            e.currentTarget.style.borderColor =
-                              "rgba(108,99,255,0.5)";
-                            e.currentTarget.style.color =
-                              "#fff";
-                          }}
-                          onMouseLeave={e => {
-                            e.currentTarget.style.background =
-                              "rgba(108,99,255,0.1)";
-                            e.currentTarget.style.borderColor =
-                              "rgba(108,99,255,0.25)";
-                            e.currentTarget.style.color =
-                              "#a09aff";
-                          }}
-                        >
-                          <Pencil size={12} strokeWidth={2} />
-                          Edit
-                        </button>
-
-
-                        <button
-                          onClick={e =>
-                            handleDelete(e, job.id)
-                          }
-                          style={{
-                            padding: "0.3rem 0.65rem",
-                            background:
-                              "rgba(255,101,132,0.1)",
-                            color: "#ff6584",
-                            border:
-                              "1px solid rgba(255,101,132,0.25)",
-                            borderRadius: "6px",
-                            fontSize: "0.75rem",
-                            cursor: "pointer",
-                            backdropFilter: "blur(6px)",
-                            transition:
-                              "all 0.2s ease",
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "0.3rem"
-                          }}
-                          onMouseEnter={e => {
-                            e.currentTarget.style.background =
-                              "rgba(255,101,132,0.2)";
-                            e.currentTarget.style.borderColor =
-                              "rgba(255,101,132,0.5)";
-                          }}
-                          onMouseLeave={e => {
-                            e.currentTarget.style.background =
-                              "rgba(255,101,132,0.1)";
-                            e.currentTarget.style.borderColor =
-                              "rgba(255,101,132,0.25)";
-                          }}
-                        >
-                          <Trash2 size={12} strokeWidth={2} />
-                          Delete
-                        </button>
-
-                      </div>
-
                     </div>
-
-                  </div>
-
-                ))
-
+                  );
+                })
               )}
-
             </div>
-
           </div>
 
-
-          {/* Applicants Panel */}
-          <div
-            className={`panel-applicants r-panel ${
-              !showApplicants ? "hide-mobile" : ""
-            }`}
-          >
-
-            <div
-              className="r-panel-header"
-              style={{
-                justifyContent: "space-between",
-                alignItems: "center"
-              }}
-            >
-
-              <span
-                style={{
-                  fontFamily: "var(--font-head)",
-                  fontWeight: 700,
-                  fontSize:
-                    "clamp(0.85rem,2.5vw,1rem)"
-                }}
-              >
-                {selectedJob
-                  ? `Applicants — ${selectedJob.title}`
-                  : "Select a job to view applicants"}
-              </span>
-
-
-              {selectedJob && (
-                <span
-                  style={{
-                    fontSize: "0.8rem",
-                    color: "var(--text2)",
-                    flexShrink: 0
-                  }}
-                >
-                  {applications.length} total
+          {/* Right Column: Applicants for Selected Job */}
+          <div className={`r-panel-card ${!showApplicants ? "hide-on-mobile-tab" : ""}`}>
+            <div className="r-panel-header">
+              <div>
+                <span style={{ fontWeight: 800, fontSize: "1.05rem", color: "var(--text-main)" }}>
+                  {selectedJob ? `Applicants for ${selectedJob.title}` : "Candidate Applicants"}
                 </span>
-              )}
-
+                {selectedJob && (
+                  <div style={{ fontSize: "0.82rem", color: "var(--text-secondary)", marginTop: "0.15rem" }}>
+                    {applications.length} candidates applied to this position
+                  </div>
+                )}
+              </div>
             </div>
 
-
-            <div style={{ padding: "1rem" }}>
-
+            <div style={{ padding: "1.25rem" }}>
               {!selectedJob ? (
-
-                <div
-                  style={{
-                    padding: "3rem",
-                    textAlign: "center",
-                    color: "var(--text2)",
-                    fontSize: "0.875rem"
-                  }}
-                >
-
-                  <ArrowLeft
-                    size={22}
-                    strokeWidth={1.7}
-                    style={{
-                      display: "block",
-                      margin: "0 auto 0.75rem"
-                    }}
-                  />
-
-                  Click a job to see its applicants
-
+                <div style={{ padding: "4rem 2rem", textAlign: "center", color: "var(--text-secondary)" }}>
+                  <ArrowLeft size={24} style={{ display: "block", margin: "0 auto 0.75rem", color: "var(--primary)" }} />
+                  <p style={{ fontSize: "0.95rem" }}>Select a job from the left panel to review its applicants.</p>
                 </div>
-
               ) : applications.length === 0 ? (
-
-                <div
-                  style={{
-                    padding: "3rem",
-                    textAlign: "center",
-                    color: "var(--text2)",
-                    fontSize: "0.875rem"
-                  }}
-                >
-                  No applications yet for this job
+                <div style={{ padding: "4rem 2rem", textAlign: "center", color: "var(--text-secondary)" }}>
+                  <Users size={32} style={{ display: "block", margin: "0 auto 0.75rem", color: "var(--text-muted)" }} />
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: "0.35rem" }}>
+                    No candidates have applied yet
+                  </h3>
+                  <p style={{ fontSize: "0.88rem" }}>
+                    Your posting is live on the marketplace. Qualified candidates will appear here as soon as they apply.
+                  </p>
                 </div>
-
               ) : (
+                applications.map((app) => (
+                  <div key={app.id} className="r-applicant-card">
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "1rem", flexWrap: "wrap", marginBottom: "0.75rem" }}>
+                      <div>
+                        <h4 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-main)", margin: "0 0 0.2rem" }}>
+                          {app.candidate?.name || "Candidate"}
+                        </h4>
+                        <div style={{ fontSize: "0.84rem", color: "var(--text-secondary)" }}>
+                          {app.candidate?.email}
+                        </div>
+                      </div>
 
-                applications.map(app => (
-
-                  <div
-                    key={app.id}
-                    className="r-app-card"
-                  >
-
-                    <div
-                      style={{
-                        fontWeight: 700,
-                        marginBottom: "0.15rem"
-                      }}
-                    >
-                      {app.candidate?.name || "Candidate"}
-                    </div>
-
-
-                    <div
-                      style={{
-                        color: "var(--text2)",
-                        fontSize: "0.8rem",
-                        marginBottom: "0.75rem"
-                      }}
-                    >
-                      {app.candidate?.email}
-                    </div>
-
-
-                    {app.resumeUrl && (
-
-                      <a
-                        href={app.resumeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "0.4rem",
-                          padding: "0.3rem 0.85rem",
-                          marginBottom: "0.75rem",
-                          background:
-                            "rgba(108,99,255,0.1)",
-                          color: "#a09aff",
-                          border:
-                            "1px solid rgba(108,99,255,0.25)",
-                          borderRadius: "20px",
-                          fontSize: "0.78rem",
-                          fontWeight: 600,
-                          textDecoration: "none",
-                          backdropFilter: "blur(6px)"
-                        }}
-                      >
-                        <FileText
-                          size={14}
-                          strokeWidth={2}
-                        />
-                        View Resume
-                      </a>
-
-                    )}
-
-
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "0.4rem",
-                        flexWrap: "wrap",
-                        marginBottom: "0.75rem"
-                      }}
-                    >
-
-                      {[
-                        "APPLIED",
-                        "SHORTLISTED",
-                        "REJECTED"
-                      ].map(st => (
-
-                        <button
-                          key={st}
-                          onClick={() =>
-                            handleStatus(app.id, st)
-                          }
-                          style={{
-                            padding: "0.3rem 0.75rem",
-                            borderRadius: "20px",
-                            cursor: "pointer",
-                            border:
-                              `1px solid ${STATUS_COLORS[st]}35`,
-                            background:
-                              app.status === st
-                                ? `${STATUS_COLORS[st]}18`
-                                : "rgba(255,255,255,0.04)",
-                            color:
-                              app.status === st
-                                ? STATUS_COLORS[st]
-                                : "var(--text2)",
-                            fontSize: "0.72rem",
-                            fontWeight: 600,
-                            transition:
-                              "all 0.2s ease",
-                            backdropFilter: "blur(6px)"
-                          }}
+                      {/* View Resume Button */}
+                      {app.resumeUrl && (
+                        <a
+                          href={app.resumeUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-subtle"
+                          style={{ padding: "0.38rem 0.85rem", fontSize: "0.8rem", gap: "0.35rem" }}
                         >
-                          {st}
-                        </button>
-
-                      ))}
-
+                          <FileText size={15} />
+                          <span>View Resume</span>
+                          <ExternalLink size={13} />
+                        </a>
+                      )}
                     </div>
 
-
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "0.5rem",
-                        flexWrap: "wrap"
-                      }}
-                    >
-
-                      <button
-                        onClick={() =>
-                          setInterviewModal(app.id)
-                        }
-                        style={{
-                          padding: "0.35rem 0.85rem",
-                          borderRadius: "var(--radius)",
-                          background:
-                            "rgba(67,233,123,0.08)",
-                          color: "#43e97b",
-                          border:
-                            "1px solid rgba(67,233,123,0.22)",
-                          fontSize: "0.78rem",
-                          fontWeight: 600,
-                          cursor: "pointer",
-                          backdropFilter: "blur(6px)",
-                          transition:
-                            "all 0.2s ease",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "0.4rem"
-                        }}
-                        onMouseEnter={e => {
-                          e.currentTarget.style.background =
-                            "rgba(67,233,123,0.18)";
-                          e.currentTarget.style.borderColor =
-                            "rgba(67,233,123,0.5)";
-                          e.currentTarget.style.color =
-                            "#fff";
-                          e.currentTarget.style.boxShadow =
-                            "0 4px 12px rgba(67,233,123,0.1)";
-                        }}
-                        onMouseLeave={e => {
-                          e.currentTarget.style.background =
-                            "rgba(67,233,123,0.08)";
-                          e.currentTarget.style.borderColor =
-                            "rgba(67,233,123,0.22)";
-                          e.currentTarget.style.color =
-                            "#43e97b";
-                          e.currentTarget.style.boxShadow =
-                            "none";
-                        }}
-                      >
-                        <CalendarDays
-                          size={14}
-                          strokeWidth={2}
-                        />
-                        Schedule Interview
-                      </button>
-
-
-                      <button
-                        onClick={() =>
-                          setContactModal(app.id)
-                        }
-                        style={{
-                          padding: "0.35rem 0.85rem",
-                          borderRadius: "var(--radius)",
-                          background:
-                            "rgba(245,158,11,0.08)",
-                          color: "#f59e0b",
-                          border:
-                            "1px solid rgba(245,158,11,0.22)",
-                          fontSize: "0.78rem",
-                          fontWeight: 600,
-                          cursor: "pointer",
-                          backdropFilter: "blur(6px)",
-                          transition:
-                            "all 0.2s ease",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "0.4rem"
-                        }}
-                        onMouseEnter={e => {
-                          e.currentTarget.style.background =
-                            "rgba(245,158,11,0.18)";
-                          e.currentTarget.style.borderColor =
-                            "rgba(245,158,11,0.5)";
-                          e.currentTarget.style.color =
-                            "#fff";
-                          e.currentTarget.style.boxShadow =
-                            "0 4px 12px rgba(245,158,11,0.1)";
-                        }}
-                        onMouseLeave={e => {
-                          e.currentTarget.style.background =
-                            "rgba(245,158,11,0.08)";
-                          e.currentTarget.style.borderColor =
-                            "rgba(245,158,11,0.22)";
-                          e.currentTarget.style.color =
-                            "#f59e0b";
-                          e.currentTarget.style.boxShadow =
-                            "none";
-                        }}
-                      >
-                        <Mail
-                          size={14}
-                          strokeWidth={2}
-                        />
-                        Contact
-                      </button>
-
-                    </div>
-
-
-                    {app.status === "INTERVIEW_SCHEDULED" &&
-                      app.interviewScheduledAt && (
-
-                        <div
-                          style={{
-                            marginTop: "0.75rem",
-                            padding: "0.6rem 0.85rem",
-                            background:
-                              "rgba(67,233,123,0.08)",
-                            border:
-                              "1px solid rgba(67,233,123,0.2)",
-                            borderRadius: "var(--radius)",
-                            fontSize: "0.8rem",
-                            color: "#43e97b",
-                            backdropFilter: "blur(6px)"
-                          }}
-                        >
-
-                          <div
+                    {/* Status Changer Buttons */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", flexWrap: "wrap", margin: "0.85rem 0" }}>
+                      <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--text-muted)", marginRight: "0.25rem" }}>
+                        Status:
+                      </span>
+                      {["APPLIED", "SHORTLISTED", "REJECTED"].map((st) => {
+                        const cfg = STATUS_CONFIG[st];
+                        const isCurrent = app.status === st;
+                        return (
+                          <button
+                            key={st}
+                            type="button"
+                            onClick={() => handleStatus(app.id, st)}
+                            className="status-chip-btn"
                             style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "0.4rem"
+                              background: isCurrent ? cfg.bg : "#FFFFFF",
+                              color: isCurrent ? cfg.color : "var(--text-secondary)",
+                              borderColor: isCurrent ? cfg.border : "var(--border-color)"
                             }}
                           >
-                            <CalendarDays
-                              size={14}
-                              strokeWidth={2}
-                            />
+                            {cfg.label}
+                          </button>
+                        );
+                      })}
+                    </div>
 
-                            {app.interviewScheduledAt
-                              .replace("T", " ")
-                              .slice(0, 16)}
-                          </div>
-
-
-                          {app.interviewDetails && (
-                            <div
-                              style={{
-                                color: "var(--text2)",
-                                marginTop: "0.2rem"
-                              }}
-                            >
-                              {app.interviewDetails}
-                            </div>
-                          )}
-
+                    {/* Interview Details if Scheduled */}
+                    {app.status === "INTERVIEW_SCHEDULED" && app.interviewScheduledAt && (
+                      <div
+                        style={{
+                          background: "var(--bg-soft)",
+                          border: "1px solid var(--border-color)",
+                          padding: "0.75rem 1rem",
+                          borderRadius: "var(--radius-sm)",
+                          marginBottom: "0.85rem",
+                          fontSize: "0.84rem"
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontWeight: 700, color: "var(--primary-dark)" }}>
+                          <CalendarDays size={15} color="var(--primary)" />
+                          Interview: {app.interviewScheduledAt.replace("T", " ").slice(0, 16)}
                         </div>
+                        {app.interviewDetails && (
+                          <div style={{ color: "var(--text-secondary)", marginTop: "0.25rem" }}>
+                            {app.interviewDetails}
+                          </div>
+                        )}
+                      </div>
+                    )}
 
-                      )}
+                    {/* Action Buttons: Schedule Interview & Contact */}
+                    <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap", paddingTop: "0.75rem", borderTop: "1px solid var(--border-color)" }}>
+                      <button
+                        type="button"
+                        onClick={() => setInterviewModal(app.id)}
+                        className="btn-secondary"
+                        style={{ padding: "0.45rem 0.85rem", fontSize: "0.82rem", gap: "0.35rem" }}
+                      >
+                        <CalendarDays size={14} color="var(--primary)" />
+                        <span>Schedule Interview</span>
+                      </button>
 
+                      <button
+                        type="button"
+                        onClick={() => setContactModal(app.id)}
+                        className="btn-secondary"
+                        style={{ padding: "0.45rem 0.85rem", fontSize: "0.82rem", gap: "0.35rem" }}
+                      >
+                        <Mail size={14} />
+                        <span>Contact Candidate</span>
+                      </button>
+                    </div>
                   </div>
-
                 ))
-
               )}
-
             </div>
-
           </div>
-
         </div>
-
       </main>
 
-
-      {/* Create Job Modal */}
+      {/* Post a Job Modal */}
       {showModal && (
-
         <div
-          onClick={() => setShowModal(false)}
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.7)",
-            backdropFilter: "blur(8px)",
-            WebkitBackdropFilter: "blur(8px)",
+            background: "rgba(23, 33, 29, 0.5)",
+            backdropFilter: "blur(6px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             zIndex: 200,
             padding: "1rem"
           }}
+          onClick={() => setShowModal(false)}
         >
-
-          <div
-            onClick={e => e.stopPropagation()}
-            className="r-glass-modal"
-            style={{
-              padding:
-                "clamp(1.25rem,4vw,2rem)",
-              width: "100%",
-              maxWidth: "480px",
-              animation: "fadeIn 0.3s ease",
-              maxHeight: "90vh",
-              overflowY: "auto"
-            }}
-          >
-
-            <h2
-              style={{
-                marginBottom: "1.5rem",
-                fontSize:
-                  "clamp(1.2rem,4vw,1.5rem)"
-              }}
-            >
-              Post a New Job
-            </h2>
-
+          <div className="modal-clean" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
+              <h2 style={{ fontSize: "1.35rem", fontWeight: 800, margin: 0, color: "var(--text-main)" }}>
+                Post a New Opportunity
+              </h2>
+              <button onClick={() => setShowModal(false)} style={{ background: "none", color: "var(--text-muted)" }}>
+                <X size={20} />
+              </button>
+            </div>
 
             <form onSubmit={handleCreateJob}>
-
-              {[
-                {
-                  label: "Job Title",
-                  key: "title",
-                  type: "text",
-                  ph: "e.g. Senior React Developer"
-                },
-                {
-                  label: "Location",
-                  key: "location",
-                  type: "text",
-                  ph: "e.g. Bangalore / Remote"
-                },
-                {
-                  label: "Salary (₹/year)",
-                  key: "salary",
-                  type: "number",
-                  ph: "e.g. 1200000"
-                }
-              ].map(f => (
-
-                <div key={f.key}>
-
-                  <label
-                    style={{
-                      display: "block",
-                      fontSize: "0.78rem",
-                      fontWeight: 600,
-                      color: "var(--text2)",
-                      marginBottom: "0.35rem",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.5px"
-                    }}
-                  >
-                    {f.label}
-                  </label>
-
-
-                  <input
-                    className="dash-inp"
-                    style={inputStyle}
-                    type={f.type}
-                    placeholder={f.ph}
-                    value={form[f.key]}
-                    onChange={e =>
-                      setForm({
-                        ...form,
-                        [f.key]: e.target.value
-                      })
-                    }
-                    required={f.key === "title"}
-                  />
-
-                </div>
-
-              ))}
-
-
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.78rem",
-                  fontWeight: 600,
-                  color: "var(--text2)",
-                  marginBottom: "0.35rem",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px"
-                }}
-              >
-                Description
+              <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", marginBottom: "0.35rem", textTransform: "uppercase" }}>
+                Job Title *
               </label>
-
-
-              <textarea
-                className="dash-inp"
-                style={{
-                  ...inputStyle,
-                  minHeight: "80px",
-                  resize: "vertical"
-                }}
-                placeholder="Describe the role..."
-                value={form.description}
-                onChange={e =>
-                  setForm({
-                    ...form,
-                    description: e.target.value
-                  })
-                }
+              <input
+                style={inputStyle}
+                placeholder="e.g. Senior Frontend Engineer"
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                required
               />
 
+              <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", marginBottom: "0.35rem", textTransform: "uppercase" }}>
+                Location
+              </label>
+              <input
+                style={inputStyle}
+                placeholder="e.g. Bangalore / Remote"
+                value={form.location}
+                onChange={(e) => setForm({ ...form, location: e.target.value })}
+              />
 
-              <div
-                style={{
-                  display: "flex",
-                  gap: "0.75rem",
-                  marginTop: "0.5rem"
-                }}
-              >
+              <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", marginBottom: "0.35rem", textTransform: "uppercase" }}>
+                Annual Compensation (₹/year)
+              </label>
+              <input
+                style={inputStyle}
+                type="number"
+                placeholder="e.g. 1800000"
+                value={form.salary}
+                onChange={(e) => setForm({ ...form, salary: e.target.value })}
+              />
 
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="btn-mc"
-                >
+              <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", marginBottom: "0.35rem", textTransform: "uppercase" }}>
+                Job Description
+              </label>
+              <textarea
+                style={{ ...inputStyle, minHeight: "100px", resize: "vertical" }}
+                placeholder="Outline team mission, responsibilities, and requirements..."
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+              />
+
+              <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.5rem" }}>
+                <button type="button" onClick={() => setShowModal(false)} className="btn-secondary" style={{ flex: 1 }}>
                   Cancel
                 </button>
-
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="btn-mp"
-                >
-                  {loading
-                    ? "Posting..."
-                    : "Post Job"}
+                <button type="submit" disabled={loading} className="btn-primary" style={{ flex: 2 }}>
+                  {loading ? "Publishing..." : "Publish Job"}
                 </button>
-
               </div>
-
             </form>
-
           </div>
-
         </div>
-
       )}
-
 
       {/* Edit Job Modal */}
       {editModal && (
-
         <div
-          onClick={() => setEditModal(null)}
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.7)",
-            backdropFilter: "blur(8px)",
-            WebkitBackdropFilter: "blur(8px)",
+            background: "rgba(23, 33, 29, 0.5)",
+            backdropFilter: "blur(6px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             zIndex: 200,
             padding: "1rem"
           }}
+          onClick={() => setEditModal(null)}
         >
-
-          <div
-            onClick={e => e.stopPropagation()}
-            className="r-glass-modal"
-            style={{
-              padding:
-                "clamp(1.25rem,4vw,2rem)",
-              width: "100%",
-              maxWidth: "480px",
-              animation: "fadeIn 0.3s ease",
-              maxHeight: "90vh",
-              overflowY: "auto"
-            }}
-          >
-
-            <h2
-              style={{
-                marginBottom: "1.5rem",
-                fontSize:
-                  "clamp(1.2rem,4vw,1.5rem)",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem"
-              }}
-            >
-              <Pencil size={20} strokeWidth={2} />
-              Edit Job
-            </h2>
-
+          <div className="modal-clean" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
+              <h2 style={{ fontSize: "1.35rem", fontWeight: 800, margin: 0, color: "var(--text-main)" }}>
+                Edit Job Details
+              </h2>
+              <button onClick={() => setEditModal(null)} style={{ background: "none", color: "var(--text-muted)" }}>
+                <X size={20} />
+              </button>
+            </div>
 
             <form onSubmit={handleEditJob}>
-
-              {[
-                {
-                  label: "Job Title",
-                  key: "title",
-                  type: "text",
-                  ph: "e.g. Senior React Developer"
-                },
-                {
-                  label: "Location",
-                  key: "location",
-                  type: "text",
-                  ph: "e.g. Bangalore / Remote"
-                },
-                {
-                  label: "Salary (₹/year)",
-                  key: "salary",
-                  type: "number",
-                  ph: "e.g. 1200000"
-                }
-              ].map(f => (
-
-                <div key={f.key}>
-
-                  <label
-                    style={{
-                      display: "block",
-                      fontSize: "0.78rem",
-                      fontWeight: 600,
-                      color: "var(--text2)",
-                      marginBottom: "0.35rem",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.5px"
-                    }}
-                  >
-                    {f.label}
-                  </label>
-
-
-                  <input
-                    className="dash-inp"
-                    style={inputStyle}
-                    type={f.type}
-                    placeholder={f.ph}
-                    value={editForm[f.key]}
-                    onChange={e =>
-                      setEditForm({
-                        ...editForm,
-                        [f.key]: e.target.value
-                      })
-                    }
-                    required={f.key === "title"}
-                  />
-
-                </div>
-
-              ))}
-
-
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.78rem",
-                  fontWeight: 600,
-                  color: "var(--text2)",
-                  marginBottom: "0.35rem",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px"
-                }}
-              >
-                Description
+              <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", marginBottom: "0.35rem", textTransform: "uppercase" }}>
+                Job Title *
               </label>
-
-
-              <textarea
-                className="dash-inp"
-                style={{
-                  ...inputStyle,
-                  minHeight: "80px",
-                  resize: "vertical"
-                }}
-                placeholder="Describe the role..."
-                value={editForm.description}
-                onChange={e =>
-                  setEditForm({
-                    ...editForm,
-                    description: e.target.value
-                  })
-                }
+              <input
+                style={inputStyle}
+                value={editForm.title}
+                onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                required
               />
 
+              <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", marginBottom: "0.35rem", textTransform: "uppercase" }}>
+                Location
+              </label>
+              <input
+                style={inputStyle}
+                value={editForm.location}
+                onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
+              />
 
-              <div
-                style={{
-                  display: "flex",
-                  gap: "0.75rem",
-                  marginTop: "0.5rem"
-                }}
-              >
+              <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", marginBottom: "0.35rem", textTransform: "uppercase" }}>
+                Annual Compensation (₹/year)
+              </label>
+              <input
+                style={inputStyle}
+                type="number"
+                value={editForm.salary}
+                onChange={(e) => setEditForm({ ...editForm, salary: e.target.value })}
+              />
 
-                <button
-                  type="button"
-                  onClick={() => setEditModal(null)}
-                  className="btn-mc"
-                >
+              <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", marginBottom: "0.35rem", textTransform: "uppercase" }}>
+                Description
+              </label>
+              <textarea
+                style={{ ...inputStyle, minHeight: "100px", resize: "vertical" }}
+                value={editForm.description}
+                onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+              />
+
+              <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.5rem" }}>
+                <button type="button" onClick={() => setEditModal(null)} className="btn-secondary" style={{ flex: 1 }}>
                   Cancel
                 </button>
-
-
-                <button
-                  type="submit"
-                  disabled={editLoading}
-                  className="btn-mp"
-                >
-                  {editLoading
-                    ? "Saving..."
-                    : "Save Changes"}
+                <button type="submit" disabled={editLoading} className="btn-primary" style={{ flex: 2 }}>
+                  {editLoading ? "Saving..." : "Save Changes"}
                 </button>
-
               </div>
-
             </form>
-
           </div>
-
         </div>
-
       )}
-
 
       {/* Schedule Interview Modal */}
       {interviewModal && (
-
         <div
-          onClick={() => setInterviewModal(null)}
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.7)",
-            backdropFilter: "blur(8px)",
-            WebkitBackdropFilter: "blur(8px)",
+            background: "rgba(23, 33, 29, 0.5)",
+            backdropFilter: "blur(6px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             zIndex: 200,
             padding: "1rem"
           }}
+          onClick={() => setInterviewModal(null)}
         >
+          <div className="modal-clean" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <CalendarDays size={20} color="var(--primary)" />
+                <h2 style={{ fontSize: "1.25rem", fontWeight: 800, margin: 0, color: "var(--text-main)" }}>
+                  Schedule Interview
+                </h2>
+              </div>
+              <button onClick={() => setInterviewModal(null)} style={{ background: "none", color: "var(--text-muted)" }}>
+                <X size={20} />
+              </button>
+            </div>
 
-          <div
-            onClick={e => e.stopPropagation()}
-            className="r-glass-modal"
-            style={{
-              padding: "2rem",
-              width: "100%",
-              maxWidth: "440px",
-              animation: "fadeIn 0.3s ease"
-            }}
-          >
-
-            <h2
-              style={{
-                marginBottom: "1.5rem",
-                fontFamily: "var(--font-head)",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem"
-              }}
-            >
-              <CalendarDays
-                size={20}
-                strokeWidth={2}
-              />
-              Schedule Interview
-            </h2>
-
-
-            <label
-              style={{
-                display: "block",
-                fontSize: "0.78rem",
-                fontWeight: 600,
-                color: "var(--text2)",
-                marginBottom: "0.35rem",
-                textTransform: "uppercase",
-                letterSpacing: "0.5px"
-              }}
-            >
-              Date & Time
+            <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", marginBottom: "0.35rem", textTransform: "uppercase" }}>
+              Interview Date & Time *
             </label>
-
-
             <input
               type="datetime-local"
               value={interviewAt}
-              onChange={e =>
-                setInterviewAt(e.target.value)
-              }
-              className="dash-inp"
+              onChange={(e) => setInterviewAt(e.target.value)}
               style={inputStyle}
             />
 
-
-            <label
-              style={{
-                display: "block",
-                fontSize: "0.78rem",
-                fontWeight: 600,
-                color: "var(--text2)",
-                marginBottom: "0.35rem",
-                textTransform: "uppercase",
-                letterSpacing: "0.5px"
-              }}
-            >
-              Details
+            <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", marginBottom: "0.35rem", textTransform: "uppercase" }}>
+              Meeting Details & Instructions
             </label>
-
-
             <textarea
               value={interviewDetails}
-              onChange={e =>
-                setInterviewDetails(e.target.value)
-              }
-              placeholder="e.g. Google Meet link..."
-              className="dash-inp"
-              style={{
-                ...inputStyle,
-                minHeight: "80px",
-                resize: "vertical"
-              }}
+              onChange={(e) => setInterviewDetails(e.target.value)}
+              placeholder="e.g. Google Meet link, interviewers, preparation topics..."
+              style={{ ...inputStyle, minHeight: "85px", resize: "vertical" }}
             />
 
-
-            <div
-              style={{
-                display: "flex",
-                gap: "0.75rem"
-              }}
-            >
-
-              <button
-                onClick={() =>
-                  setInterviewModal(null)
-                }
-                className="btn-mc"
-              >
+            <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.5rem" }}>
+              <button type="button" onClick={() => setInterviewModal(null)} className="btn-secondary" style={{ flex: 1 }}>
                 Cancel
               </button>
-
-
               <button
+                type="button"
                 onClick={handleScheduleInterview}
                 disabled={interviewLoading}
-                className="btn-miv"
+                className="btn-primary"
+                style={{ flex: 2 }}
               >
-                {interviewLoading
-                  ? "Scheduling..."
-                  : "Schedule & Notify"}
+                {interviewLoading ? "Scheduling..." : "Schedule & Notify"}
               </button>
-
             </div>
-
           </div>
-
         </div>
-
       )}
-
 
       {/* Contact Candidate Modal */}
       {contactModal && (
-
         <div
-          onClick={() => setContactModal(null)}
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.7)",
-            backdropFilter: "blur(8px)",
-            WebkitBackdropFilter: "blur(8px)",
+            background: "rgba(23, 33, 29, 0.5)",
+            backdropFilter: "blur(6px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             zIndex: 200,
             padding: "1rem"
           }}
+          onClick={() => setContactModal(null)}
         >
+          <div className="modal-clean" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <Mail size={20} color="var(--primary)" />
+                <h2 style={{ fontSize: "1.25rem", fontWeight: 800, margin: 0, color: "var(--text-main)" }}>
+                  Message Candidate
+                </h2>
+              </div>
+              <button onClick={() => setContactModal(null)} style={{ background: "none", color: "var(--text-muted)" }}>
+                <X size={20} />
+              </button>
+            </div>
 
-          <div
-            onClick={e => e.stopPropagation()}
-            className="r-glass-modal"
-            style={{
-              padding: "2rem",
-              width: "100%",
-              maxWidth: "440px",
-              animation: "fadeIn 0.3s ease"
-            }}
-          >
-
-            <h2
-              style={{
-                marginBottom: "1.5rem",
-                fontFamily: "var(--font-head)",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem"
-              }}
-            >
-              <Mail
-                size={20}
-                strokeWidth={2}
-              />
-              Contact Candidate
-            </h2>
-
-
-            <label
-              style={{
-                display: "block",
-                fontSize: "0.78rem",
-                fontWeight: 600,
-                color: "var(--text2)",
-                marginBottom: "0.35rem",
-                textTransform: "uppercase",
-                letterSpacing: "0.5px"
-              }}
-            >
-              Subject
+            <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", marginBottom: "0.35rem", textTransform: "uppercase" }}>
+              Subject *
             </label>
-
-
             <input
               value={contactSubject}
-              onChange={e =>
-                setContactSubject(e.target.value)
-              }
-              placeholder="e.g. Next Steps..."
-              className="dash-inp"
+              onChange={(e) => setContactSubject(e.target.value)}
+              placeholder="e.g. Next steps in our interview process"
               style={inputStyle}
             />
 
-
-            <label
-              style={{
-                display: "block",
-                fontSize: "0.78rem",
-                fontWeight: 600,
-                color: "var(--text2)",
-                marginBottom: "0.35rem",
-                textTransform: "uppercase",
-                letterSpacing: "0.5px"
-              }}
-            >
-              Message
+            <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", marginBottom: "0.35rem", textTransform: "uppercase" }}>
+              Message Content *
             </label>
-
-
             <textarea
               value={contactMessage}
-              onChange={e =>
-                setContactMessage(e.target.value)
-              }
-              placeholder="Write your message..."
-              className="dash-inp"
-              style={{
-                ...inputStyle,
-                minHeight: "100px",
-                resize: "vertical"
-              }}
+              onChange={(e) => setContactMessage(e.target.value)}
+              placeholder="Write your direct message to the candidate..."
+              style={{ ...inputStyle, minHeight: "110px", resize: "vertical" }}
             />
 
-
-            <div
-              style={{
-                display: "flex",
-                gap: "0.75rem"
-              }}
-            >
-
-              <button
-                onClick={() =>
-                  setContactModal(null)
-                }
-                className="btn-mc"
-              >
+            <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.5rem" }}>
+              <button type="button" onClick={() => setContactModal(null)} className="btn-secondary" style={{ flex: 1 }}>
                 Cancel
               </button>
-
-
               <button
+                type="button"
                 onClick={handleContact}
                 disabled={contactLoading}
-                className="btn-mco"
+                className="btn-primary"
+                style={{ flex: 2 }}
               >
-                {contactLoading
-                  ? "Sending..."
-                  : "Send Message"}
+                {contactLoading ? "Sending..." : "Send Message"}
               </button>
-
             </div>
-
           </div>
-
         </div>
-
       )}
 
-
-      {/* Toast */}
+      {/* Floating Toast Notification */}
       {toast && (
-
-        <div className="toast-glass">
-
-          {toast.Icon && (
-            <toast.Icon
-              size={17}
-              strokeWidth={2}
-            />
-          )}
-
+        <div className="toast-float">
+          {toast.Icon && <toast.Icon size={18} color="var(--primary)" />}
           <span>{toast.message}</span>
-
         </div>
-
       )}
 
+      <Footer />
     </div>
   );
 }

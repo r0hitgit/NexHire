@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 412 266" fill="none">
+  <defs>
+    <linearGradient id="nhBrandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#177A59" />
+      <stop offset="100%" stop-color="#0C4E3A" />
+    </linearGradient>
+  </defs>
+  <path
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+    d="M106 0L196 0L216 114L178 114L165 39L128 38L156 199L131 266L0 266ZM103 118L116 194L103 227L59 228Z"
+    fill="url(#nhBrandGradient)"
+  />
+  <path
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+    d="M281 0L412 0L306 266L205 266L185 152L223 152L236 228L274 228L248 81ZM311 38L353 40L301 166L288 91Z"
+    fill="url(#nhBrandGradient)"
+  />
+</svg>
+

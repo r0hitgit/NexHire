@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../api/axios";
+import { Eye, EyeOff, ArrowRight, ShieldCheck } from "lucide-react";
+import Logo from "../components/Logo";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -12,7 +14,8 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); setLoading(true);
+    setError("");
+    setLoading(true);
     try {
       const response = await login({ email, password });
       const token = response.data;
@@ -21,6 +24,7 @@ export default function Login() {
       localStorage.setItem("role", payload.role?.replace("ROLE_", ""));
       localStorage.setItem("email", payload.sub);
       localStorage.setItem("name", payload.name || payload.sub);
+
       if (payload.role?.includes("RECRUITER")) navigate("/recruiter");
       else if (payload.role?.includes("CANDIDATE")) navigate("/candidate");
       else navigate("/jobs");
@@ -32,167 +36,165 @@ export default function Login() {
   };
 
   const inputStyle = {
-    width: "100%", padding: "0.75rem 1rem",
-    background: "rgba(255,255,255,0.05)",
-    border: "1px solid rgba(255,255,255,0.1)",
-    borderRadius: "var(--radius)", color: "var(--text)", fontSize: "0.95rem", outline: "none",
+    width: "100%",
+    padding: "0.8rem 1rem",
+    background: "#FFFFFF",
+    border: "1px solid var(--border-color)",
+    borderRadius: "var(--radius-sm)",
+    color: "var(--text-main)",
+    fontSize: "0.95rem",
+    outline: "none",
     boxSizing: "border-box",
-    backdropFilter: "blur(8px)",
-    WebkitBackdropFilter: "blur(8px)",
-    transition: "border-color 0.25s ease, box-shadow 0.25s ease",
+    transition: "border-color 0.2s ease, box-shadow 0.2s ease"
   };
 
   const labelStyle = {
-    display: "block", fontSize: "0.78rem", fontWeight: 600,
-    color: "var(--text2)", marginBottom: "0.4rem",
-    textTransform: "uppercase", letterSpacing: "0.5px",
+    display: "block",
+    fontSize: "0.8rem",
+    fontWeight: 700,
+    color: "var(--text-secondary)",
+    marginBottom: "0.45rem",
+    textTransform: "uppercase",
+    letterSpacing: "0.04em"
   };
 
-  const EyeIcon = () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-      <circle cx="12" cy="12" r="3"/>
-    </svg>
-  );
-
-  const EyeOffIcon = () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
-      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
-      <line x1="1" y1="1" x2="23" y2="23"/>
-    </svg>
-  );
-
   return (
-    <div style={{
-      minHeight: "100dvh",
-      display: "flex", alignItems: "center", justifyContent: "center",
-      background: "radial-gradient(ellipse at 60% 20%, rgba(108,99,255,0.1) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(255,101,132,0.07) 0%, transparent 50%), var(--bg)",
-      padding: "1rem",
-    }}>
-
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "var(--bg-soft)",
+        padding: "1.5rem"
+      }}
+    >
       <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(16px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        .login-card {
+        .auth-card {
           width: 100%;
-          max-width: 420px;
-          background: rgba(255, 255, 255, 0.04);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          backdrop-filter: blur(24px);
-          -webkit-backdrop-filter: blur(24px);
+          max-width: 440px;
+          background: #FFFFFF;
+          border: 1px solid var(--border-color);
           border-radius: var(--radius-lg);
-          padding: clamp(1.5rem, 5vw, 2.5rem);
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(108,99,255,0.08);
-          animation: fadeIn 0.5s ease;
+          padding: clamp(2rem, 5vw, 2.75rem);
+          box-shadow: var(--shadow-md);
+          animation: fadeIn 0.35s ease;
         }
 
-        .login-input:focus {
-          border-color: rgba(108, 99, 255, 0.6) !important;
-          box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.12);
-        }
-
-        .btn-signin-submit {
-          width: 100%;
-          padding: 0.85rem;
-          border: 1px solid rgba(108, 99, 255, 0.4);
-          background: rgba(108, 99, 255, 0.2);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          color: #d0cdff;
-          border-radius: var(--radius);
-          font-size: 1rem;
-          font-weight: 600;
-          font-family: var(--font-head);
-          cursor: pointer;
-          transition: all 0.3s ease;
-          box-shadow: 0 2px 12px rgba(108, 99, 255, 0.15);
-        }
-        .btn-signin-submit:hover:not(:disabled) {
-          background: rgba(108, 99, 255, 0.32);
-          border-color: rgba(108, 99, 255, 0.7);
-          color: #fff;
-          transform: translateY(-2px);
-          box-shadow: 0 6px 24px rgba(108, 99, 255, 0.28);
-        }
-        .btn-signin-submit:active:not(:disabled) {
-          transform: translateY(0px);
-        }
-        .btn-signin-submit:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
+        .auth-input:focus {
+          border-color: var(--primary) !important;
+          box-shadow: 0 0 0 3px rgba(23, 122, 89, 0.12) !important;
         }
       `}</style>
 
-      <div className="login-card">
-        <div style={{
-          fontFamily: "'Saira', sans-serif", fontSize: "clamp(1.6rem, 5vw, 1.8rem)", fontWeight: 600,
-          background: "linear-gradient(135deg, #6c63ff, #ff6584)",
-          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-          marginBottom: "0.25rem",
-        }}>NexHire</div>
-        <p style={{ color: "var(--text2)", fontSize: "0.9rem", marginBottom: "2rem" }}>
-          Sign in to your account
+      <div className="auth-card">
+        {/* Brand Logo */}
+        <div
+          onClick={() => navigate("/")}
+          style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem", marginBottom: "1.5rem", cursor: "pointer" }}
+        >
+          <Logo size={36} variant="badge" />
+          <span style={{ fontFamily: "var(--font-head)", fontSize: "1.35rem", fontWeight: 800, color: "var(--text-main)" }}>
+            Nex<span style={{ color: "var(--primary)" }}>Hire</span>
+          </span>
+        </div>
+
+        <h1 style={{ fontSize: "1.6rem", fontWeight: 800, color: "var(--text-main)", marginBottom: "0.35rem" }}>
+          Welcome back
+        </h1>
+        <p style={{ color: "var(--text-secondary)", fontSize: "0.92rem", marginBottom: "1.75rem" }}>
+          Sign in to access your jobs, applications, and hiring tools.
         </p>
 
         {error && (
-          <div style={{
-            background: "rgba(255,101,132,0.08)", border: "1px solid rgba(255,101,132,0.25)",
-            color: "#ff6584", padding: "0.75rem 1rem", borderRadius: "var(--radius)",
-            fontSize: "0.875rem", marginBottom: "1rem",
-            backdropFilter: "blur(8px)",
-          }}>{error}</div>
+          <div
+            style={{
+              background: "#FEF2F2",
+              border: "1px solid #FECACA",
+              color: "#B91C1C",
+              padding: "0.8rem 1rem",
+              borderRadius: "var(--radius-sm)",
+              fontSize: "0.88rem",
+              marginBottom: "1.25rem",
+              fontWeight: 500
+            }}
+          >
+            {error}
+          </div>
         )}
 
         <form onSubmit={handleLogin}>
-          <label style={labelStyle}>Email</label>
-          <input
-            type="email" placeholder="you@example.com" value={email}
-            onChange={(e) => setEmail(e.target.value)} required
-            className="login-input"
-            style={{ ...inputStyle, marginBottom: "1.2rem" }}
-          />
-
-          <label style={labelStyle}>Password</label>
-          <div style={{ position: "relative", marginBottom: "0.75rem" }}>
+          <div style={{ marginBottom: "1.2rem" }}>
+            <label style={labelStyle}>Email Address</label>
             <input
-              type={showPassword ? "text" : "password"}
-              placeholder="••••••••" value={password}
-              onChange={(e) => setPassword(e.target.value)} required
-              className="login-input"
-              style={{ ...inputStyle, paddingRight: "3rem" }}
+              type="email"
+              placeholder="you@company.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="auth-input"
+              style={inputStyle}
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              style={{
-                position: "absolute", right: "0.75rem", top: "50%",
-                transform: "translateY(-50%)",
-                background: "none", border: "none", cursor: "pointer",
-                color: "var(--text2)", padding: "0.25rem",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-              {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-            </button>
+          </div>
+
+          <div style={{ marginBottom: "0.75rem" }}>
+            <label style={labelStyle}>Password</label>
+            <div style={{ position: "relative" }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="auth-input"
+                style={{ ...inputStyle, paddingRight: "3rem", marginBottom: 0 }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: "0.75rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  color: "var(--text-muted)",
+                  padding: "0.25rem",
+                  display: "flex",
+                  alignItems: "center"
+                }}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           <div style={{ textAlign: "right", marginBottom: "1.5rem" }}>
-            <Link to="/forgot-password" style={{ color: "var(--accent)", fontSize: "0.825rem", fontWeight: 500 }}>
+            <Link
+              to="/forgot-password"
+              style={{ color: "var(--primary)", fontSize: "0.85rem", fontWeight: 600 }}
+            >
               Forgot password?
             </Link>
           </div>
 
-          <button type="submit" disabled={loading} className="btn-signin-submit">
-            {loading ? "Signing in..." : "Sign In →"}
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary"
+            style={{ width: "100%", padding: "0.85rem", fontSize: "1rem" }}
+          >
+            <span>{loading ? "Signing in..." : "Sign In"}</span>
+            <ArrowRight size={17} />
           </button>
         </form>
 
-        <p style={{ textAlign: "center", marginTop: "1.5rem", fontSize: "0.875rem", color: "var(--text2)" }}>
+        <p style={{ textAlign: "center", marginTop: "1.75rem", fontSize: "0.9rem", color: "var(--text-secondary)" }}>
           Don't have an account?{" "}
-          <Link to="/register" style={{ color: "var(--accent)", fontWeight: 500 }}>Register</Link>
+          <Link to="/register" style={{ color: "var(--primary-dark)", fontWeight: 700 }}>
+            Create one free
+          </Link>
         </p>
       </div>
     </div>
