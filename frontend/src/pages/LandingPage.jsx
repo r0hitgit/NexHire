@@ -143,7 +143,7 @@ export default function LandingPage() {
         }
 
         .hero-headline span.highlight {
-          color: var(--primary);
+          color: var(--text-main);
           position: relative;
           display: inline-block;
           white-space: nowrap;
