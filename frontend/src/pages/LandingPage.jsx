@@ -100,6 +100,7 @@ export default function LandingPage() {
           max-width: 1240px;
           margin: 0 auto;
           width: 100%;
+          overflow-x: clip;
         }
 
         .hero-grid {
@@ -349,6 +350,26 @@ export default function LandingPage() {
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
         }
 
+        .candidate-avatar svg {
+          width: 48px;
+          height: 48px;
+          display: block;
+        }
+
+        .candidate-name {
+          font-weight: 800;
+          font-size: 1.05rem;
+          color: #141E19;
+          line-height: 1.2;
+        }
+
+        .candidate-role {
+          font-size: 0.85rem;
+          color: #64746D;
+          font-weight: 500;
+          margin-top: 2px;
+        }
+
         .candidate-match-pill {
           background: #EAF5EF;
           color: #177A59;
@@ -390,6 +411,13 @@ export default function LandingPage() {
           margin-bottom: 1.15rem;
         }
 
+        .opportunity-header {
+          display: flex;
+          align-items: center;
+          gap: 0.95rem;
+          margin-bottom: 1.25rem;
+        }
+
         .opportunity-company-icon {
           width: 48px;
           height: 48px;
@@ -404,6 +432,33 @@ export default function LandingPage() {
           font-weight: 700;
           font-style: italic;
           flex-shrink: 0;
+        }
+
+        .opportunity-role-title {
+          font-weight: 800;
+          font-size: 1.2rem;
+          color: #141E19;
+          line-height: 1.25;
+        }
+
+        .opportunity-company-name {
+          font-size: 0.9rem;
+          color: #64746D;
+          font-weight: 500;
+          margin-top: 3px;
+        }
+
+        .opportunity-tags-row {
+          display: flex;
+          align-items: center;
+          gap: 1.75rem;
+          margin-bottom: 1.4rem;
+        }
+
+        .opportunity-tag-item {
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: #52635B;
         }
 
         .opportunity-btn {
@@ -445,6 +500,11 @@ export default function LandingPage() {
           gap: 0.65rem;
           z-index: 4;
           animation: floatSmooth 7s ease-in-out infinite 1s;
+        }
+
+        .hired-pill-text {
+          font-size: 0.88rem;
+          color: #44534B;
         }
 
         @keyframes floatSmooth {
@@ -582,11 +642,11 @@ export default function LandingPage() {
           }
           .hero-stage-container {
             max-width: 440px;
-            margin: 0 auto;
+            margin: 1rem auto 0;
           }
           .hero-opportunity-card {
-            margin-right: 0;
-            max-width: 100%;
+            margin-right: 28px;
+            max-width: 380px;
           }
           .search-panel {
             flex-direction: column;
@@ -602,39 +662,198 @@ export default function LandingPage() {
           }
         }
 
-        @media (max-width: 520px) {
+        @media (max-width: 560px) {
           .hero-stage-container {
-            min-height: auto;
-            flex-direction: column;
-            gap: 1rem;
-            align-items: stretch;
-          }
-          .hero-concentric-disc,
-          .hero-accent-orb,
-          .hero-peach-accent {
-            display: none;
-          }
-          .hero-candidate-card {
+            min-height: 390px;
+            height: 390px;
+            max-width: 360px;
+            margin: 1.5rem auto 0;
             position: relative;
-            top: auto;
-            right: auto;
-            width: 100%;
-            justify-content: space-between;
-            animation: none;
-          }
-          .hero-opportunity-card {
-            position: relative;
-            margin-top: 0;
-            margin-right: 0;
-            width: 100%;
-          }
-          .hero-hired-pill {
-            position: relative;
-            bottom: auto;
-            right: auto;
-            width: 100%;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            animation: none;
+          }
+
+          /* Keep concentric disc visible and scaled for mobile */
+          .hero-concentric-disc {
+            display: block !important;
+            width: 310px;
+            height: 310px;
+            top: 48%;
+            left: 52%;
+          }
+
+          .hero-disc-ring {
+            width: 225px;
+            height: 225px;
+          }
+
+          /* Keep floating accent orbs */
+          .hero-accent-orb {
+            display: block !important;
+            width: 36px;
+            height: 36px;
+            top: 10px;
+            right: 22px;
+          }
+
+          .hero-peach-accent {
+            display: block !important;
+            width: 24px;
+            height: 24px;
+            bottom: 22px;
+            left: 14px;
+          }
+
+          /* Card 1: Top Floating Candidate Match Card */
+          .hero-candidate-card {
+            position: absolute !important;
+            top: 14px;
+            right: 6px;
+            width: auto;
+            max-width: calc(100% - 12px);
+            padding: 0.55rem 0.85rem;
+            border-radius: 16px;
+            gap: 0.65rem;
+            box-shadow: 0 14px 28px -6px rgba(16, 50, 36, 0.12);
+            z-index: 3;
+            animation: floatSmooth 6s ease-in-out infinite;
+          }
+
+          .candidate-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+          }
+
+          .candidate-avatar svg {
+            width: 38px;
+            height: 38px;
+          }
+
+          .candidate-name {
+            font-size: 0.88rem;
+          }
+
+          .candidate-role {
+            font-size: 0.72rem;
+            margin-top: 1px;
+          }
+
+          .candidate-match-pill {
+            font-size: 0.72rem;
+            padding: 0.25rem 0.6rem;
+            margin-left: 0.25rem;
+          }
+
+          /* Card 2: Foreground Opportunity Card */
+          .hero-opportunity-card {
+            position: relative !important;
+            width: 88%;
+            max-width: 295px;
+            margin-top: 50px;
+            margin-right: 22px;
+            padding: 1.2rem 1.25rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 48px -10px rgba(16, 50, 36, 0.16);
+            z-index: 2;
+          }
+
+          .opportunity-label {
+            font-size: 0.68rem;
+            margin-bottom: 0.85rem;
+          }
+
+          .opportunity-header {
+            gap: 0.75rem;
+            margin-bottom: 0.95rem;
+          }
+
+          .opportunity-company-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1.4rem;
+            border-radius: 10px;
+          }
+
+          .opportunity-role-title {
+            font-size: 1.05rem;
+          }
+
+          .opportunity-company-name {
+            font-size: 0.8rem;
+          }
+
+          .opportunity-tags-row {
+            gap: 1.25rem;
+            margin-bottom: 1.15rem;
+          }
+
+          .opportunity-tag-item {
+            font-size: 0.82rem;
+          }
+
+          .opportunity-btn {
+            padding: 0.72rem 1rem;
+            font-size: 0.84rem;
+            border-radius: 10px;
+            gap: 0.45rem;
+          }
+
+          /* Card 3: Bottom Floating Pill */
+          .hero-hired-pill {
+            position: absolute !important;
+            bottom: 14px;
+            right: 4px;
+            width: auto;
+            padding: 0.5rem 0.85rem;
+            border-radius: 12px;
+            gap: 0.5rem;
+            box-shadow: 0 12px 24px -4px rgba(16, 50, 36, 0.12);
+            z-index: 4;
+            animation: floatSmooth 7s ease-in-out infinite 1s;
+          }
+
+          .hired-pill-text {
+            font-size: 0.76rem;
+          }
+        }
+
+        @media (max-width: 375px) {
+          .hero-stage-container {
+            min-height: 360px;
+            height: 360px;
+            max-width: 320px;
+          }
+
+          .hero-concentric-disc {
+            width: 270px;
+            height: 270px;
+          }
+
+          .hero-disc-ring {
+            width: 195px;
+            height: 195px;
+          }
+
+          .hero-opportunity-card {
+            max-width: 265px;
+            padding: 1rem 1.1rem;
+            margin-top: 42px;
+            margin-right: 14px;
+          }
+
+          .hero-candidate-card {
+            top: 8px;
+            right: 0px;
+            padding: 0.45rem 0.7rem;
+            gap: 0.5rem;
+          }
+
+          .hero-hired-pill {
+            bottom: 8px;
+            right: 0px;
+            padding: 0.42rem 0.75rem;
           }
         }
       `}</style>
@@ -747,10 +966,10 @@ export default function LandingPage() {
             {/* Subtle peach bottom-left glow */}
             <div className="hero-peach-accent" />
 
-            {/* Card 1: Top Floating Candidate Match Card (Alex Morgan) */}
+            {/* Card 1: Top Floating Candidate Match Card (Aarav Sharma) */}
             <div className="hero-candidate-card">
               <div className="candidate-avatar">
-                <svg viewBox="0 0 54 54" width="48" height="48" style={{ display: "block" }}>
+                <svg viewBox="0 0 54 54" style={{ display: "block" }}>
                   <rect width="54" height="54" rx="14" fill="#B9DCD0" />
                   <path d="M11 54 C11 41, 19 36, 27 36 C35 36, 43 41, 43 54 Z" fill="#3A6D59" />
                   <rect x="23" y="29" width="8" height="8" rx="2" fill="#D89D7F" />
@@ -763,10 +982,10 @@ export default function LandingPage() {
               </div>
 
               <div>
-                <div style={{ fontWeight: 800, fontSize: "1.05rem", color: "#141E19", lineHeight: 1.2 }}>
+                <div className="candidate-name">
                   Aarav Sharma
                 </div>
-                <div style={{ fontSize: "0.85rem", color: "#64746D", fontWeight: 500, marginTop: "2px" }}>
+                <div className="candidate-role">
                   Product Designer
                 </div>
               </div>
@@ -782,25 +1001,25 @@ export default function LandingPage() {
                 NEW OPPORTUNITY
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "0.95rem", marginBottom: "1.25rem" }}>
+              <div className="opportunity-header">
                 <div className="opportunity-company-icon">
                   A
                 </div>
                 <div>
-                  <div style={{ fontWeight: 800, fontSize: "1.2rem", color: "#141E19", lineHeight: 1.25 }}>
+                  <div className="opportunity-role-title">
                     Lead Product Designer
                   </div>
-                  <div style={{ fontSize: "0.9rem", color: "#64746D", fontWeight: 500, marginTop: "3px" }}>
+                  <div className="opportunity-company-name">
                     Arc Studio
                   </div>
                 </div>
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "1.75rem", marginBottom: "1.4rem" }}>
-                <span style={{ fontSize: "0.9rem", fontWeight: 600, color: "#52635B" }}>
+              <div className="opportunity-tags-row">
+                <span className="opportunity-tag-item">
                   Remote
                 </span>
-                <span style={{ fontSize: "0.9rem", fontWeight: 600, color: "#52635B" }}>
+                <span className="opportunity-tag-item">
                   $145k – $175k
                 </span>
               </div>
@@ -818,7 +1037,7 @@ export default function LandingPage() {
             {/* Card 3: Bottom Floating Pill (2.4k people hired this month) */}
             <div className="hero-hired-pill">
               <Users size={18} color="#177A59" strokeWidth={2.4} />
-              <div style={{ fontSize: "0.88rem", color: "#44534B" }}>
+              <div className="hired-pill-text">
                 <strong style={{ fontWeight: 800, color: "#141E19", marginRight: "0.3rem" }}>2.4k</strong>
                 people hired this month
               </div>
