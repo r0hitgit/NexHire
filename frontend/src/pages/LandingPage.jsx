@@ -961,12 +961,8 @@ export default function LandingPage() {
               </div>
 
               <div>
-                <div className="candidate-name">
-                  Harsh Soni
-                </div>
-                <div className="candidate-role">
-                  Product Designer
-                </div>
+                <div className="candidate-name">Harsh Soni</div>
+                <div className="candidate-role">Product Designer</div>
               </div>
 
               <div className="candidate-match-pill">
