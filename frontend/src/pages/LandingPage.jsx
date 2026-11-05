@@ -250,7 +250,6 @@ export default function LandingPage() {
           transform: translateY(-1px);
         }
 
-        /* Visual Composition Right (Matches screenshot) */
         .hero-stage-container {
           position: relative;
           min-height: 440px;
@@ -308,7 +307,6 @@ export default function LandingPage() {
           z-index: 1;
         }
 
-        /* Top Floating Candidate Match Card */
         .hero-candidate-card {
           position: absolute;
           top: 24px;
@@ -381,7 +379,6 @@ export default function LandingPage() {
           margin-left: 0.5rem;
         }
 
-        /* Main Foreground Opportunity Card */
         .hero-opportunity-card {
           position: relative;
           width: 100%;
@@ -485,7 +482,6 @@ export default function LandingPage() {
           box-shadow: 0 6px 16px rgba(24, 34, 30, 0.25);
         }
 
-        /* Bottom Floating Pill Card */
         .hero-hired-pill {
           position: absolute;
           bottom: 24px;
@@ -516,7 +512,6 @@ export default function LandingPage() {
           }
         }
 
-        /* Category section */
         .category-section {
           padding: 5rem clamp(1rem, 4vw, 2.5rem);
           max-width: 1240px;
@@ -586,7 +581,6 @@ export default function LandingPage() {
           transform: translateX(3px);
         }
 
-        /* Features Section */
         .features-section {
           background: var(--white);
           border-top: 1px solid var(--border-color);
@@ -618,7 +612,6 @@ export default function LandingPage() {
           box-shadow: var(--shadow-sm);
         }
 
-        /* CTA Section */
         .cta-banner {
           background: linear-gradient(135deg, #0C4E3A 0%, #177A59 100%);
           border-radius: 24px;
@@ -674,7 +667,6 @@ export default function LandingPage() {
             justify-content: center;
           }
 
-          /* Keep concentric disc visible and scaled for mobile */
           .hero-concentric-disc {
             display: block !important;
             width: 310px;
@@ -688,7 +680,6 @@ export default function LandingPage() {
             height: 225px;
           }
 
-          /* Keep floating accent orbs */
           .hero-accent-orb {
             display: block !important;
             width: 36px;
@@ -705,7 +696,6 @@ export default function LandingPage() {
             left: 14px;
           }
 
-          /* Card 1: Top Floating Candidate Match Card */
           .hero-candidate-card {
             position: absolute !important;
             top: 14px;
@@ -746,7 +736,6 @@ export default function LandingPage() {
             margin-left: 0.25rem;
           }
 
-          /* Card 2: Foreground Opportunity Card */
           .hero-opportunity-card {
             position: relative !important;
             width: 88%;
@@ -800,7 +789,6 @@ export default function LandingPage() {
             gap: 0.45rem;
           }
 
-          /* Card 3: Bottom Floating Pill */
           .hero-hired-pill {
             position: absolute !important;
             bottom: 14px;
@@ -858,10 +846,8 @@ export default function LandingPage() {
         }
       `}</style>
 
-      {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-grid">
-          {/* Left Column: Copy & Search */}
           <div>
             <div className="hero-badge">
               <span className="hero-pulse-dot" />
@@ -903,7 +889,6 @@ export default function LandingPage() {
               NexHire connects top talent with great companies. Apply for jobs or post openings — all in one place.
             </p>
 
-            {/* Search Panel */}
             <form onSubmit={handleSearch} className="search-panel">
               <div className="search-input-group">
                 <Search size={18} color="var(--primary)" />
@@ -935,7 +920,6 @@ export default function LandingPage() {
               </button>
             </form>
 
-            {/* Popular Shortcuts */}
             <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
               <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text-muted)", marginRight: "0.25rem" }}>
                 Popular:
@@ -953,20 +937,15 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Right Column: Visual Composition (Matches screenshot) */}
           <div className="hero-stage-container">
-            {/* Background circular disc & rings */}
             <div className="hero-concentric-disc">
               <div className="hero-disc-ring" />
             </div>
 
-            {/* Lime yellow-green accent orb */}
             <div className="hero-accent-orb" />
 
-            {/* Subtle peach bottom-left glow */}
             <div className="hero-peach-accent" />
 
-            {/* Card 1: Top Floating Candidate Match Card (Aarav Sharma) */}
             <div className="hero-candidate-card">
               <div className="candidate-avatar">
                 <svg viewBox="0 0 54 54" style={{ display: "block" }}>
@@ -983,7 +962,7 @@ export default function LandingPage() {
 
               <div>
                 <div className="candidate-name">
-                  Aarav Sharma
+                  Harsh Soni
                 </div>
                 <div className="candidate-role">
                   Product Designer
@@ -995,7 +974,6 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Card 2: Main Foreground Opportunity Card */}
             <div className="hero-opportunity-card">
               <div className="opportunity-label">
                 NEW OPPORTUNITY
@@ -1034,7 +1012,6 @@ export default function LandingPage() {
               </button>
             </div>
 
-            {/* Card 3: Bottom Floating Pill (2.4k people hired this month) */}
             <div className="hero-hired-pill">
               <Users size={18} color="#177A59" strokeWidth={2.4} />
               <div className="hired-pill-text">
@@ -1046,7 +1023,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Explore by Category */}
       <section className="category-section">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "1rem" }}>
           <div>
@@ -1098,7 +1074,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Why NexHire / Platform Features */}
       <section className="features-section">
         <div style={{ maxWidth: "1240px", margin: "0 auto" }}>
           <div style={{ textAlign: "center", maxWidth: "600px", margin: "0 auto" }}>
@@ -1167,7 +1142,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Call to Action Banner */}
       <section style={{ padding: "0 1rem" }}>
         <div className="cta-banner">
           <div style={{ maxWidth: "600px" }}>

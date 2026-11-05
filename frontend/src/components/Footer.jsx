@@ -319,7 +319,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Blended Massive Watermark Brand Text at Webpage Base */}
       <div
         style={{
           width: "100%",

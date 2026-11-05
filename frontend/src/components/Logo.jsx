@@ -1,6 +1,6 @@
 export default function Logo({
   size = 28,
-  variant = "mark", // "mark" (bare green N) | "badge" | "white"
+  variant = "mark",
   color = "#177A59",
   className = "",
   style = {},
@@ -11,7 +11,6 @@ export default function Logo({
   const c1 =
     "M281 0L412 0L306 266L205 266L185 152L223 152L236 228L274 228L248 81ZM311 38L353 40L301 166L288 91Z";
 
-  // Bare Mark (standalone green N with no square background)
   if (variant === "mark") {
     const width = Math.round((size * 412) / 266);
     return (
@@ -37,7 +36,6 @@ export default function Logo({
     );
   }
 
-  // White mark for dark backgrounds
   if (variant === "white") {
     const width = Math.round((size * 412) / 266);
     return (
@@ -57,7 +55,6 @@ export default function Logo({
     );
   }
 
-  // Optional rounded badge container (if explicitly requested)
   return (
     <div
       className={className}
