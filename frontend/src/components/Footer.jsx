@@ -340,8 +340,7 @@ export default function Footer() {
             fontFamily: "var(--font-head)",
             fontSize: "clamp(5.5rem, 19vw, 17.5rem)",
             fontWeight: 900,
-            letterSpacing: "-0.05em",
-            textTransform: "lowercase",
+            letterSpacing: "-0.04em",
             whiteSpace: "nowrap",
             background: "linear-gradient(180deg, rgba(23, 122, 89, 0.16) 0%, rgba(23, 122, 89, 0.02) 100%)",
             WebkitBackgroundClip: "text",
@@ -349,7 +348,7 @@ export default function Footer() {
             color: "rgba(23, 122, 89, 0.12)",
           }}
         >
-          nexhire
+          NexHire.
         </span>
       </div>
     </footer>

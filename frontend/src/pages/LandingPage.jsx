@@ -144,22 +144,19 @@ export default function LandingPage() {
 
         .hero-headline span.highlight {
           color: var(--primary);
-          font-style: italic;
-          font-family: 'DM Sans', serif;
-          font-weight: 700;
           position: relative;
+          display: inline-block;
+          white-space: nowrap;
         }
 
-        .hero-headline span.highlight::after {
-          content: "";
+        .hero-swoosh-svg {
           position: absolute;
-          bottom: 2px;
-          left: 0;
-          right: 0;
-          height: 6px;
-          background: rgba(223, 242, 100, 0.55);
-          border-radius: 4px;
-          z-index: -1;
+          left: -3%;
+          bottom: -11px;
+          width: 106%;
+          height: 18px;
+          pointer-events: none;
+          overflow: visible;
         }
 
         .hero-desc {
@@ -653,7 +650,33 @@ export default function LandingPage() {
             </div>
 
             <h1 className="hero-headline">
-              Find Your <span className="highlight">Dream Job</span> <br />
+              Find Your{" "}
+              <span className="highlight">
+                Dream Job
+                <svg
+                  viewBox="0 0 260 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="hero-swoosh-svg"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M 6 13 Q 128 2, 252 8"
+                    stroke="#177A59"
+                    strokeWidth="3.6"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M 18 19 Q 138 8, 242 14"
+                    stroke="#177A59"
+                    strokeWidth="2.8"
+                    strokeLinecap="round"
+                    opacity="0.8"
+                  />
+                </svg>
+              </span>{" "}
+              <br />
               or Perfect Hire
             </h1>
 
