@@ -81,27 +81,14 @@ export default function Navbar() {
         .nav-logo {
           display: flex;
           align-items: center;
-          gap: 0.6rem;
+          gap: 0.55rem;
           cursor: pointer;
           user-select: none;
           text-decoration: none;
         }
 
-        .logo-symbol {
-          width: 38px;
-          height: 38px;
-          background: linear-gradient(135deg, #177A59 0%, #0C4E3A 100%);
-          border-radius: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #FFFFFF;
-          box-shadow: 0 4px 12px rgba(23, 122, 89, 0.2);
-          transition: transform 0.2s ease;
-        }
-
-        .nav-logo:hover .logo-symbol {
-          transform: scale(1.04);
+        .nav-logo:hover svg {
+          transform: scale(1.06);
         }
 
         .logo-text {
@@ -254,7 +241,7 @@ export default function Navbar() {
         <div className="navbar-inner">
           {/* Brand Logo & Name */}
           <div className="nav-logo" onClick={handleLogoClick}>
-            <Logo size={36} variant="badge" className="logo-symbol" />
+            <Logo size={28} />
             <span className="logo-text">
               Nex<span>Hire</span>
             </span>

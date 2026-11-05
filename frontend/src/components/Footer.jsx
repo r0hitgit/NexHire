@@ -43,7 +43,7 @@ export default function Footer() {
                 marginBottom: "1rem",
               }}
             >
-              <Logo size={34} variant="badge" />
+              <Logo size={28} />
               <span
                 style={{
                   fontFamily: "var(--font-head)",

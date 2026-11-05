@@ -1,6 +1,6 @@
 export default function Logo({
-  size = 36,
-  variant = "badge", // "badge" | "mark" | "white"
+  size = 28,
+  variant = "mark", // "mark" (bare green N) | "badge" | "white"
   color = "#177A59",
   className = "",
   style = {},
@@ -11,56 +11,44 @@ export default function Logo({
   const c1 =
     "M281 0L412 0L306 266L205 266L185 152L223 152L236 228L274 228L248 81ZM311 38L353 40L301 166L288 91Z";
 
-  // Bare Mark
+  // Bare Mark (standalone green N with no square background)
   if (variant === "mark") {
-    const width = size;
-    const height = Math.round((size * 266) / 412);
+    const width = Math.round((size * 412) / 266);
     return (
       <svg
         width={width}
-        height={height}
+        height={size}
         viewBox="0 0 412 266"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className={className}
-        style={{ display: "inline-block", verticalAlign: "middle", ...style }}
+        style={{
+          display: "inline-block",
+          verticalAlign: "middle",
+          flexShrink: 0,
+          transition: "transform 0.2s ease",
+          ...style
+        }}
         {...props}
       >
-        <defs>
-          <linearGradient id="logoMarkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#177A59" />
-            <stop offset="100%" stopColor="#0C4E3A" />
-          </linearGradient>
-        </defs>
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d={c0}
-          fill={color === "#177A59" ? "url(#logoMarkGrad)" : color}
-        />
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d={c1}
-          fill={color === "#177A59" ? "url(#logoMarkGrad)" : color}
-        />
+        <path fillRule="evenodd" clipRule="evenodd" d={c0} fill={color} />
+        <path fillRule="evenodd" clipRule="evenodd" d={c1} fill={color} />
       </svg>
     );
   }
 
   // White mark for dark backgrounds
   if (variant === "white") {
-    const width = size;
-    const height = Math.round((size * 266) / 412);
+    const width = Math.round((size * 412) / 266);
     return (
       <svg
         width={width}
-        height={height}
+        height={size}
         viewBox="0 0 412 266"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className={className}
-        style={{ display: "inline-block", verticalAlign: "middle", ...style }}
+        style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0, ...style }}
         {...props}
       >
         <path fillRule="evenodd" clipRule="evenodd" d={c0} fill="#FFFFFF" />
@@ -69,7 +57,7 @@ export default function Logo({
     );
   }
 
-  // Rounded badge container (default)
+  // Optional rounded badge container (if explicitly requested)
   return (
     <div
       className={className}
@@ -83,7 +71,7 @@ export default function Logo({
         justifyContent: "center",
         boxShadow: "0 4px 12px rgba(23, 122, 89, 0.22)",
         flexShrink: 0,
-        ...style,
+        ...style
       }}
       {...props}
     >
@@ -100,4 +88,3 @@ export default function Logo({
     </div>
   );
 }
-

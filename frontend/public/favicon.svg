@@ -1,24 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 412 266">
   <defs>
-    <linearGradient id="favBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="favMarkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#177A59"/>
       <stop offset="100%" stop-color="#0C4E3A"/>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="120" fill="url(#favBgGrad)" />
-  <g transform="translate(56, 127) scale(0.97)">
-    <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
-      d="M106 0L196 0L216 114L178 114L165 39L128 38L156 199L131 266L0 266ZM103 118L116 194L103 227L59 228Z"
-      fill="#FFFFFF"
-    />
-    <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
-      d="M281 0L412 0L306 266L205 266L185 152L223 152L236 228L274 228L248 81ZM311 38L353 40L301 166L288 91Z"
-      fill="#FFFFFF"
-    />
-  </g>
+  <path
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+    d="M106 0L196 0L216 114L178 114L165 39L128 38L156 199L131 266L0 266ZM103 118L116 194L103 227L59 228Z"
+    fill="url(#favMarkGrad)"
+  />
+  <path
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+    d="M281 0L412 0L306 266L205 266L185 152L223 152L236 228L274 228L248 81ZM311 38L353 40L301 166L288 91Z"
+    fill="url(#favMarkGrad)"
+  />
 </svg>
-

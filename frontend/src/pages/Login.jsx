@@ -93,7 +93,7 @@ export default function Login() {
           onClick={() => navigate("/")}
           style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem", marginBottom: "1.5rem", cursor: "pointer" }}
         >
-          <Logo size={36} variant="badge" />
+          <Logo size={30} />
           <span style={{ fontFamily: "var(--font-head)", fontSize: "1.35rem", fontWeight: 800, color: "var(--text-main)" }}>
             Nex<span style={{ color: "var(--primary)" }}>Hire</span>
           </span>
