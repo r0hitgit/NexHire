@@ -12,8 +12,10 @@ export default function Footer() {
         backgroundColor: "#FFFFFF",
         borderTop: "1px solid var(--border-color)",
         paddingTop: "4rem",
-        paddingBottom: "2rem",
+        paddingBottom: "0",
         marginTop: "auto",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
       <div
@@ -315,6 +317,40 @@ export default function Footer() {
             </span>
           </div>
         </div>
+      </div>
+
+      {/* Blended Massive Watermark Brand Text at Webpage Base */}
+      <div
+        style={{
+          width: "100%",
+          overflow: "hidden",
+          userSelect: "none",
+          pointerEvents: "none",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "flex-end",
+          lineHeight: 0.72,
+          marginTop: "2rem",
+          marginBottom: "-1.8vw",
+        }}
+        aria-hidden="true"
+      >
+        <span
+          style={{
+            fontFamily: "var(--font-head)",
+            fontSize: "clamp(5.5rem, 19vw, 17.5rem)",
+            fontWeight: 900,
+            letterSpacing: "-0.05em",
+            textTransform: "lowercase",
+            whiteSpace: "nowrap",
+            background: "linear-gradient(180deg, rgba(23, 122, 89, 0.16) 0%, rgba(23, 122, 89, 0.02) 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            color: "rgba(23, 122, 89, 0.12)",
+          }}
+        >
+          nexhire
+        </span>
       </div>
     </footer>
   );
