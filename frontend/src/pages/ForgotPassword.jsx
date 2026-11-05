@@ -99,15 +99,36 @@ export default function ForgotPassword() {
       `}</style>
 
       <div className="forgot-card">
-        {/* Brand Logo */}
-        <div
-          onClick={() => navigate("/")}
-          style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem", marginBottom: "1.5rem", cursor: "pointer" }}
-        >
-          <Logo size={30} />
-          <span style={{ fontFamily: "var(--font-head)", fontSize: "1.35rem", fontWeight: 800, color: "var(--text-main)" }}>
-            Nex<span style={{ color: "var(--primary)" }}>Hire</span>
-          </span>
+        {/* Brand Logo & Skip Option */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem" }}>
+          <div
+            onClick={() => navigate("/")}
+            style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem", cursor: "pointer" }}
+          >
+            <Logo size={30} />
+            <span style={{ fontFamily: "var(--font-head)", fontSize: "1.35rem", fontWeight: 800, color: "var(--text-main)" }}>
+              Nex<span style={{ color: "var(--primary)" }}>Hire</span>
+            </span>
+          </div>
+
+          <Link
+            to="/"
+            style={{
+              color: "var(--text-muted)",
+              fontSize: "0.82rem",
+              fontWeight: 600,
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.25rem",
+              transition: "color 0.2s ease"
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
+          >
+            <span>Skip to home</span>
+            <ArrowRight size={13} />
+          </Link>
         </div>
 
         {step === "email" ? (
@@ -154,13 +175,34 @@ export default function ForgotPassword() {
               </button>
             </form>
 
-            <div style={{ textAlign: "center", marginTop: "1.75rem" }}>
+            <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
               <Link
                 to="/login"
                 style={{ color: "var(--primary-dark)", fontSize: "0.88rem", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: "0.35rem" }}
               >
                 <ArrowLeft size={16} />
                 <span>Back to Sign In</span>
+              </Link>
+            </div>
+
+            <div style={{ textAlign: "center", marginTop: "1rem", paddingTop: "0.9rem", borderTop: "1px solid var(--border-color)" }}>
+              <Link
+                to="/"
+                style={{
+                  color: "var(--text-muted)",
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                  textDecoration: "none",
+                  transition: "color 0.2s ease"
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
+              >
+                <span>Skip and continue to home</span>
+                <ArrowRight size={14} />
               </Link>
             </div>
           </>
@@ -240,13 +282,34 @@ export default function ForgotPassword() {
               </button>
             </form>
 
-            <div style={{ textAlign: "center", marginTop: "1.75rem" }}>
+            <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
               <span
                 onClick={() => setStep("email")}
                 style={{ color: "var(--primary-dark)", fontSize: "0.88rem", fontWeight: 600, cursor: "pointer" }}
               >
                 ← Resend code or change email
               </span>
+            </div>
+
+            <div style={{ textAlign: "center", marginTop: "1rem", paddingTop: "0.9rem", borderTop: "1px solid var(--border-color)" }}>
+              <Link
+                to="/"
+                style={{
+                  color: "var(--text-muted)",
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                  textDecoration: "none",
+                  transition: "color 0.2s ease"
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
+              >
+                <span>Skip and continue to home</span>
+                <ArrowRight size={14} />
+              </Link>
             </div>
           </>
         )}
