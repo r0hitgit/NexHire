@@ -4,6 +4,7 @@ import com.rohit.jobportal.dto.LoginRequest;
 import com.rohit.jobportal.dto.RegisterRequest;
 import com.rohit.jobportal.dto.UserResponse;
 import com.rohit.jobportal.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -73,6 +74,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<UserResponse> getAllUsers() {
         return userService.getAllUsers();
     }

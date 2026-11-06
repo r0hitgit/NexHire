@@ -40,7 +40,7 @@ public class Job {
     private User recruiter;
 
     // Candidates who applied
-    @OneToMany(mappedBy = "job")
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Application> applications;
 

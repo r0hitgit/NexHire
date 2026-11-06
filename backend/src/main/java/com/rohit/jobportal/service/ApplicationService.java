@@ -6,6 +6,7 @@ import com.rohit.jobportal.entity.*;
 import com.rohit.jobportal.repository.ApplicationRepository;
 import com.rohit.jobportal.repository.JobRepository;
 import com.rohit.jobportal.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +25,9 @@ public class ApplicationService {
     private final UserRepository userRepository;
     private final Cloudinary cloudinary;
     private final EmailService emailService;
+
+    @Value("${cloudinary.cloud-name:${CLOUDINARY_CLOUD_NAME:djmtdgsfg}}")
+    private String cloudName;
 
     public ApplicationService(ApplicationRepository applicationRepository,
                               JobRepository jobRepository,
@@ -65,6 +69,7 @@ public class ApplicationService {
         application.setStatus(ApplicationStatus.APPLIED);
 
         if (resume != null && !resume.isEmpty()) {
+            validateResumeFile(resume);
             String resumeUrl = uploadResume(resume, candidate.getName());
             application.setResumeUrl(resumeUrl);
         }
@@ -72,10 +77,46 @@ public class ApplicationService {
         return applicationRepository.save(application);
     }
 
-    //upload resume by candidate
+    // Validate resume file size, extension, and MIME type
+    private void validateResumeFile(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return;
+        }
+
+        // 1. Max size: 5MB
+        long maxSizeBytes = 5L * 1024 * 1024;
+        if (file.getSize() > maxSizeBytes) {
+            throw new RuntimeException("Resume file size must be less than 5MB");
+        }
+
+        // 2. Validate file extension
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || !originalFilename.contains(".")) {
+            throw new RuntimeException("Invalid file name");
+        }
+
+        String extension = originalFilename.substring(originalFilename.lastIndexOf('.')).toLowerCase();
+        if (!extension.equals(".pdf") && !extension.equals(".doc") && !extension.equals(".docx")) {
+            throw new RuntimeException("Invalid file type. Only PDF and Word documents (.pdf, .doc, .docx) are permitted");
+        }
+
+        // 3. Validate Content-Type
+        String contentType = file.getContentType();
+        if (contentType != null) {
+            String ct = contentType.toLowerCase();
+            boolean isValidMime = ct.equals("application/pdf") ||
+                    ct.equals("application/msword") ||
+                    ct.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document") ||
+                    ct.equals("application/octet-stream");
+            if (!isValidMime) {
+                throw new RuntimeException("Invalid MIME type: Only PDF and Word documents are permitted");
+            }
+        }
+    }
+
+    // Upload resume by candidate
     private String uploadResume(MultipartFile file, String candidateName) {
         try {
-            String cloudName = "djmtdgsfg";
             String uploadPreset = "nexhire_resumes";
             String boundary = "----FormBoundary" + System.currentTimeMillis();
 
@@ -124,31 +165,54 @@ public class ApplicationService {
         return applicationRepository.findByCandidate(candidate);
     }
 
-    // Recruiter → View applicants for a job
+    // Helper: Verify recruiter ownership or admin
+    private void verifyRecruiterOrAdmin(Application application) {
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        boolean isOwner = application.getJob().getRecruiter() != null &&
+                application.getJob().getRecruiter().getId().equals(currentUser.getId());
+        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
+
+        if (!isOwner && !isAdmin) {
+            throw new RuntimeException("Unauthorized: You do not have permission to perform this action");
+        }
+    }
+
+    // Recruiter / Admin → View applicants for a job
     public List<Application> getApplicationsForJob(Long jobId) {
 
         String email = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
 
-        User recruiter = userRepository.findByEmail(email)
+        User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
 
-        if (!job.getRecruiter().getId().equals(recruiter.getId())) {
-            throw new RuntimeException("You can only view applicants for your own jobs");
+        boolean isOwner = job.getRecruiter() != null && job.getRecruiter().getId().equals(currentUser.getId());
+        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
+
+        if (!isOwner && !isAdmin) {
+            throw new RuntimeException("Unauthorized: You can only view applicants for your own jobs");
         }
 
         return applicationRepository.findByJob(job);
     }
 
-    // Recruiter → Update application status
+    // Recruiter / Admin → Update application status
     public Application updateApplicationStatus(Long applicationId, ApplicationStatus status) {
 
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        verifyRecruiterOrAdmin(application);
 
         application.setStatus(status);
         applicationRepository.save(application);
@@ -166,13 +230,15 @@ public class ApplicationService {
         return application;
     }
 
-    // Recruiter → Schedule interview
+    // Recruiter / Admin → Schedule interview
     public Application scheduleInterview(Long applicationId,
                                          LocalDateTime interviewAt,
                                          String details) {
 
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        verifyRecruiterOrAdmin(application);
 
         application.setStatus(ApplicationStatus.INTERVIEW_SCHEDULED);
         application.setInterviewScheduledAt(interviewAt);
@@ -190,11 +256,13 @@ public class ApplicationService {
         return application;
     }
 
-    // Recruiter → Contact candidate
+    // Recruiter / Admin → Contact candidate
     public void contactCandidate(Long applicationId, String subject, String message) {
 
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        verifyRecruiterOrAdmin(application);
 
         String recruiterName = application.getJob().getRecruiter().getName();
 

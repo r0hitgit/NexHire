@@ -38,25 +38,25 @@ public class ApplicationController {
         return applicationService.getMyApplications();
     }
 
-    // Recruiter → View applicants for a job
+    // Recruiter / Admin → View applicants for a job
     @GetMapping("/job/{jobId}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAuthority('ROLE_RECRUITER') or hasAuthority('ROLE_ADMIN')")
     public List<Application> getApplicationsForJob(@PathVariable Long jobId) {
         return applicationService.getApplicationsForJob(jobId);
     }
 
-    // Recruiter → Update status (shortlist / reject)
+    // Recruiter / Admin → Update status (shortlist / reject)
     @PutMapping("/{applicationId}/status")
-    @PreAuthorize("hasAuthority('ROLE_RECRUITER')")
+    @PreAuthorize("hasAuthority('ROLE_RECRUITER') or hasAuthority('ROLE_ADMIN')")
     public Application updateApplicationStatus(
             @PathVariable Long applicationId,
             @RequestParam ApplicationStatus status) {
         return applicationService.updateApplicationStatus(applicationId, status);
     }
 
-    // Recruiter → Schedule interview
+    // Recruiter / Admin → Schedule interview
     @PostMapping("/{applicationId}/schedule-interview")
-    @PreAuthorize("hasAuthority('ROLE_RECRUITER')")
+    @PreAuthorize("hasAuthority('ROLE_RECRUITER') or hasAuthority('ROLE_ADMIN')")
     public Application scheduleInterview(
             @PathVariable Long applicationId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime interviewAt,
@@ -64,9 +64,9 @@ public class ApplicationController {
         return applicationService.scheduleInterview(applicationId, interviewAt, details);
     }
 
-    // Recruiter → Contact candidate
+    // Recruiter / Admin → Contact candidate
     @PostMapping("/{applicationId}/contact")
-    @PreAuthorize("hasAuthority('ROLE_RECRUITER')")
+    @PreAuthorize("hasAuthority('ROLE_RECRUITER') or hasAuthority('ROLE_ADMIN')")
     public void contactCandidate(
             @PathVariable Long applicationId,
             @RequestParam String subject,

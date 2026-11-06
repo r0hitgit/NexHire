@@ -1,6 +1,7 @@
 package com.rohit.jobportal.service;
 
 import com.rohit.jobportal.entity.Job;
+import com.rohit.jobportal.entity.Role;
 import com.rohit.jobportal.entity.User;
 import com.rohit.jobportal.repository.JobRepository;
 import com.rohit.jobportal.repository.UserRepository;
@@ -47,11 +48,29 @@ public class JobService {
                 .orElseThrow(() -> new RuntimeException("Job not found"));
     }
 
-    // Delete job
+    // Delete job (Owner or Admin only)
     public void deleteJob(Long id) {
-        jobRepository.deleteById(id);
+        Job job = jobRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
+
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        boolean isOwner = job.getRecruiter() != null && job.getRecruiter().getEmail().equalsIgnoreCase(email);
+        boolean isAdmin = user.getRole() == Role.ADMIN;
+
+        if (!isOwner && !isAdmin) {
+            throw new RuntimeException("Unauthorized: You can only delete your own jobs");
+        }
+
+        jobRepository.delete(job);
     }
-    // Update job
+
+    // Update job (Owner or Admin only)
     public Job updateJob(Long id, Job updatedJob) {
         Job job = jobRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
@@ -60,8 +79,14 @@ public class JobService {
                 .getAuthentication()
                 .getName();
 
-        if (!job.getRecruiter().getEmail().equals(email)) {
-            throw new RuntimeException("You can only edit your own jobs");
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        boolean isOwner = job.getRecruiter() != null && job.getRecruiter().getEmail().equalsIgnoreCase(email);
+        boolean isAdmin = user.getRole() == Role.ADMIN;
+
+        if (!isOwner && !isAdmin) {
+            throw new RuntimeException("Unauthorized: You can only edit your own jobs");
         }
 
         job.setTitle(updatedJob.getTitle());

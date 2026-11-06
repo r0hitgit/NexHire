@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import com.rohit.jobportal.entity.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -12,20 +13,22 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "mysecurejwtsecretkeymysecurejwtsecretkey";
+    @Value("${jwt.secret:${JWT_SECRET:mysecurejwtsecretkeymysecurejwtsecretkey}}")
+    private String secret;
 
-    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    private Key getSigningKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes());
+    }
 
     public String generateToken(User user) {
 
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .claim("role", "ROLE_" + user.getRole().name())
-                // CHANGE: Add name to JWT payload
                 .claim("name", user.getName())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-                .signWith(key)
+                .signWith(getSigningKey())
                 .compact();
     }
 
@@ -37,14 +40,13 @@ public class JwtUtil {
         return extractAllClaims(token).get("role", String.class);
     }
 
-    //CHANGE: Add extractName method
     public String extractName(String token) {
         return extractAllClaims(token).get("name", String.class);
     }
 
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(key)
+                .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();

@@ -10,9 +10,9 @@ import com.rohit.jobportal.security.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 public class UserService {
@@ -21,6 +21,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final EmailService emailService;
+    private final SecureRandom secureRandom = new SecureRandom();
 
     public UserService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
@@ -32,7 +33,11 @@ public class UserService {
         this.emailService = emailService;
     }
 
-    // ✅ NEW: Password strength validator
+    private String generateSecureOtp() {
+        return String.valueOf(100000 + secureRandom.nextInt(900000));
+    }
+
+    // Password strength validator
     private void validatePassword(String password) {
         if (password == null || password.length() < 8) {
             throw new RuntimeException("Password must be at least 8 characters long");
@@ -62,16 +67,31 @@ public class UserService {
             }
         }
 
-        // ✅ NEW: Validate password strength before saving
+        // Validate password strength before saving
         validatePassword(request.getPassword());
 
-        String otp = String.valueOf(100000 + new Random().nextInt(900000));
+        if (request.getRole() == null || request.getRole().trim().isEmpty()) {
+            throw new RuntimeException("Role is required");
+        }
+
+        Role userRole;
+        try {
+            userRole = Role.valueOf(request.getRole().trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid role specified");
+        }
+
+        if (userRole == Role.ADMIN) {
+            throw new RuntimeException("Public registration with ADMIN role is not permitted");
+        }
+
+        String otp = generateSecureOtp();
 
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail().trim().toLowerCase());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(Role.valueOf(request.getRole().toUpperCase()));
+        user.setRole(userRole);
         user.setOtp(otp);
         user.setVerified(false);
 
@@ -134,7 +154,7 @@ public class UserService {
         User user = userRepository.findByEmail(email.trim().toLowerCase())
                 .orElseThrow(() -> new RuntimeException("No account found with this email"));
 
-        String otp = String.valueOf(100000 + new Random().nextInt(900000));
+        String otp = generateSecureOtp();
         user.setOtp(otp);
         userRepository.save(user);
 

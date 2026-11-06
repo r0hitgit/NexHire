@@ -46,14 +46,14 @@ public class JobController {
 
     // Delete job
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_RECRUITER')")
+    @PreAuthorize("hasAuthority('ROLE_RECRUITER') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteJob(@PathVariable Long id) {
         jobService.deleteJob(id);
         return ResponseEntity.ok().build();
     }
-    // Recruiter → Edit job
+    // Recruiter / Admin → Edit job
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_RECRUITER')")
+    @PreAuthorize("hasAuthority('ROLE_RECRUITER') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Job> updateJob(@PathVariable Long id, @RequestBody Job updatedJob) {
         return ResponseEntity.ok(jobService.updateJob(id, updatedJob));
     }
