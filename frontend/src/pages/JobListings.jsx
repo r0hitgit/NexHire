@@ -330,6 +330,107 @@ export default function JobListings() {
           font-weight: 600;
         }
 
+        .search-input-wrap {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          flex: 1;
+          min-width: 0;
+        }
+
+        .search-bar-divider {
+          width: 1px;
+          height: 28px;
+          background: var(--border-color);
+          flex-shrink: 0;
+        }
+
+        .location-and-filters-row {
+          display: contents;
+        }
+
+        .location-input-wrap {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          flex: 0.85;
+          min-width: 0;
+        }
+
+        .search-bar-input {
+          width: 100%;
+          border: none;
+          outline: none;
+          background: transparent;
+          font-size: 0.95rem;
+          color: var(--text-main);
+          font-weight: 500;
+        }
+
+        .btn-clear-input {
+          background: none;
+          border: none;
+          color: var(--text-muted);
+          padding: 0.2rem;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .job-card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+
+        .job-card-main-meta {
+          display: flex;
+          gap: 1rem;
+          align-items: flex-start;
+          flex: 1;
+          min-width: 0;
+        }
+
+        .job-info-col {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .job-title-row {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+          margin-bottom: 0.25rem;
+        }
+
+        .job-title-heading {
+          font-size: 1.18rem;
+          font-weight: 700;
+          color: var(--text-main);
+          margin: 0;
+          word-break: break-word;
+          line-height: 1.35;
+        }
+
+        .results-summary-bar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 1rem;
+          margin-bottom: 1.75rem;
+        }
+
+        .job-card-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          flex-shrink: 0;
+        }
+
         @media (max-width: 900px) {
           .jobs-layout {
             grid-template-columns: 1fr;
@@ -339,6 +440,91 @@ export default function JobListings() {
           }
           .mobile-filter-trigger {
             display: inline-flex !important;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .jobs-page-container {
+            padding: 1.25rem 1rem 3rem;
+          }
+
+          .search-hero-bar {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 0.75rem 0.85rem;
+            gap: 0.55rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+          }
+
+          .search-bar-divider {
+            width: 100%;
+            height: 1px;
+            margin: 0.15rem 0;
+          }
+
+          .location-and-filters-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+          }
+
+          .location-input-wrap {
+            flex: 1;
+          }
+
+          .mobile-filter-trigger {
+            padding: 0.5rem 0.85rem !important;
+            font-size: 0.84rem;
+          }
+
+          .job-card-premium {
+            padding: 1.15rem 1rem;
+            border-radius: var(--radius-md);
+            gap: 0.85rem;
+          }
+
+          .job-avatar {
+            width: 42px;
+            height: 42px;
+            font-size: 1.05rem;
+            border-radius: 10px;
+          }
+
+          .job-card-header {
+            flex-direction: column;
+            gap: 0.65rem;
+          }
+
+          .job-card-main-meta {
+            width: 100%;
+            position: relative;
+            padding-right: 2.5rem;
+          }
+
+          .job-title-heading {
+            font-size: 1.08rem;
+          }
+
+          .job-card-actions {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+          }
+
+          .btn-save-bookmark {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 32px;
+            height: 32px;
+          }
+
+          .salary-pill {
+            font-size: 0.8rem;
+            padding: 0.28rem 0.65rem;
           }
         }
       `}</style>
@@ -359,85 +545,61 @@ export default function JobListings() {
 
         {/* Global Search Bar */}
         <div className="search-hero-bar">
-          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flex: 1 }}>
+          <div className="search-input-wrap">
             <Search size={18} color="var(--primary)" />
             <input
               type="text"
               placeholder="Search by job title, keyword, or company..."
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              style={{
-                width: "100%",
-                border: "none",
-                outline: "none",
-                background: "transparent",
-                fontSize: "0.95rem",
-                color: "var(--text-main)",
-                fontWeight: 500
-              }}
+              className="search-bar-input"
             />
             {keyword && (
               <button
                 type="button"
                 onClick={() => setKeyword("")}
-                style={{ background: "none", color: "var(--text-muted)", padding: "0.2rem" }}
+                className="btn-clear-input"
               >
                 <X size={16} />
               </button>
             )}
           </div>
 
-          <div style={{ width: "1px", height: "28px", background: "var(--border-color)" }} />
+          <div className="search-bar-divider" />
 
-          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flex: "0.8" }}>
-            <MapPin size={18} color="var(--text-muted)" />
-            <input
-              type="text"
-              placeholder="Location or 'Remote'..."
-              value={locationFilter}
-              onChange={(e) => setLocationFilter(e.target.value)}
-              style={{
-                width: "100%",
-                border: "none",
-                outline: "none",
-                background: "transparent",
-                fontSize: "0.95rem",
-                color: "var(--text-main)",
-                fontWeight: 500
-              }}
-            />
-            {locationFilter && (
-              <button
-                type="button"
-                onClick={() => setLocationFilter("")}
-                style={{ background: "none", color: "var(--text-muted)", padding: "0.2rem" }}
-              >
-                <X size={16} />
-              </button>
-            )}
+          <div className="location-and-filters-row">
+            <div className="location-input-wrap">
+              <MapPin size={18} color="var(--text-muted)" />
+              <input
+                type="text"
+                placeholder="Location or 'Remote'..."
+                value={locationFilter}
+                onChange={(e) => setLocationFilter(e.target.value)}
+                className="search-bar-input"
+              />
+              {locationFilter && (
+                <button
+                  type="button"
+                  onClick={() => setLocationFilter("")}
+                  className="btn-clear-input"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+
+            <button
+              onClick={() => setMobileFiltersOpen(true)}
+              className="btn-secondary mobile-filter-trigger"
+            >
+              <SlidersHorizontal size={16} />
+              <span>Filters {activeFiltersCount > 0 ? `(${activeFiltersCount})` : ""}</span>
+            </button>
           </div>
-
-          <button
-            onClick={() => setMobileFiltersOpen(true)}
-            className="btn-secondary mobile-filter-trigger"
-            style={{ display: "none", padding: "0.6rem 0.85rem", gap: "0.4rem" }}
-          >
-            <SlidersHorizontal size={16} />
-            <span>Filters {activeFiltersCount > 0 ? `(${activeFiltersCount})` : ""}</span>
-          </button>
         </div>
 
         {/* Results Bar: Active Chips & Sort */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: "1rem",
-            marginBottom: "1.75rem",
-          }}
-        >
+        <div className="results-summary-bar">
           <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
             <span style={{ fontSize: "0.95rem", fontWeight: 700, color: "var(--text-main)" }}>
               {loading ? "Searching..." : `${filteredJobs.length} opportunities`}
@@ -654,24 +816,14 @@ export default function JobListings() {
                       onClick={() => navigate(`/jobs/${job.id}`)}
                     >
                       {/* Top Header Row */}
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "1rem" }}>
-                        <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start", minWidth: 0 }}>
+                      <div className="job-card-header">
+                        <div className="job-card-main-meta">
                           <div className="job-avatar">
                             {companyName.charAt(0).toUpperCase()}
                           </div>
-                          <div style={{ minWidth: 0 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.25rem" }}>
-                              <h2
-                                style={{
-                                  fontSize: "1.18rem",
-                                  fontWeight: 700,
-                                  color: "var(--text-main)",
-                                  margin: 0,
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap"
-                                }}
-                              >
+                          <div className="job-info-col">
+                            <div className="job-title-row">
+                              <h2 className="job-title-heading">
                                 {job.title}
                               </h2>
                               {job.salary && job.salary > 2000000 && (
@@ -702,7 +854,7 @@ export default function JobListings() {
                         </div>
 
                         {/* Top Right: Salary & Bookmark */}
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexShrink: 0 }}>
+                        <div className="job-card-actions">
                           {job.salary && (
                             <span className="salary-pill">
                               <IndianRupee size={13} strokeWidth={2.4} />

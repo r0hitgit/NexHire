@@ -158,6 +158,13 @@ export default function CandidateDashboard() {
           padding: 2.25rem clamp(1rem, 3vw, 2rem) 4rem;
         }
 
+        .candidate-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 1rem;
+          margin-bottom: 2.25rem;
+        }
+
         .stat-card-clean {
           background: #FFFFFF;
           border: 1px solid var(--border-color);
@@ -170,6 +177,19 @@ export default function CandidateDashboard() {
         .stat-card-clean:hover {
           transform: translateY(-2px);
           box-shadow: var(--shadow-sm);
+        }
+
+        .stat-card-label {
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: var(--text-secondary);
+        }
+
+        .stat-card-val {
+          font-size: 2.1rem;
+          font-weight: 800;
+          color: var(--text-main);
+          margin-top: 0.4rem;
         }
 
         .tab-button {
@@ -202,6 +222,25 @@ export default function CandidateDashboard() {
         .app-row-card:hover {
           border-color: #BCE0D1;
           box-shadow: var(--shadow-sm);
+        }
+
+        .app-card-layout {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+
+        .app-card-info {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .app-card-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          flex-shrink: 0;
         }
 
         .btn-withdraw-clean {
@@ -241,6 +280,58 @@ export default function CandidateDashboard() {
           font-weight: 600;
           font-size: 0.92rem;
           color: var(--text-main);
+        }
+
+        @media (max-width: 900px) {
+          .candidate-stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        @media (max-width: 640px) {
+          .candidate-dashboard-container {
+            padding: 1.25rem 1rem 3rem;
+          }
+
+          .candidate-stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.65rem;
+            margin-bottom: 1.5rem;
+          }
+
+          .stat-card-clean {
+            padding: 0.85rem 0.95rem;
+            border-radius: var(--radius-md);
+          }
+
+          .stat-card-val {
+            font-size: 1.55rem;
+            margin-top: 0.25rem;
+          }
+
+          .stat-card-label {
+            font-size: 0.78rem;
+          }
+
+          .app-row-card {
+            padding: 1.1rem 1rem;
+            border-radius: var(--radius-md);
+          }
+
+          .app-card-layout {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.85rem;
+          }
+
+          .app-card-actions {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border-color);
+          }
         }
       `}</style>
 
@@ -341,14 +432,7 @@ export default function CandidateDashboard() {
         </div>
 
         {/* Pipeline Stat Cards */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "1rem",
-            marginBottom: "2.25rem",
-          }}
-        >
+        <div className="candidate-stats-grid">
           {[
             { label: "Submitted", val: counts.APPLIED, color: "#177A59", icon: ClipboardList },
             { label: "Shortlisted", val: counts.SHORTLISTED, color: "#B45309", icon: Star },
@@ -359,12 +443,12 @@ export default function CandidateDashboard() {
             return (
               <div key={i} className="stat-card-clean" style={{ borderLeft: `4px solid ${item.color}` }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--text-secondary)" }}>
+                  <span className="stat-card-label">
                     {item.label}
                   </span>
                   <Icon size={18} color={item.color} />
                 </div>
-                <div style={{ fontSize: "2.1rem", fontWeight: 800, color: "var(--text-main)", marginTop: "0.4rem" }}>
+                <div className="stat-card-val">
                   {item.val}
                 </div>
               </div>
@@ -460,9 +544,9 @@ export default function CandidateDashboard() {
 
                 return (
                   <div key={app.id} className="app-row-card">
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "1rem", flexWrap: "wrap" }}>
-                      <div style={{ minWidth: 0, flex: 1 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.3rem" }}>
+                    <div className="app-card-layout">
+                      <div className="app-card-info">
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.35rem" }}>
                           <h3
                             style={{
                               fontSize: "1.15rem",
@@ -470,6 +554,8 @@ export default function CandidateDashboard() {
                               color: "var(--text-main)",
                               margin: 0,
                               cursor: "pointer",
+                              wordBreak: "break-word",
+                              lineHeight: 1.35,
                             }}
                             onClick={() => app.job?.id && navigate(`/jobs/${app.job.id}`)}
                           >
@@ -494,15 +580,15 @@ export default function CandidateDashboard() {
 
                           {app.job?.salary && (
                             <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
-                              <IndianRupee size={13} />
-                              ₹{(app.job.salary / 100000).toFixed(1)}L
+                              <IndianRupee size={13} strokeWidth={2.4} />
+                              {(app.job.salary / 100000).toFixed(1)}L
                             </span>
                           )}
                         </div>
                       </div>
 
-                      {/* Status Badge */}
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
+                      {/* Status Badge & Actions */}
+                      <div className="app-card-actions">
                         <span
                           style={{
                             background: cfg.bg,
@@ -600,22 +686,22 @@ export default function CandidateDashboard() {
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 {savedJobsList.map((job) => (
                   <div key={job.id} className="app-row-card">
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "1rem", flexWrap: "wrap" }}>
-                      <div>
+                    <div className="app-card-layout">
+                      <div className="app-card-info">
                         <h3
-                          style={{ fontSize: "1.15rem", fontWeight: 700, color: "var(--text-main)", marginBottom: "0.3rem", cursor: "pointer" }}
+                          style={{ fontSize: "1.15rem", fontWeight: 700, color: "var(--text-main)", marginBottom: "0.35rem", cursor: "pointer", wordBreak: "break-word", lineHeight: 1.35 }}
                           onClick={() => navigate(`/jobs/${job.id}`)}
                         >
                           {job.title}
                         </h3>
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", fontSize: "0.86rem", color: "var(--text-secondary)" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", fontSize: "0.86rem", color: "var(--text-secondary)" }}>
                           <span>{job.recruiter?.name || "Company"}</span>
                           {job.location && <span>• {job.location}</span>}
                           {job.salary && <span>• ₹{(job.salary / 100000).toFixed(1)}L / yr</span>}
                         </div>
                       </div>
 
-                      <div style={{ display: "flex", gap: "0.6rem" }}>
+                      <div className="app-card-actions" style={{ gap: "0.6rem" }}>
                         <button
                           onClick={() => removeSavedJob(job.id)}
                           className="btn-secondary"

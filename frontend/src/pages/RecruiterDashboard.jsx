@@ -416,6 +416,13 @@ export default function RecruiterDashboard() {
           color: var(--text-main);
         }
 
+        .recruiter-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1rem;
+          margin-bottom: 2rem;
+        }
+
         @media (max-width: 900px) {
           .recruiter-grid {
             grid-template-columns: 1fr;
@@ -425,6 +432,27 @@ export default function RecruiterDashboard() {
           }
           .hide-on-mobile-tab {
             display: none !important;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .recruiter-container {
+            padding: 1.25rem 1rem 3rem;
+          }
+
+          .recruiter-stats-grid {
+            grid-template-columns: 1fr;
+            gap: 0.65rem;
+            margin-bottom: 1.5rem;
+          }
+
+          .stat-card-recruiter {
+            padding: 0.95rem 1.15rem;
+            border-radius: var(--radius-md);
+          }
+
+          .r-panel-card {
+            border-radius: var(--radius-md);
           }
         }
       `}</style>
@@ -464,14 +492,7 @@ export default function RecruiterDashboard() {
         </div>
 
         {/* Overview Stats */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-            gap: "1rem",
-            marginBottom: "2rem"
-          }}
-        >
+        <div className="recruiter-stats-grid">
           <div className="stat-card-recruiter">
             <div>
               <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text-secondary)" }}>
@@ -587,7 +608,7 @@ export default function RecruiterDashboard() {
                     >
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "0.5rem" }}>
                         <div style={{ minWidth: 0, flex: 1 }}>
-                          <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-main)", margin: "0 0 0.25rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-main)", margin: "0 0 0.25rem", wordBreak: "break-word", lineHeight: 1.35 }}>
                             {job.title}
                           </h3>
                           <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
