@@ -27,9 +27,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // Skip authentication for login & register
+        // Skip authentication for public auth endpoints
         return path.startsWith("/api/users/login") ||
-                path.startsWith("/api/users/register");
+                path.startsWith("/api/users/register") ||
+                path.startsWith("/api/users/google-login");
     }
     /*@Override
     protected boolean shouldNotFilter(HttpServletRequest request) {

@@ -25,6 +25,7 @@ API.interceptors.response.use(
 
 // ── Auth ──────────────────────────────────────────
 export const login = (data) => API.post("/users/login", data);
+export const googleLogin = (data) => API.post("/users/google-login", data);
 export const register = (data) => API.post("/users/register", data);
 export const verifyOtp = (data) => API.post("/users/verify-otp", data);
 export const forgotPassword = (data) => API.post("/users/forgot-password", data);

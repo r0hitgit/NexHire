@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { login } from "../api/axios";
+import { login, googleLogin } from "../api/axios";
 import { Eye, EyeOff, ArrowRight, ShieldCheck } from "lucide-react";
 import Logo from "../components/Logo";
+import GoogleAuthButton from "../components/GoogleAuthButton";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -30,6 +31,28 @@ export default function Login() {
       else navigate("/jobs");
     } catch (err) {
       setError(err.response?.data || "Invalid email or password");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credential) => {
+    setError("");
+    setLoading(true);
+    try {
+      const response = await googleLogin({ credential, role: "CANDIDATE" });
+      const token = response.data;
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", payload.role?.replace("ROLE_", ""));
+      localStorage.setItem("email", payload.sub);
+      localStorage.setItem("name", payload.name || payload.sub);
+
+      if (payload.role?.includes("RECRUITER")) navigate("/recruiter");
+      else if (payload.role?.includes("CANDIDATE")) navigate("/candidate");
+      else navigate("/jobs");
+    } catch (err) {
+      setError(err.response?.data || "Google sign-in failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -143,6 +166,22 @@ export default function Login() {
             {error}
           </div>
         )}
+
+        <GoogleAuthButton
+          text="Continue with Google"
+          onSuccess={handleGoogleSuccess}
+          onError={(msg) => setError(msg)}
+          disabled={loading}
+          role="CANDIDATE"
+        />
+
+        <div style={{ display: "flex", alignItems: "center", gap: "0.85rem", margin: "1.35rem 0" }}>
+          <div style={{ flex: 1, height: "1px", background: "var(--border-color)" }} />
+          <span style={{ fontSize: "0.76rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            or continue with email
+          </span>
+          <div style={{ flex: 1, height: "1px", background: "var(--border-color)" }} />
+        </div>
 
         <form onSubmit={handleLogin}>
           <div style={{ marginBottom: "1.2rem" }}>

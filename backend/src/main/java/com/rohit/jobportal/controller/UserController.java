@@ -51,6 +51,17 @@ public class UserController {
         }
     }
 
+    @PostMapping("/google-login")
+    public ResponseEntity<?> googleLogin(@RequestBody Map<String, String> body) {
+        try {
+            String credential = body.get("credential");
+            String role = body.getOrDefault("role", "CANDIDATE");
+            return ResponseEntity.ok(userService.googleLogin(credential, role));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
+
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body) {
         try {

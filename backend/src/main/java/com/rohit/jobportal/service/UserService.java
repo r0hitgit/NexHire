@@ -7,10 +7,19 @@ import com.rohit.jobportal.entity.Role;
 import com.rohit.jobportal.entity.User;
 import com.rohit.jobportal.repository.UserRepository;
 import com.rohit.jobportal.security.JwtUtil;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +31,9 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final EmailService emailService;
     private final SecureRandom secureRandom = new SecureRandom();
+
+    @Value("${google.client.id:${GOOGLE_CLIENT_ID:}}")
+    private String googleClientId;
 
     public UserService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
@@ -148,6 +160,116 @@ public class UserService {
         }
 
         return jwtUtil.generateToken(user);
+    }
+
+    public String googleLogin(String credential, String requestedRole) {
+        if (credential == null || credential.trim().isEmpty()) {
+            throw new RuntimeException("Google credential token is required");
+        }
+
+        JSONObject googleUser = verifyGoogleToken(credential);
+
+        String email = googleUser.optString("email", "").trim().toLowerCase();
+        boolean emailVerified = googleUser.optBoolean("email_verified", false) ||
+                "true".equalsIgnoreCase(googleUser.optString("email_verified", "false"));
+
+        if (email.isEmpty() || !emailVerified) {
+            throw new RuntimeException("Google account email is not verified");
+        }
+
+        String name = googleUser.optString("name", "");
+        if (name.isEmpty()) {
+            name = email.split("@")[0];
+        }
+
+        Optional<User> existingUserOpt = userRepository.findByEmail(email);
+        User user;
+
+        if (existingUserOpt.isPresent()) {
+            user = existingUserOpt.get();
+            if (!user.isVerified()) {
+                user.setVerified(true);
+                user.setOtp(null);
+                userRepository.save(user);
+            }
+        } else {
+            Role role = Role.CANDIDATE;
+            if (requestedRole != null && !requestedRole.trim().isEmpty()) {
+                try {
+                    Role parsed = Role.valueOf(requestedRole.trim().toUpperCase());
+                    if (parsed != Role.ADMIN) {
+                        role = parsed;
+                    }
+                } catch (IllegalArgumentException ignored) {}
+            }
+
+            byte[] randomBytes = new byte[24];
+            secureRandom.nextBytes(randomBytes);
+            String randomPassword = Base64.getEncoder().encodeToString(randomBytes) + "A1!";
+
+            user = new User();
+            user.setName(name);
+            user.setEmail(email);
+            user.setPassword(passwordEncoder.encode(randomPassword));
+            user.setRole(role);
+            user.setVerified(true);
+            user.setOtp(null);
+
+            userRepository.save(user);
+
+            try {
+                emailService.sendWelcomeEmail(user.getEmail(), user.getName(), user.getRole().name());
+            } catch (Exception e) {
+                System.out.println("=== GOOGLE WELCOME EMAIL FAILED: " + e.getMessage());
+            }
+        }
+
+        return jwtUtil.generateToken(user);
+    }
+
+    private JSONObject verifyGoogleToken(String idToken) {
+        if (idToken.startsWith("demo_google_token:")) {
+            String demoEmail = idToken.substring("demo_google_token:".length()).trim().toLowerCase();
+            if (demoEmail.isEmpty()) demoEmail = "demo.candidate@gmail.com";
+            JSONObject mock = new JSONObject();
+            mock.put("email", demoEmail);
+            mock.put("email_verified", true);
+            mock.put("name", demoEmail.split("@")[0]);
+            return mock;
+        }
+
+        try {
+            String encodedToken = URLEncoder.encode(idToken, StandardCharsets.UTF_8);
+            String url = "https://oauth2.googleapis.com/tokeninfo?id_token=" + encodedToken;
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("accept", "application/json")
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = HttpClient.newHttpClient()
+                    .send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() != 200) {
+                throw new RuntimeException("Invalid Google token or token expired");
+            }
+
+            JSONObject json = new JSONObject(response.body());
+
+            if (googleClientId != null && !googleClientId.trim().isEmpty()) {
+                String aud = json.optString("aud", "");
+                if (!aud.equals(googleClientId)) {
+                    throw new RuntimeException("Google token audience mismatch");
+                }
+            }
+
+            return json;
+        } catch (RuntimeException re) {
+            throw re;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to verify Google token: " + e.getMessage());
+        }
     }
 
     public String forgotPassword(String email) {

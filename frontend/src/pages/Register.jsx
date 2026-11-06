@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
-import { register, verifyOtp } from "../api/axios";
+import { register, verifyOtp, googleLogin } from "../api/axios";
 
 import {
   Check,
@@ -13,6 +13,7 @@ import {
   EyeOff
 } from "lucide-react";
 import Logo from "../components/Logo";
+import GoogleAuthButton from "../components/GoogleAuthButton";
 
 // Password strength checker
 const getPasswordStrength = (password) => {
@@ -84,6 +85,29 @@ export default function Register() {
           ? "This email is already registered. Please sign in instead."
           : msg || "Registration failed. Please check your details and try again."
       );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credential) => {
+    setError("");
+    setSuccess("");
+    setLoading(true);
+    try {
+      const response = await googleLogin({ credential, role: form.role });
+      const token = response.data;
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", payload.role?.replace("ROLE_", ""));
+      localStorage.setItem("email", payload.sub);
+      localStorage.setItem("name", payload.name || payload.sub);
+
+      if (payload.role?.includes("RECRUITER")) navigate("/recruiter");
+      else if (payload.role?.includes("CANDIDATE")) navigate("/candidate");
+      else navigate("/jobs");
+    } catch (err) {
+      setError(err.response?.data || "Google registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -294,6 +318,22 @@ export default function Register() {
                   <Building2 size={18} />
                   <span>Hire Talent</span>
                 </button>
+              </div>
+
+              <GoogleAuthButton
+                text="Continue with Google"
+                onSuccess={handleGoogleSuccess}
+                onError={(msg) => setError(msg)}
+                disabled={loading}
+                role={form.role}
+              />
+
+              <div style={{ display: "flex", alignItems: "center", gap: "0.85rem", margin: "1.35rem 0" }}>
+                <div style={{ flex: 1, height: "1px", background: "var(--border-color)" }} />
+                <span style={{ fontSize: "0.76rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  or register with email
+                </span>
+                <div style={{ flex: 1, height: "1px", background: "var(--border-color)" }} />
               </div>
 
               {/* Full Name */}
