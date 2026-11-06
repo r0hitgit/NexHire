@@ -96,7 +96,7 @@ export default function LandingPage() {
 
       <style>{`
         .hero-section {
-          padding: clamp(3rem, 6vw, 5.5rem) clamp(1rem, 4vw, 2.5rem) clamp(3.5rem, 6vw, 5rem);
+          padding: clamp(3rem, 6vw, 5rem) clamp(1rem, 4vw, 2.5rem) clamp(4.5rem, 6vw, 6rem);
           max-width: 1240px;
           margin: 0 auto;
           width: 100%;
@@ -164,7 +164,7 @@ export default function LandingPage() {
           font-size: clamp(1.05rem, 2vw, 1.2rem);
           color: var(--text-secondary);
           line-height: 1.65;
-          margin-bottom: 2.25rem;
+          margin-bottom: 1.6rem;
           max-width: 540px;
         }
 
@@ -172,12 +172,12 @@ export default function LandingPage() {
           background: var(--white);
           border: 1px solid var(--border-color);
           border-radius: var(--radius-lg);
-          padding: 0.75rem;
+          padding: 0.65rem 0.75rem;
           box-shadow: var(--shadow-md);
           display: flex;
           align-items: center;
           gap: 0.75rem;
-          margin-bottom: 1.5rem;
+          margin-bottom: 1.25rem;
           transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
@@ -191,7 +191,14 @@ export default function LandingPage() {
           align-items: center;
           gap: 0.65rem;
           flex: 1;
-          padding: 0.45rem 0.75rem;
+          min-width: 0;
+          padding: 0.25rem 0.5rem;
+          min-height: 46px;
+          box-sizing: border-box;
+        }
+
+        .search-input-group svg {
+          flex-shrink: 0;
         }
 
         .search-input-field {
@@ -202,6 +209,18 @@ export default function LandingPage() {
           font-size: 0.95rem;
           font-weight: 500;
           color: var(--text-main);
+          height: 36px;
+          line-height: normal;
+          padding: 0;
+          margin: 0;
+          display: block;
+          box-sizing: border-box;
+        }
+
+        .search-input-field::placeholder {
+          color: var(--text-muted);
+          line-height: normal;
+          opacity: 0.9;
         }
 
         .search-divider {
@@ -222,6 +241,7 @@ export default function LandingPage() {
           gap: 0.5rem;
           box-shadow: 0 2px 6px rgba(23, 122, 89, 0.2);
           white-space: nowrap;
+          cursor: pointer;
         }
 
         .btn-search-hero:hover {
@@ -229,10 +249,29 @@ export default function LandingPage() {
           transform: translateY(-1px);
         }
 
+        .hero-popular-tags {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 0.65rem 0.5rem;
+          margin-top: 1.25rem;
+          margin-bottom: 2.5rem;
+          position: relative;
+          z-index: 2;
+        }
+
+        .popular-label {
+          font-size: 0.82rem;
+          font-weight: 700;
+          color: var(--text-muted);
+          margin-right: 0.25rem;
+          flex-shrink: 0;
+        }
+
         .shortcut-chip {
           display: inline-flex;
           align-items: center;
-          padding: 0.35rem 0.85rem;
+          padding: 0.38rem 0.85rem;
           background-color: var(--white);
           border: 1px solid var(--border-color);
           border-radius: var(--radius-full);
@@ -241,6 +280,8 @@ export default function LandingPage() {
           color: var(--text-secondary);
           cursor: pointer;
           transition: var(--transition);
+          line-height: 1.3;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
         }
 
         .shortcut-chip:hover {
@@ -920,8 +961,8 @@ export default function LandingPage() {
               </button>
             </form>
 
-            <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
-              <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text-muted)", marginRight: "0.25rem" }}>
+            <div className="hero-popular-tags">
+              <span className="popular-label">
                 Popular:
               </span>
               {popularShortcuts.map((shortcut) => (
