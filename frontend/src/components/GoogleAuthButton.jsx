@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 
 export function GoogleIcon({ size = 18 }) {
   const outerSize = Math.max(26, Math.round(size * 1.5));
@@ -56,6 +57,9 @@ export default function GoogleAuthButton({
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [demoEmail, setDemoEmail] = useState("");
   const hiddenGsiRef = useRef(null);
+
+  // Lock scrolling when config modal is open
+  useLockBodyScroll(showConfigModal);
 
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -187,13 +191,19 @@ export default function GoogleAuthButton({
             inset: 0,
             backgroundColor: "rgba(0, 0, 0, 0.45)",
             backdropFilter: "blur(3px)",
+            WebkitBackdropFilter: "blur(3px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             zIndex: 9999,
-            padding: "1rem"
+            padding: "1rem",
+            touchAction: "none",
+            overscrollBehavior: "contain"
           }}
           onClick={() => setShowConfigModal(false)}
+          onTouchMove={(e) => {
+            if (e.target === e.currentTarget) e.preventDefault();
+          }}
         >
           <div
             style={{

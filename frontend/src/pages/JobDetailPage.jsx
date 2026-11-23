@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getJobById, applyForJob } from "../api/axios";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 
 import {
   ArrowLeft,
@@ -42,6 +43,9 @@ export default function JobDetailPage() {
 
   const fileRef = useRef();
   const role = localStorage.getItem("role");
+
+  // Lock scrolling when apply modal is open
+  useLockBodyScroll(showApplyModal);
 
   useEffect(() => {
     try {
@@ -592,9 +596,14 @@ export default function JobDetailPage() {
             justifyContent: "center",
             zIndex: 200,
             padding: "1rem",
-            animation: "fadeIn 0.2s ease"
+            animation: "fadeIn 0.2s ease",
+            touchAction: "none",
+            overscrollBehavior: "contain"
           }}
           onClick={() => setShowApplyModal(false)}
+          onTouchMove={(e) => {
+            if (e.target === e.currentTarget) e.preventDefault();
+          }}
         >
           <div
             onClick={(e) => e.stopPropagation()}

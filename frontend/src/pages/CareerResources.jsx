@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import {
   ArrowLeft,
   BookOpen,
@@ -22,6 +23,9 @@ export default function CareerResources() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [activeGuide, setActiveGuide] = useState(null);
   const [checkedItems, setCheckedItems] = useState({});
+
+  // Lock scrolling when reading guide modal is open
+  useLockBodyScroll(Boolean(activeGuide));
 
   const categories = ["All", "Interview Prep", "Resume & Portfolio", "Salary & Negotiation", "Career Growth"];
 
@@ -482,13 +486,19 @@ export default function CareerResources() {
             bottom: 0,
             backgroundColor: "rgba(12, 30, 24, 0.65)",
             backdropFilter: "blur(6px)",
+            WebkitBackdropFilter: "blur(6px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             padding: "1.25rem",
-            zIndex: 1000
+            zIndex: 1000,
+            touchAction: "none",
+            overscrollBehavior: "contain"
           }}
           onClick={() => setActiveGuide(null)}
+          onTouchMove={(e) => {
+            if (e.target === e.currentTarget) e.preventDefault();
+          }}
         >
           <div
             style={{

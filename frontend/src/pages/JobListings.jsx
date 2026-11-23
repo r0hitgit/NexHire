@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getJobs } from "../api/axios";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 
 import {
   Search,
@@ -44,6 +45,9 @@ export default function JobListings() {
   });
 
   const navigate = useNavigate();
+
+  // Lock scrolling when mobile filters drawer is open
+  useLockBodyScroll(mobileFiltersOpen);
 
   useEffect(() => {
     getJobs()
@@ -944,11 +948,17 @@ export default function JobListings() {
             inset: 0,
             background: "rgba(23, 33, 29, 0.45)",
             backdropFilter: "blur(4px)",
+            WebkitBackdropFilter: "blur(4px)",
             zIndex: 200,
             display: "flex",
-            justifyContent: "flex-end"
+            justifyContent: "flex-end",
+            touchAction: "none",
+            overscrollBehavior: "contain"
           }}
           onClick={() => setMobileFiltersOpen(false)}
+          onTouchMove={(e) => {
+            if (e.target === e.currentTarget) e.preventDefault();
+          }}
         >
           <div
             style={{
@@ -961,7 +971,10 @@ export default function JobListings() {
               display: "flex",
               flexDirection: "column",
               gap: "1.5rem",
-              overflowY: "auto"
+              overflowY: "auto",
+              WebkitOverflowScrolling: "touch",
+              overscrollBehavior: "contain",
+              touchAction: "pan-y"
             }}
             onClick={(e) => e.stopPropagation()}
           >

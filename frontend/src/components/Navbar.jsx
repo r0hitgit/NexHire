@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
-import { Menu, X, LogOut, User, Compass, Building, BookOpen } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Menu, X, LogOut, Compass, Building, BookOpen } from "lucide-react";
 import Logo from "./Logo";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -12,6 +13,35 @@ export default function Navbar() {
   const name = localStorage.getItem("name") || email.split("@")[0] || "User";
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Lock scrolling when mobile menu is open
+  useLockBodyScroll(menuOpen);
+
+  // Auto-close menu when route changes
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  // Close menu on Escape key and on screen resize above mobile breakpoint
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+
+    const handleResize = () => {
+      if (window.innerWidth > 860) setMenuOpen(false);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [menuOpen]);
+
   const handleLogout = () => {
     localStorage.clear();
     setMenuOpen(false);
@@ -19,6 +49,7 @@ export default function Navbar() {
   };
 
   const handleLogoClick = () => {
+    setMenuOpen(false);
     navigate(token ? "/jobs" : "/");
   };
 
@@ -226,6 +257,17 @@ export default function Navbar() {
           cursor: pointer;
         }
 
+        @keyframes slideInRight {
+          from {
+            transform: translateX(100%);
+            opacity: 0.85;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
         @media (max-width: 860px) {
           .nav-links-desktop,
           .nav-actions-desktop {
@@ -294,10 +336,10 @@ export default function Navbar() {
 
           {/* Desktop Right Actions */}
           <div className="nav-actions-desktop" style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            {/* For Employers CTA */}
-            {role !== "RECRUITER" && (
+            {/* For Employers CTA (Only when visitor is not logged in) */}
+            {!token && (
               <button
-                onClick={() => navigate(token ? "/recruiter" : "/register")}
+                onClick={() => navigate("/register?role=RECRUITER")}
                 className="btn-employer-cta"
               >
                 For Employers
@@ -349,13 +391,14 @@ export default function Navbar() {
             className="hamburger-btn"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
           >
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
       </nav>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer (with body scroll lock on phone) */}
       {menuOpen && (
         <div
           style={{
@@ -364,13 +407,20 @@ export default function Navbar() {
             left: 0,
             right: 0,
             bottom: 0,
-            background: "rgba(23, 33, 29, 0.4)",
+            background: "rgba(23, 33, 29, 0.45)",
+            backdropFilter: "blur(4px)",
+            WebkitBackdropFilter: "blur(4px)",
             zIndex: 99,
             display: "flex",
             justifyContent: "flex-end",
-            animation: "fadeIn 0.2s ease"
+            animation: "fadeIn 0.2s ease",
+            touchAction: "none",
+            overscrollBehavior: "contain"
           }}
           onClick={() => setMenuOpen(false)}
+          onTouchMove={(e) => {
+            if (e.target === e.currentTarget) e.preventDefault();
+          }}
         >
           <div
             style={{
@@ -378,15 +428,44 @@ export default function Navbar() {
               maxWidth: "320px",
               background: "#FFFFFF",
               height: "100%",
-              padding: "1.5rem",
+              padding: "1.25rem 1.5rem 1.5rem",
               boxShadow: "var(--shadow-lg)",
               display: "flex",
               flexDirection: "column",
               gap: "1.25rem",
-              overflowY: "auto"
+              overflowY: "auto",
+              WebkitOverflowScrolling: "touch",
+              overscrollBehavior: "contain",
+              touchAction: "pan-y",
+              animation: "slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1)"
             }}
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Drawer top bar with close button */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "0.4rem", borderBottom: "1px solid var(--border-color)" }}>
+              <span style={{ fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                Menu
+              </span>
+              <button
+                onClick={() => setMenuOpen(false)}
+                style={{
+                  background: "var(--bg-soft)",
+                  border: "1px solid var(--border-color)",
+                  borderRadius: "var(--radius-sm)",
+                  width: "30px",
+                  height: "30px",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "var(--text-main)",
+                  cursor: "pointer"
+                }}
+                aria-label="Close menu"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
             {/* User card if logged in */}
             {token ? (
               <div style={{
@@ -466,9 +545,9 @@ export default function Navbar() {
 
             {/* Mobile Actions */}
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginTop: "auto" }}>
-              {role !== "RECRUITER" && (
+              {!token && (
                 <button
-                  onClick={() => { navigate(token ? "/recruiter" : "/register"); setMenuOpen(false); }}
+                  onClick={() => { navigate("/register?role=RECRUITER"); setMenuOpen(false); }}
                   className="btn-employer-cta"
                   style={{ justifyContent: "center", minHeight: "44px" }}
                 >

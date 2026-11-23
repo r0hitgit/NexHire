@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 
 import {
   getMyJobs,
@@ -94,6 +95,9 @@ export default function RecruiterDashboard() {
   const [contactSubject, setContactSubject] = useState("");
   const [contactMessage, setContactMessage] = useState("");
   const [contactLoading, setContactLoading] = useState(false);
+
+  // Lock scrolling when any modal is open
+  useLockBodyScroll(Boolean(showModal || editModal || interviewModal || contactModal));
 
   const fetchApplications = async (jobId) => {
     try {
